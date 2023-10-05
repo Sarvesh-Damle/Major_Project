@@ -1,7 +1,7 @@
 import React from "react";
-import Navbar from "./Navbar";
+import Navbar from "../Navbar";
 
-const Signin = () => {
+const SignUp = () => {
   return (
     <>
     <Navbar/>
@@ -10,27 +10,33 @@ const Signin = () => {
           <div className="w-full px-4">
             <div className="relative mx-auto max-w-[525px] overflow-hidden rounded-lg bg-white py-16 px-10 text-center sm:px-12 md:px-[60px]">
               <div className="mb-10 text-center md:mb-16">
-                <a href="/#" className="mx-auto inline-block max-w-[160px]">
+                <a href="/" className="mx-auto inline-block max-w-[160px]">
                   <img
-                    src="https://cdn.tailgrids.com/2.0/image/assets/images/logo/logo.svg"
+                    src="https://res.cloudinary.com/dmrz8k1os/image/upload/v1696435051/samples/ecommerce/logo_black2_zrvewb.png"
                     alt="logo"
                   />
                 </a>
               </div>
               <form>
+                <InputBox type="text" name="name" placeholder="Name"/>
                 <InputBox type="email" name="email" placeholder="Email" />
                 <InputBox
                   type="password"
                   name="password"
                   placeholder="Password"
                 />
+                <InputBox
+                  type="password"
+                  name="password"
+                  placeholder="Confirm-Password"
+                />
 
                 <div className="mb-10">
                   <button
-                    className="border-primary w-full cursor-pointer rounded-md border bg-primary py-3 px-5 text-base text-white transition hover:bg-opacity-90"
+                    className="border-primary w-full cursor-pointer rounded-md border bg-primary py-3 px-5 text-base text-blue-500 transition hover:bg-opacity-90 hover:bg-blue-100"
                     type="submit"
                   >
-                    Sign In
+                    Sign Up
                   </button>
                 </div>
               </form>
@@ -38,7 +44,7 @@ const Signin = () => {
               <ul className="-mx-2 mb-12 flex justify-between">
                 <li className="w-full px-2">
                   <a
-                    href="/#"
+                    href="/"
                     className="flex h-11 items-center justify-center rounded-md bg-[#4064AC] hover:bg-opacity-90"
                   >
                     <svg
@@ -57,7 +63,7 @@ const Signin = () => {
                 </li>
                 <li className="w-full px-2">
                   <a
-                    href="/#"
+                    href="/"
                     className="flex h-11 items-center justify-center rounded-md bg-[#1C9CEA] hover:bg-opacity-90"
                   >
                     <svg
@@ -94,18 +100,6 @@ const Signin = () => {
                   </a>
                 </li>
               </ul>
-              <a
-                href="/#"
-                className="mb-2 inline-block text-base text-[#adadad] hover:text-primary hover:underline"
-              >
-                Forget Password?
-              </a>
-              <p className="text-base text-[#adadad]">
-                Not a member yet?
-                <a href="/#" className="text-primary hover:underline">
-                  Sign Up
-                </a>
-              </p>
               <div>
                 <span className="absolute top-1 right-1">
                   <svg
@@ -332,7 +326,7 @@ const Signin = () => {
   );
 };
 
-export default Signin;
+export default SignUp;
 
 const InputBox = ({ type, placeholder, name }) => {
   return (
@@ -341,6 +335,7 @@ const InputBox = ({ type, placeholder, name }) => {
         type={type}
         placeholder={placeholder}
         name={name}
+        required
         className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
       />
     </div>

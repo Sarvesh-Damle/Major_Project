@@ -68,8 +68,8 @@ const Navbar = () => {
               </nav>
             </div>
             <div className="justify-end hidden pr-16 sm:flex lg:pr-0">
-                <Link to="/auth" className="py-3 text-base font-medium px-7 text-dark hover:text-primary">Sign in</Link>
-                <Link to="/auth" className="py-3 text-base font-medium text-dark rounded-lg bg-primary px-7 hover:bg-opacity-90">Sign Up</Link>
+                <Link to="/signin" className="py-3 text-base font-medium px-7 text-dark hover:text-primary">Sign in</Link>
+                <Link to="/signup" className="py-3 text-base font-medium text-dark rounded-lg bg-primary px-7 hover:bg-opacity-90">Sign Up</Link>
               {/* <a
                 href="/#"
                 className="py-3 text-base font-medium px-7 text-dark hover:text-primary"
