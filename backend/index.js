@@ -7,10 +7,10 @@ import apartmentsRoute from "./routes/apartments.routes.js";
 import roomsRoute from "./routes/rooms.routes.js";
 import flatmatesRoute from "./routes/flatmates.routes.js";
 import cookieParser from "cookie-parser";
-// import cors from "cors";
+import cors from "cors";
 
 const app = express();
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 dotenv.config();
 
 const connect = async () => {
@@ -27,7 +27,7 @@ mongoose.connection.on("disconnected", () => {
 })
 
 // middlewares
-// app.use(cors());
+app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 

@@ -1,26 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
 const useFetch = (url) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const res = await axios.get(url);
-        setData(res.data);
-      } catch (error) {
-        setError(error);
-      }
-      setLoading(false);
-    };
-    fetchData();
-  }, [url]);
-
-  const reFetch = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const res = await axios.get(url);
@@ -29,7 +15,15 @@ const useFetch = (url) => {
       setError(error);
     }
     setLoading(false);
-  };
+  }, [url]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const reFetch = useCallback(() => {
+    fetchData();
+  }, [fetchData]);
 
   return { data, loading, error, reFetch };
 };
