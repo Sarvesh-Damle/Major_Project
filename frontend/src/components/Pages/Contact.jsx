@@ -77,7 +77,7 @@ const Contact = () => {
                       Email Address
                     </h4>
                     <p className="text-base text-body-color">
-                      sarvesh.damle1@gmail.com
+                      buddies@gmail.com
                     </p>
                   </div>
                 </div>
@@ -935,7 +935,7 @@ const Contact = () => {
 
 export default Contact;
 
-const ContactTextArea = ({ row, placeholder, name, defaultValue }) => {
+export const ContactTextArea = ({ row, placeholder, name, defaultValue }) => {
   return (
     <>
       <div className="mb-6">
@@ -952,7 +952,7 @@ const ContactTextArea = ({ row, placeholder, name, defaultValue }) => {
   );
 };
 
-const ContactInputBox = ({ type, placeholder, name }) => {
+export const ContactInputBox = ({ type, placeholder, name }) => {
   return (
     <>
       <div className="mb-6">

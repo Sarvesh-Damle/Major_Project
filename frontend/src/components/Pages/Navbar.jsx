@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import ListProperty from "./ListingForms/ListProperty";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -69,22 +70,9 @@ const Navbar = () => {
               </nav>
             </div>
             <div className="justify-end hidden pr-16 sm:flex lg:pr-0">
-                <Link to="/list" className="py-3 text-base font-medium px-7 text-dark hover:text-primary">List Property</Link>
+                <ListProperty/>
                 <Link to="/signin" className="py-3 text-base font-medium px-7 text-dark hover:text-primary">Sign in</Link>
                 <Link to="/signup" className="py-3 text-base font-medium text-dark rounded-lg bg-primary px-7 hover:bg-opacity-90">Sign Up</Link>
-              {/* <a
-                href="/#"
-                className="py-3 text-base font-medium px-7 text-dark hover:text-primary"
-              >
-                Sign in
-              </a> */}
-{/* 
-              <a
-                href="/#"
-                className="py-3 text-base font-medium text-white rounded-lg bg-primary px-7 hover:bg-opacity-90"
-              >
-                Sign Up
-              </a> */}
             </div>
           </div>
         </div>

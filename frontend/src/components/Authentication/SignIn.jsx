@@ -10,7 +10,7 @@ const SignIn = () => {
   const handleUser = async (e) => {
     e.preventDefault();
     if (email !== "" && password !== "") {
-      const request = await fetch('http://localhost:8001/user/addUser', {
+      const request = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -65,7 +65,7 @@ const SignIn = () => {
                   </button>
                 </div>
               </form>
-              <p className="mb-6 text-base text-[#adadad]">Connect With</p>
+              <p className="mb-6 text-base text-gray-600">Connect With</p>
               <ul className="-mx-2 mb-12 flex justify-between">
                 <li className="w-full px-2">
                   <a
@@ -127,13 +127,13 @@ const SignIn = () => {
               </ul>
               <a
                 href="/"
-                className="mb-2 inline-block text-base text-[#adadad] hover:text-primary hover:underline"
+                className="mb-2 inline-block text-base text-gray-600 hover:text-primary hover:underline"
               >
                 Forgot Password?
               </a>
-              <p className="text-base text-[#adadad]">
-                Not a member yet?
-                <Link to="/signup" className="text-primary hover:underline">
+              <p className="text-base text-gray-600">
+                Not a member yet? 
+                <Link to="/signup" className="ml-2 text-primary hover:underline text-gray-600">
                   Sign Up
                 </Link>
               </p>
