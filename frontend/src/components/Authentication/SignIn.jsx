@@ -1,36 +1,36 @@
-import React, { useState } from "react";
+import { useState } from "react";
 // import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-// import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const navigate = useNavigate();
-  // const handleUser = async (e) => {
-  //   e.preventDefault();
-  //   // if (email !== "" && password !== "") {
-  //   //   const request = await fetch('http://localhost:8001/user/addUser', {
-  //   //     method: 'POST',
-  //   //     headers: {
-  //   //       Accept: 'application/json',
-  //   //       'Content-Type': 'application/json'
-  //   //     },
-  //   //     body: JSON.stringify({
-  //   //       email, password
-  //   //     })
-  //   //   });
-  //     const data = await request.json();
-  //     if (data.type === "success") {
-  //       toast(`${data.message}`);
-  //       setEmail("");
-  //       setPassword("");
-  //       setTimeout(() => {
-  //         navigate("/")
-  //       }, 1000);
-  //     }
-  //   }
-  // }
+  const navigate = useNavigate();
+  const handleUser = async (e) => {
+    e.preventDefault();
+    if (email !== "" && password !== "") {
+      const request = await fetch('http://localhost:8001/user/addUser', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email, password
+        })
+      });
+      const data = await request.json();
+      if (data.type === "success") {
+        // toast(`${data.message}`);
+        setEmail("");
+        setPassword("");
+        setTimeout(() => {
+          navigate("/")
+        }, 1000);
+      }
+    }
+  }
   return (
     <>
       <section className="bg-[#F4F7FF] py-20 lg:py-[120px]">
@@ -59,7 +59,7 @@ const SignIn = () => {
                   <button
                     className="border-primary w-full cursor-pointer rounded-md border bg-primary py-3 px-5 text-base text-blue-500 transition hover:bg-opacity-90 hover:bg-blue-100"
                     type="submit"
-                    // onClick={(e) => handleUser(e)}
+                    onClick={(e) => handleUser(e)}
                   >
                     Sign In
                   </button>
@@ -129,13 +129,13 @@ const SignIn = () => {
                 href="/"
                 className="mb-2 inline-block text-base text-[#adadad] hover:text-primary hover:underline"
               >
-                Forget Password?
+                Forgot Password?
               </a>
               <p className="text-base text-[#adadad]">
                 Not a member yet?
-                <a href="/" className="text-primary hover:underline">
+                <Link to="/signup" className="text-primary hover:underline">
                   Sign Up
-                </a>
+                </Link>
               </p>
               <div>
                 <span className="absolute top-1 right-1">
