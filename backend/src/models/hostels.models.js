@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const hostelsSchema = new mongoose.Schema({
   name: {
@@ -54,5 +55,7 @@ const hostelsSchema = new mongoose.Schema({
     default: false,
   },
 });
+
+hostelsSchema.plugin(mongooseAggregatePaginate);
 
 export default mongoose.model("Hostel", hostelsSchema);

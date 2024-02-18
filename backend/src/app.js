@@ -5,7 +5,6 @@ import authRoute from "./routes/auth.routes.js";
 import usersRoute from "./routes/users.routes.js";
 import hostelsRoute from "./routes/hostels.routes.js";
 import flatsRoute from "./routes/flats.routes.js";
-import flatmatesRoute from "./routes/flatmates.routes.js";
 
 const app = express();
 
@@ -19,11 +18,11 @@ app.use(express.urlencoded({extended: true, limit: "16kb"}));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-app.use("/api/auth", authRoute);
-app.use("/api/users", usersRoute);
-app.use("/api/flats", flatsRoute);
-app.use("/api/hostels", hostelsRoute);
-app.use("/api/flatmates", flatmatesRoute);
+// routes
+app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/users", usersRoute);
+app.use("/api/v1/flats", flatsRoute);
+app.use("/api/v1/hostels", hostelsRoute);
 
 app.use((err, req, res, next) => {
   const errorStatus = err.status || 500;
