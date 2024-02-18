@@ -30,7 +30,7 @@ const PropertyOwner = () => {
       <div className='flex items-center justify-center h-auto'>
         <div className='flex flex-col sm:w-1/3 w-full'>
           {error && <p className='text-red-600 mt-4 text-center'>{error}</p>}
-          <form onSubmit={handleSubmit(login)} className='mt-4'>
+          <form onSubmit={handleSubmit(login)} className='mt-4' action='/api/v1/--' method='post' encType='multipart/form-data'>
             <div className='space-y-5 m-4 p-5 shadow-md rounded-lg'>
               <Input
                 label='Name: '
@@ -97,6 +97,7 @@ const PropertyOwner = () => {
                 })}
               />
               {errors.email && <p className='text-red-600'>{errors.email.message}</p>}
+              <input type="file" name="propertyImage" accept="image/*" />
               <Button
                 type='submit'
                 className='w-full'

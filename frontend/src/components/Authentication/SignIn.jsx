@@ -45,7 +45,7 @@ const SignIn = () => {
                   />
                 </a>
               </div>
-              <form>
+              <form action="/api/v1register" method="post">
                 <InputBox type="email" name="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
                 <InputBox
                   type="password"
@@ -53,6 +53,11 @@ const SignIn = () => {
                   placeholder="Password"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
+                />
+                <InputBox
+                  type="file"
+                  name="property_photos"
+                  accept="property_photos/*"
                 />
 
                 <div className="mb-10">
