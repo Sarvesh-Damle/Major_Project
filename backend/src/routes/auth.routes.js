@@ -1,6 +1,7 @@
 import express from "express";
-import { register } from "../controllers/auth.controllers.js";
+import { registerUser, loginUser, logoutUser, refreshAccessToken } from "../controllers/auth.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
@@ -8,8 +9,12 @@ const router = express.Router();
 //     name: "property_photos",
 //     maxCount: 5
 // }]), register);
-router.post("/register", register);
+router.post("/register", registerUser);
 
-// router.post("/login", login);
+router.post("/login", loginUser);
+
+// secured routes
+router.post("/logout", verifyJWT, logoutUser);
+router.post("/refresh-token", refreshAccessToken);
 
 export default router;

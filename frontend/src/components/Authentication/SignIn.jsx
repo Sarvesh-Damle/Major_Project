@@ -10,7 +10,7 @@ const SignIn = () => {
   const handleUser = async (e) => {
     e.preventDefault();
     if (email !== "" && password !== "") {
-      const request = await fetch('/api/auth/register', {
+      const request = await fetch('/api/v1/auth/register', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
