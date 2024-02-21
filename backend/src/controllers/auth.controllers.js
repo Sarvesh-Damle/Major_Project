@@ -253,4 +253,54 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Password Changed Successfully"));
 });
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken, changeCurrentPassword };
+const getCurrentUser = asyncHandler(async (req, res) => {
+  return res
+    .status(200)
+    .json(new ApiResponse(200, req.user, "Current User Fetched Successfully"));
+});
+
+const getAllUsers = asyncHandler(async (req, res) => {
+  const Users = await User.find();
+  return res
+    .status(200)
+    .json(new ApiResponse(200, Users, "All Users Fetched Successfully"));
+});
+
+const updateAccountDetails = asyncHandler(async (req, res) => {
+  const { name, email, phoneNumber } = req.body;
+
+  if (!name && !email && !phoneNumber) {
+    throw new ApiError(400, "Provide atleast one field to change");
+  }
+
+  const updateFields = {};
+  if (name) {
+    updateFields.name = name;
+  }
+  if (email) {
+    updateFields.email = email;
+  }
+  if (phoneNumber) {
+    updateFields.phoneNumber = phoneNumber;
+  }
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    { $set: updateFields },
+    { new: true }
+  ).select("-password");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Account Details Updated Successfully"));
+});
+
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  refreshAccessToken,
+  changeCurrentPassword,
+  getCurrentUser,
+  getAllUsers,
+  updateAccountDetails,
+};
