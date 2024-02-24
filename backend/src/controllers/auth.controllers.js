@@ -4,7 +4,10 @@ import { createError } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  deleteFromCloudinary,
+  uploadOnCloudinary,
+} from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 const generateRefreshAndAccessTokens = async (userId) => {
@@ -293,6 +296,78 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, user, "Account Details Updated Successfully"));
 });
+
+// const updatePhotos = asyncHandler(async (req, res) => {
+//   const photosLocalPath = req.file?.path; // req.file is for single photo updation
+
+//   if (!photosLocalPath) {
+//     throw new ApiError(400, "Photos are missing");
+//   }
+
+//   const photos = await uploadOnCloudinary(photosLocalPath);
+
+//   if (!photos.url) {
+//     throw new ApiError(400, "Error while uploading photos");
+//   }
+
+//   // delete old image
+//   const userToUpdate = await User.findById(req.user?._id);
+//   const oldPhotosUrl = userToUpdate.property_photos;
+
+//   if (oldPhotosUrl) {
+//     await deleteFromCloudinary(oldPhotosUrl);
+//   }
+
+//   const user = await User.findByIdAndUpdate(
+//     req.user?._id,
+//     { $set: { property_photos: photos.url } },
+//     { new: true }
+//   ).select("-password");
+
+//   return res
+//     .status(200)
+//     .json(new ApiResponse(200, user, "Photos Updated Successfully"));
+// });
+
+// Function to remove a particular photo
+// const removePhoto = async (publicId) => {
+//   try {
+//     if (!publicId) return null;
+//     // Deleting file from Cloudinary
+//     const response = await cloudinary.uploader.destroy(publicId);
+//     console.log("File deleted from Cloudinary successfully!!");
+//     return response;
+//   } catch (error) {
+//     console.error("Error deleting file from Cloudinary:", error);
+//     return null;
+//   }
+// };
+
+// API route for updating property images
+// const updatePropertyImages = async (req, res) => {
+//   const { remove, add } = req.body;
+
+//   // Remove specified photos
+//   if (remove && remove.length > 0) {
+//     for (let publicId of remove) {
+//       await removePhoto(publicId);
+//     }
+//   }
+
+//   // Add new photos
+//   if (add && add.length > 0) {
+//     for (let file of add) {
+//       const response = await uploadOnCloudinary(file.path);
+//       if (!response.url) {
+//         throw new ApiError(400, "Error while uploading photos");
+//       }
+//     }
+//   }
+
+//   return res
+//     .status(200)
+//     .json(new ApiResponse(200, "Photos updated successfully"));
+// };
 
 export {
   registerUser,
