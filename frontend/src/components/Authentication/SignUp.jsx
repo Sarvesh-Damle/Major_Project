@@ -1,6 +1,22 @@
-import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useForm, Controller } from "react-hook-form";
 
+export let signedUp = false;
 const SignUp = () => {
+  const { control, handleSubmit, formState: { errors } } = useForm();
+  const navigate = useNavigate();
+
+  const signup = async (data) => {
+    try {
+      await axios.post("/api/v1/auth/register", data);
+      signedUp = true;
+      navigate("/signin");
+    } catch (error) {
+      console.error("Sorry, an error occurred while registering in. ", error);
+    }
+  }
+
   return (
     <>
       <section className="bg-[#F4F7FF] py-20 lg:py-[120px]">
@@ -8,28 +24,100 @@ const SignUp = () => {
           <div className="w-full px-4">
             <div className="relative mx-auto max-w-[525px] overflow-hidden rounded-lg bg-white py-16 px-10 text-center sm:px-12 md:px-[60px]">
               <div className="mb-10 text-center md:mb-16">
-                <a href="/" className="mx-auto inline-block max-w-[160px]">
+                <Link to="/" className="mx-auto inline-block max-w-[160px]">
                   <img
-                    src="https://res.cloudinary.com/dmrz8k1os/image/upload/v1696435051/samples/ecommerce/logo_black2_zrvewb.png"
+                    src="https://res.cloudinary.com/sarvesh-damle/image/upload/v1696435051/Buddies_MajorProject/logos/logo_black2_zrvewb.png"
                     alt="logo"
                   />
-                </a>
+                </Link>
               </div>
-              <form>
-                <InputBox type="text" name="name" placeholder="Name"/>
-                <InputBox type="email" name="email" placeholder="Email" />
-                <InputBox
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                />
-                <InputBox
-                  type="password"
-                  name="password"
-                  placeholder="Confirm-Password"
-                />
+              <form onSubmit={handleSubmit(signup)}>
+                <div className="mb-6">
+                  <Controller
+                    name="name"
+                    defaultValue=""
+                    control={control}
+                    rules={{
+                      required: "Name is required",
+                      pattern: {
+                        value: /^[A-Za-z\s]+$/,
+                        message: "Name must contain only letters and spaces"
+                      }
+                    }}
+                    render={({ field }) => (
+                      <>
+                        <input {...field} type="text" placeholder="Enter your name..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" autoComplete="name" />
+                        {errors.name && <p className='text-red-600'>{errors.name.message}</p>}
+                      </>
+                    )}
+                  />
+                </div>
+                <div className="mb-6">
+                  <Controller
+                    name="email"
+                    defaultValue=""
+                    control={control}
+                    rules={{
+                      required: "Email is required",
+                      pattern: {
+                        value: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+                        message: "Email address must be a valid address"
+                      }
+                    }}
+                    render={({ field }) => (
+                      <>
+                        <input {...field} type="email" placeholder="Enter your email..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" autoComplete="email" />
+                        {errors.email && <p className='text-red-600'>{errors.email.message}</p>}
+                      </>
+                    )}
+                  />
+                </div>
+                <div className="mb-6">
+                  <Controller
+                    name="phoneNumber"
+                    defaultValue=""
+                    control={control}
+                    rules={{
+                      required: "Phone Number is required",
+                      minLength: {
+                        value: 10,
+                        message: "Phone Number must be of 10 digits"
+                      },
+                      maxLength: {
+                        value: 10,
+                        message: "Phone Number must be of 10 digits"
+                      }
+                    }}
+                    render={({ field }) => (
+                      <>
+                        <input {...field} type="number" placeholder="Enter your phone number..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" autoComplete="tel" />
+                        {errors.phoneNumber && <p className='text-red-600'>{errors.phoneNumber.message}</p>}
+                      </>
+                    )}
+                  />
+                </div>
+                <div className="mb-6">
+                  <Controller
+                    name="password"
+                    defaultValue=""
+                    control={control}
+                    rules={{
+                      required: "Password is required",
+                      minLength: {
+                        value: 8,
+                        message: "Password must be atleast 8 characters long"
+                      }
+                    }}
+                    render={({ field }) => (
+                      <>
+                        <input {...field} type="password" placeholder="Enter your password..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" autoComplete="current-password" />
+                        {errors.password && <p className='text-red-600'>{errors.password.message}</p>}
+                      </>
+                    )}
+                  />
+                </div>
 
-                <div className="mb-10">
+                <div className="mb-10 mt-5">
                   <button
                     className="border-primary w-full cursor-pointer rounded-md border bg-primary py-3 px-5 text-base text-blue-500 transition hover:bg-opacity-90 hover:bg-blue-100"
                     type="submit"
@@ -41,8 +129,8 @@ const SignUp = () => {
               <p className="mb-6 text-base text-[#adadad]">Connect With</p>
               <ul className="-mx-2 mb-12 flex justify-between">
                 <li className="w-full px-2">
-                  <a
-                    href="/"
+                  <Link
+                    to="/"
                     className="flex h-11 items-center justify-center rounded-md bg-[#4064AC] hover:bg-opacity-90"
                   >
                     <svg
@@ -57,11 +145,11 @@ const SignUp = () => {
                         fill="white"
                       />
                     </svg>
-                  </a>
+                  </Link>
                 </li>
                 <li className="w-full px-2">
-                  <a
-                    href="/"
+                  <Link
+                    to="/"
                     className="flex h-11 items-center justify-center rounded-md bg-[#1C9CEA] hover:bg-opacity-90"
                   >
                     <svg
@@ -76,11 +164,11 @@ const SignUp = () => {
                         fill="white"
                       />
                     </svg>
-                  </a>
+                  </Link>
                 </li>
                 <li className="w-full px-2">
-                  <a
-                    href="/#"
+                  <Link
+                    to="/"
                     className="flex h-11 items-center justify-center rounded-md bg-[#D64937] hover:bg-opacity-90"
                   >
                     <svg
@@ -95,7 +183,7 @@ const SignUp = () => {
                         fill="white"
                       />
                     </svg>
-                  </a>
+                  </Link>
                 </li>
               </ul>
               <div>
@@ -326,16 +414,16 @@ const SignUp = () => {
 
 export default SignUp;
 
-const InputBox = ({ type, placeholder, name }) => {
-  return (
-    <div className="mb-6">
-      <input
-        type={type}
-        placeholder={placeholder}
-        name={name}
-        required
-        className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
-      />
-    </div>
-  );
-};
+// const InputBox = ({ type, placeholder, name }) => {
+//   return (
+//     <div className="mb-6">
+//       <input
+//         type={type}
+//         placeholder={placeholder}
+//         name={name}
+//         required
+//         className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
+//       />
+//     </div>
+//   );
+// };

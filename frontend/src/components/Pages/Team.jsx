@@ -1,16 +1,11 @@
-import React from "react";
-
 const Team = () => {
     return (
         <>
-            <section className="pt-20 pb-10 lg:pt-[120px] lg:pb-20">
+            <section className="pt-10 pb-10 lg:pt-[80px] lg:pb-20">
                 <div className="container">
                     <div className="flex flex-wrap -mx-4">
                         <div className="w-full px-4">
                             <div className="mx-auto mb-[60px] max-w-[510px] text-center">
-                                {/* <span className="block mb-2 text-lg font-semibold text-primary">
-                Our Team
-              </span> */}
                                 <h2 className="mb-4 text-3xl font-bold text-dark sm:text-4xl md:text-[40px]">
                                     Our Awesome Team
                                 </h2>
@@ -24,17 +19,17 @@ const Team = () => {
                         <TeamCard
                             name="Sarvesh Damle"
                             profession="Web Developer"
-                            imageSrc="https://res.cloudinary.com/dmrz8k1os/image/upload/v1696440501/samples/ecommerce/Sarvesh_Damle_Photo-removebg-preview_qrgcme.png"
+                            imageSrc="https://res.cloudinary.com/sarvesh-damle/image/upload/v1696440501/Buddies_MajorProject/team/Sarvesh_Damle_Photo-removebg-preview_qrgcme.png"
                         />
                         <TeamCard
                             name="Arvind Nair"
                             profession="Web Developer"
-                            imageSrc="https://res.cloudinary.com/dmrz8k1os/image/upload/v1696440346/samples/ecommerce/WhatsApp_Image_2023-10-04_at_22.24.10_159fd402_dwedta.jpg"
+                            imageSrc="https://res.cloudinary.com/sarvesh-damle/image/upload/v1696440346/Buddies_MajorProject/team/WhatsApp_Image_2023-10-04_at_22.24.10_159fd402_dwedta.jpg"
                         />
                         <TeamCard
                             name="Aryan Sadvelkar"
                             profession="Web Developer"
-                            imageSrc="https://res.cloudinary.com/dmrz8k1os/image/upload/v1699077630/samples/ecommerce/aryan_image_mtiaqa.jpg"
+                            imageSrc="https://res.cloudinary.com/sarvesh-damle/image/upload/v1699077839/Buddies_MajorProject/team/aryan_image_fm1djs.jpg"
                         />
                     </div>
                 </div>
