@@ -1,5 +1,3 @@
-import React from "react";
-
 const Footer = () => {
   return (
     <>
@@ -10,7 +8,7 @@ const Footer = () => {
               <div className="w-full mb-10">
                 <a href="/#" className="mb-6 inline-block max-w-[160px]">
                   <img
-                    src="https://res.cloudinary.com/dmrz8k1os/image/upload/v1696435051/samples/ecommerce/logo_black2_zrvewb.png"
+                    src="https://res.cloudinary.com/sarvesh-damle/image/upload/v1696435051/Buddies_MajorProject/logos/logo_black2_zrvewb.png"
                     alt="logo"
                     className="max-w-full"
                   />

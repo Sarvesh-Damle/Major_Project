@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ListProperty from "./ListingForms/ListProperty";
+import { signedUp } from "../Authentication/SignUp";
+import { loggedIn, username } from "../Authentication/SignIn";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -13,7 +15,7 @@ const Navbar = () => {
           <div className="max-w-full px-4 w-60"  >
             <div className="block w-full py-5 cursor-pointer" onClick={()=>navigate("/")} >
               <img
-                src="https://res.cloudinary.com/dmrz8k1os/image/upload/v1696435051/samples/ecommerce/logo_black2_zrvewb.png"
+                src="https://res.cloudinary.com/sarvesh-damle/image/upload/v1696435051/Buddies_MajorProject/logos/logo_black2_zrvewb.png"
                 alt="logo"
                 className="w-full"
               />
@@ -71,8 +73,8 @@ const Navbar = () => {
             </div>
             <div className="justify-end hidden pr-16 sm:flex lg:pr-0">
                 <ListProperty/>
-                <Link to="/signin" className="py-3 text-base font-medium px-7 text-dark hover:text-primary">Sign in</Link>
-                <Link to="/signup" className="py-3 text-base font-medium text-dark rounded-lg bg-primary px-7 hover:bg-opacity-90">Sign Up</Link>
+                {loggedIn ? username : (<Link to="/signin" className="py-3 text-base font-medium px-7 text-dark hover:text-primary">Sign in</Link>)}
+                {signedUp ? null : (<Link to="/signup" className="py-3 text-base font-medium text-dark rounded-lg bg-primary px-7 hover:bg-opacity-90">Sign Up</Link>)}
             </div>
           </div>
         </div>

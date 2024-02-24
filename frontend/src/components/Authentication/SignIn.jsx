@@ -1,34 +1,26 @@
-import { useState } from "react";
 // import { toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+// import 'react-toastify/dist/ReactToastify.css';
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useForm, Controller } from "react-hook-form";
+import { signedUp } from "./SignUp.jsx";
 
+export let loggedIn = false;
+export let username = "";
 const SignIn = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { control, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
-  const handleUser = async (e) => {
-    e.preventDefault();
-    if (email !== "" && password !== "") {
-      const request = await fetch('/api/v1/auth/register', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email, password
-        })
-      });
-      const data = await request.json();
-      if (data.type === "success") {
-        // toast(`${data.message}`);
-        setEmail("");
-        setPassword("");
-        setTimeout(() => {
-          navigate("/")
-        }, 1000);
-      }
+
+  const login = async (data) => {
+    try {
+      await axios.post("/api/v1/auth/login", data);
+      loggedIn = true;
+      username = data.name;
+      console.log(username);  // undefined, need db call
+      console.log(data.email);
+      navigate("/");
+    } catch (error) {
+      console.error("Sorry, an error occured while logging ", error);
     }
   }
   return (
@@ -38,33 +30,59 @@ const SignIn = () => {
           <div className="w-full px-4">
             <div className="relative mx-auto max-w-[525px] overflow-hidden rounded-lg bg-white py-16 px-10 text-center sm:px-12 md:px-[60px]">
               <div className="mb-10 text-center md:mb-16">
-                <a href="/" className="mx-auto inline-block max-w-[160px]">
+                <Link to="/" className="mx-auto inline-block max-w-[160px]">
                   <img
-                    src="https://res.cloudinary.com/dmrz8k1os/image/upload/v1696435051/samples/ecommerce/logo_black2_zrvewb.png"
+                    src="https://res.cloudinary.com/sarvesh-damle/image/upload/v1696435051/Buddies_MajorProject/logos/logo_black2_zrvewb.png"
                     alt="logo"
                   />
-                </a>
+                </Link>
               </div>
-              <form action="/api/v1register" method="post">
-                <InputBox type="email" name="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                <InputBox
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                />
-                <InputBox
-                  type="file"
-                  name="property_photos"
-                  accept="property_photos/*"
-                />
+              <form onSubmit={handleSubmit(login)}>
+                <div className="mb-6">
+                  <Controller
+                    name="email"
+                    defaultValue=""
+                    control={control}
+                    rules={{
+                      required: "Email is required",
+                      pattern: {
+                        value: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+                        message: "Email address must be a valid address"
+                      }
+                    }}
+                    render={({ field }) => (
+                      <>
+                        <input {...field} type="email" placeholder="Enter your email..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" autoComplete="email" />
+                        {errors.email && <p className='text-red-600'>{errors.email.message}</p>}
+                      </>
+                    )}
+                  />
+                </div>
+                <div className="mb-6">
+                  <Controller
+                    name="password"
+                    defaultValue=""
+                    control={control}
+                    rules={{
+                      required: "Password is required",
+                      minLength: {
+                        value: 8,
+                        message: "Password must be atleast 8 characters long"
+                      }
+                    }}
+                    render={({ field }) => (
+                      <>
+                        <input {...field} type="password" placeholder="Enter your password..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" autoComplete="current-password" />
+                        {errors.password && <p className='text-red-600'>{errors.password.message}</p>}
+                      </>
+                    )}
+                  />
+                </div>
 
                 <div className="mb-10">
                   <button
                     className="border-primary w-full cursor-pointer rounded-md border bg-primary py-3 px-5 text-base text-blue-500 transition hover:bg-opacity-90 hover:bg-blue-100"
                     type="submit"
-                    onClick={(e) => handleUser(e)}
                   >
                     Sign In
                   </button>
@@ -130,16 +148,16 @@ const SignIn = () => {
                   </a>
                 </li>
               </ul>
-              <a
-                href="/"
+              <Link
+                to="/reset-password"
                 className="mb-2 inline-block text-base text-gray-600 hover:text-primary hover:underline"
               >
                 Forgot Password?
-              </a>
+              </Link>
               <p className="text-base text-gray-600">
-                Not a member yet? 
+                Not a member yet?
                 <Link to="/signup" className="ml-2 text-primary hover:underline text-gray-600">
-                  Sign Up
+                  {signedUp ? null : "Sign Up"}
                 </Link>
               </p>
               <div>

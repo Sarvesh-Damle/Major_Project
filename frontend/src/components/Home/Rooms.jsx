@@ -1,5 +1,4 @@
-import React from 'react';
-import useFetch from "../hooks/useFetch.js";
+import useFetch from "../../hooks/useFetch.js";
 import { useNavigate } from 'react-router-dom';
 
 const Rooms = () => {
@@ -12,7 +11,7 @@ const Rooms = () => {
                     <h1 className="flex justify-center items-center text-3xl p-1 my-2">Room Types</h1>
                     <section className="pt-5 lg:pt-8 pb-5 lg:pb-8 h-full bg-[#F3F4F6]">
                         <div className="container grid sm:grid-cols-2 lg:grid-cols-3 gap-12 my-3">
-                            {data && images.map((i, index) => {
+                            {/* {data && images.map((i, index) => {
                                 return (
                                     <SingleCard
                                         key={index}
@@ -23,7 +22,7 @@ const Rooms = () => {
                                         Button="View Details"
                                     />
                                 )
-                            })}
+                            })} */}
                         </div>
                     </section>
                 </div>)
@@ -45,7 +44,7 @@ const SingleCard = ({
     return (
         <>
             {/*  */}
-            <div className="overflow-hidden bg-white rounded-lg cursor-pointer" onClick={() => navigate("/product")}>
+            <div className="overflow-hidden bg-white rounded-lg cursor-pointer" onClick={() => navigate("/property")}>
                 <img src={image} alt="Room" className="w-full" />
                 <div className="p-8 text-center sm:p-9 md:p-7 xl:p-9">
                     <h3>

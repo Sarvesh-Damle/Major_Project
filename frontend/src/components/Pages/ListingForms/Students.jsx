@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import Input from './Input';
 import Button from './Button';
+import axios from 'axios';
 
 const Students = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -16,7 +17,8 @@ const Students = () => {
     setError("");
     try {
       // Your login logic here
-      console.log(data);
+      const response = await axios.post("/api/v1/login", data);
+      console.log(response.data);
       navigate("/");
     } catch (error) {
       setError("An error occurred while logging in. Please try again."); // General error message
@@ -52,13 +54,13 @@ const Students = () => {
                 placeholder='Enter your name...'
                 type='text'
               // autoComplete='username'
-              // {...register("name", {
-              //   required: "Name is required",
-              //   pattern: {
-              //     value: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
-              //     message: "Name must be a valid name"
-              //   }
-              // })}
+              {...register("name", {
+                required: "Name is required",
+                pattern: {
+                  value: /^[A-Za-z\s]+$/,
+                  message: "Name must contain only letters and spaces"
+                }
+              })}
               />
               {errors.name && <p className='text-red-600'>{errors.name.message}</p>}
               <Input
@@ -80,7 +82,7 @@ const Students = () => {
                 })}
               />
               {errors.phone && <p className='text-red-600'>{errors.phone.message}</p>}
-              {phoneNumEntered ? (<Input
+              {phoneNumEntered && (<Input
                 label='OTP: '
                 type='number'
                 placeholder='Enter OTP...'
@@ -96,7 +98,7 @@ const Students = () => {
                     message: "OTP must be of 4 digits"
                   },
                 })}
-              />) : null}
+              />)}
               {errors.otp && <p className='text-red-600'>{errors.otp.message}</p>}
               {/* <Input
                 label='Email: '
@@ -196,6 +198,11 @@ const Students = () => {
                 />
               ) : null}
               {errors.tiffinPhone && <p className='text-red-600'>{errors.tiffinPhone.message}</p>}
+              {/* <InputBox
+                  type="file"
+                  name="property_photos"
+                  accept="property_photos/*"
+                /> */}
               <Button
                 type='submit'
                 className='w-full'
