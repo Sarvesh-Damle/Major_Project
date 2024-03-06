@@ -1,21 +1,25 @@
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useForm, Controller } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
-export let signedUp = false;
 const SignUp = () => {
   const { control, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
 
-  const signup = async (data) => {
-    try {
-      await axios.post("/api/v1/auth/register", data);
-      signedUp = true;
-      navigate("/signin");
-    } catch (error) {
-      console.error("Sorry, an error occurred while registering in. ", error);
+  const mutation = useMutation({
+    mutationKey: ['register'],
+    mutationFn: (formData) => { return axios.post("/api/v1/auth/register", formData, { withCredentials: true }) },
+    onSuccess(data) {
+      navigate("/signin")
+      toast.success(data.data.message)
+    },
+    onError(error) {
+      let message = error.response?.data?.message;
+      toast.error(message);
     }
-  }
+  })
 
   return (
     <>
@@ -31,7 +35,7 @@ const SignUp = () => {
                   />
                 </Link>
               </div>
-              <form onSubmit={handleSubmit(signup)}>
+              <form onSubmit={handleSubmit(formData => mutation.mutate(formData))}>
                 <div className="mb-6">
                   <Controller
                     name="name"
