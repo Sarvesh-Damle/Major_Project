@@ -1,28 +1,31 @@
-// import { toast } from "react-toastify";
-// import 'react-toastify/dist/ReactToastify.css';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useForm, Controller } from "react-hook-form";
-import { signedUp } from "./SignUp.jsx";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
-export let loggedIn = false;
-export let username = "";
 const SignIn = () => {
   const { control, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
 
-  const login = async (data) => {
-    try {
-      await axios.post("/api/v1/auth/login", data);
-      loggedIn = true;
-      username = data.name;
-      console.log(username);  // undefined, need db call
-      console.log(data.email);
-      navigate("/");
-    } catch (error) {
-      console.error("Sorry, an error occured while logging ", error);
+  const mutation = useMutation({
+    mutationKey: ['login'],
+    mutationFn: (formData) => {
+      return axios.post("/api/v1/auth/login",
+        formData,
+        {withCredentials: true}
+      )
+    },
+    onSuccess (data) {
+      navigate("/")
+      toast.success(data.data.message)
+    },
+    onError (error) {
+      let message = error.response?.data?.message;
+      toast.error(message);
     }
-  }
+  })
+
   return (
     <>
       <section className="bg-[#F4F7FF] py-20 lg:py-[120px]">
@@ -37,7 +40,7 @@ const SignIn = () => {
                   />
                 </Link>
               </div>
-              <form onSubmit={handleSubmit(login)}>
+              <form onSubmit={handleSubmit(formData => mutation.mutate(formData))}>
                 <div className="mb-6">
                   <Controller
                     name="email"
@@ -157,7 +160,7 @@ const SignIn = () => {
               <p className="text-base text-gray-600">
                 Not a member yet?
                 <Link to="/signup" className="ml-2 text-primary hover:underline text-gray-600">
-                  {signedUp ? null : "Sign Up"}
+                  Sign Up
                 </Link>
               </p>
               <div>
