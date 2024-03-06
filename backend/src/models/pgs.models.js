@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const FlatsSchema = new mongoose.Schema(
+const PGsSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -38,20 +38,12 @@ const FlatsSchema = new mongoose.Schema(
       min: 0,
       max: 5,
     },
-    flat_type: {
+    pg_type: {
       type: String,
       required: true,
     },
-    furnished_status: {
-      type: String,
-      required: true,
-    },
-    flat_area: {
-      type: Number,
-      required: true,
-    },
-    flat_floor_number: {
-      type: Number,
+    food_included: {
+      type: Boolean,
       required: true,
     },
     parking_availability: {
@@ -63,7 +55,7 @@ const FlatsSchema = new mongoose.Schema(
       required: true,
     },
     preferred_tennats: {
-      type: String, // family, students, bachelors
+      type: String, // girls, boys
       required: true,
     },
     phoneNumber: {
@@ -86,4 +78,4 @@ const FlatsSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Flat", FlatsSchema);
+export default mongoose.model("PG", PGsSchema);
