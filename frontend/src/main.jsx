@@ -4,7 +4,7 @@ import App from './App.jsx';
 import './index.css';
 import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
 import { Home, SignIn, SignUp, About, Property, Contact, Error, Team, ListProperty, Students, Professionals, PropertyOwner, ResetPassword } from './components/index.js';
-import Provider from './components/provider.jsx';
+import Provider from './components/Provider.jsx';
 import { ToastContainer } from "react-toastify";
 
 const router = createBrowserRouter(createRoutesFromElements(
