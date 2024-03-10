@@ -3,18 +3,25 @@ import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const hostelsSchema = new mongoose.Schema(
   {
+    owner_name: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true,
+    },
+    owner_email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    owner_phoneNumber: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     hostel_name: {
-      type: String,
-      required: true,
-    },
-    email: {
-      type: String,
-    },
-    ownerName: {
-      type: String,
-      required: true,
-    },
-    phoneNumber: {
       type: String,
       required: true,
     },
