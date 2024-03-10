@@ -6,6 +6,7 @@ import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route } 
 import { Home, SignIn, SignUp, About, Property, Contact, Error, Team, ListProperty, Students, Professionals, PropertyOwner, ResetPassword } from './components/index.js';
 import Provider from './components/Provider.jsx';
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const router = createBrowserRouter(createRoutesFromElements(
   <>
