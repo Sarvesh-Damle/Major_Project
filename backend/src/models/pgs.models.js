@@ -2,19 +2,39 @@ import mongoose from "mongoose";
 
 const PGsSchema = new mongoose.Schema(
   {
-    title: {
+    owner_name: {
       type: String,
       required: true,
+      lowercase: true,
+      trim: true,
     },
-    price: {
-      type: Number,
+    owner_email: {
+      type: String,
       required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    owner_phoneNumber: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    pg_name: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true,
     },
     city: {
       type: String,
       required: true,
     },
     address: {
+      type: String,
+      required: true,
+    },
+    description: {
       type: String,
       required: true,
     },
@@ -26,40 +46,27 @@ const PGsSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    photos: {
-      type: [String],
-    },
-    description: {
-      type: String,
-      required: true,
-    },
-    rating: {
+    rent_amount: {
       type: Number,
-      min: 0,
-      max: 5,
-    },
-    pg_type: {
-      type: String,
-      required: true,
-    },
-    food_included: {
-      type: Boolean,
-      required: true,
-    },
-    parking_availability: {
-      type: Boolean,
       required: true,
     },
     security_deposit: {
       type: Number,
       required: true,
     },
-    preferred_tennats: {
-      type: String, // girls, boys
+    food_included: {
+      type: String,
       required: true,
     },
-    phoneNumber: {
-      type: Number,
+    food_availability: {
+      type: [String],
+    },
+    parking_availability: {
+      type: Boolean,
+      required: true,
+    },
+    preferred_tennats: {
+      type: String, // girls, boys
       required: true,
     },
     amenities: {
@@ -73,6 +80,9 @@ const PGsSchema = new mongoose.Schema(
     featured: {
       type: Boolean,
       default: false,
+    },
+    photos: {
+      type: [String],
     },
   },
   { timestamps: true }
