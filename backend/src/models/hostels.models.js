@@ -29,6 +29,18 @@ const hostelsSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    locality: {
+      type: String,
+      required: true,
+    },
+    state: {
+      type: String,
+      default: "Maharashtra"
+    },
+    pincode: {
+      type: String,
+      required: true,
+    },
     address: {
       type: String,
       required: true,
@@ -57,10 +69,6 @@ const hostelsSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    facilities: {
-      type: [String],
-      required: true,
-    },
     rules: {
       type: [String],
       required: true,
@@ -73,7 +81,7 @@ const hostelsSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    photos: {
+    property_photos: {
       type: [String],
     },
     featured: {

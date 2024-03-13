@@ -34,6 +34,18 @@ const PGsSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    locality: {
+      type: String,
+      required: true,
+    },
+    state: {
+      type: String,
+      default: "Maharashtra"
+    },
+    pincode: {
+      type: String,
+      required: true,
+    },
     description: {
       type: String,
       required: true,
@@ -81,7 +93,7 @@ const PGsSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    photos: {
+    property_photos: {
       type: [String],
     },
   },
