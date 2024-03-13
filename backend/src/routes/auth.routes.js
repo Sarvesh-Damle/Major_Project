@@ -5,10 +5,6 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-// router.post("/register", upload.fields([{
-//     name: "property_photos",
-//     maxCount: 5
-// }]), register);
 router.post("/register", registerUser);
 
 router.post("/login", loginUser);
