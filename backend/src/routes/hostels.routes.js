@@ -9,21 +9,43 @@ import {
   getHostel,
   updateHostel,
 } from "../controllers/hostels.controllers.js";
-// import { createError } from "../utils/error.js";
 import { verifyAdmin } from "../utils/verifyToken.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { upload } from "../middlewares/multer.middleware.js";
 
 const router = express.Router();
 
 // CREATE
-router.post("/", verifyAdmin, createHostel);
+router.post(
+  "/add-property",
+  verifyJWT,
+  upload.fields([
+    {
+      name: "property_photos",
+      maxCount: 5
+    }
+  ]),
+  createHostel
+);
+
 // UPDATE
-router.put("/:id", verifyAdmin, updateHostel);
+router.put("/update-hostel", upload.fields([
+  {
+    name: "property_photos",
+    maxCount: 5
+  }
+]), updateHostel);
+
 // DELETE
-router.delete("/:id", verifyAdmin, deleteHostel);
+router.delete("/delete-hostel", deleteHostel);
+
 // GET
-router.get("/find/:id", getHostel);
+router.get("/find-hostel", getHostel);
+
 // GET ALL
-router.get("/", getAllHostel);
+router.get("/find-all-hostels", getAllHostel);
+
+// pending...
 router.get("/countByAddress", countByAddress);
 router.get("/countByType", countByType);
 

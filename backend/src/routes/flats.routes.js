@@ -9,18 +9,39 @@ import {
 } from "../controllers/flats.controllers.js";
 // import { createError } from "../utils/error.js";
 import { verifyAdmin } from "../utils/verifyToken.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { upload } from "../middlewares/multer.middleware.js";
 
 const router = express.Router();
 
 // CREATE
-router.post("/", verifyAdmin, createFlat);
+router.post(
+  "/add-property",
+  verifyJWT,
+  upload.fields([
+    {
+      name: "property_photos",
+      maxCount: 5
+    }
+  ]),
+  createFlat
+);
+
 // UPDATE
-router.put("/:id", verifyAdmin, updateFlat);
+router.put("/update-flat", upload.fields([
+  {
+    name: "property_photos",
+    maxCount: 5
+  }
+]), updateFlat);
+
 // DELETE
-router.delete("/:id", verifyAdmin, deleteFlat);
+router.delete("/delete-flat", deleteFlat);
+
 // GET
-router.get("/:id", getFlat);
+router.get("/find-flat", getFlat);
+
 // GET ALL
-router.get("/", getAllFlat);
+router.get("/find-all-flats", getAllFlat);
 
 export default router;
