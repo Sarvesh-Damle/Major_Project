@@ -2,20 +2,50 @@ import mongoose from "mongoose";
 
 const FlatsSchema = new mongoose.Schema(
   {
-    title: {
+    owner_name: {
       type: String,
       required: true,
+      lowercase: true,
+      trim: true,
     },
-    price: {
-      type: Number,
+    owner_email: {
+      type: String,
       required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    owner_phoneNumber: {
+      type: String,
+      required: true,
+      unique: true,
     },
     city: {
       type: String,
       required: true,
     },
+    locality: {
+      type: String,
+      required: true,
+    },
+    state: {
+      type: String,
+      default: "Maharashtra"
+    },
+    pincode: {
+      type: String,
+      required: true,
+    },
     address: {
       type: String,
+      required: true,
+    },
+    flat_type: {
+      type: String,
+      required: true,
+    },
+    rent_amount: {
+      type: Number,
       required: true,
     },
     distance_from_nearest_railway_station: {
@@ -26,19 +56,7 @@ const FlatsSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    photos: {
-      type: [String],
-    },
     description: {
-      type: String,
-      required: true,
-    },
-    rating: {
-      type: Number,
-      min: 0,
-      max: 5,
-    },
-    flat_type: {
       type: String,
       required: true,
     },
@@ -66,10 +84,6 @@ const FlatsSchema = new mongoose.Schema(
       type: String, // family, students, bachelors
       required: true,
     },
-    phoneNumber: {
-      type: Number,
-      required: true,
-    },
     amenities: {
       type: [String], // gym, swimming pool
       required: true,
@@ -81,6 +95,10 @@ const FlatsSchema = new mongoose.Schema(
     featured: {
       type: Boolean,
       default: false,
+    },
+    property_photos: {
+      type: [String],
+      required: true
     },
   },
   { timestamps: true }
