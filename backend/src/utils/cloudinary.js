@@ -12,6 +12,7 @@ const uploadOnCloudinary = async (localFilePath) => {
     if (!localFilePath) return null;
     // uploading file on cloudinary
     const response = await cloudinary.uploader.upload(localFilePath, {
+      folder: "Buddies_MajorProject/property_images",
       resource_type: "auto",
     });
     console.log("File upload on cloudinary successful!! ", response.url);
