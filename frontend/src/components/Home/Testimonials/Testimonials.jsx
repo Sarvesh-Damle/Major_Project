@@ -1,11 +1,10 @@
 const Testimonials = ({ testimonials }) => {
   return (
     <>
-    <h1 className="flex justify-center items-center text-3xl p-1 my-3">Testimonials</h1>
-    <div className="flex overflow-x-auto m-1 p-2">
+    <h1 className="primaryText max-md:text-2xl flex justify-center items-center mt-8 mb-3">Testimonials</h1>
+    <div className="p-6 innerWidth overflow-hidden flex gap-8">
       {testimonials.map((testimonial, index) => (
-        <div key={index} className="mx-auto max-w-md shadow-md rounded-2xl bg-gray-200 p-1">
-          <div className="flex flex-col rounded-md bg-white">
+        <div key={index} className="flex justify-center items-center gap-2 p-4 rounded-xl max-w-max m-auto transition-all duration-300 ease-in hover:scale-105 hover:cursor-pointer hover:bg-gradient-to-b from-[#ffffff] to-[#eeeef7] shadow hover:shadow-lg">
             <div className="flex flex-1 flex-col justify-between p-8">
               <div className="mb-4 flex space-x-2">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -36,7 +35,7 @@ const Testimonials = ({ testimonials }) => {
                   <img
                     className="h-10 w-10 flex-shrink-0 rounded-full object-cover"
                     src={testimonial.imageUrl}
-                    alt=""
+                    alt="profile_photo"
                   />
                   <div className="ml-3 min-w-0">
                     <p className="truncate text-base font-semibold text-gray-800">{testimonial.name}</p>
@@ -46,7 +45,6 @@ const Testimonials = ({ testimonials }) => {
               </div>
             </div>
           </div>
-        </div>
       ))}
       </div>
     </>
