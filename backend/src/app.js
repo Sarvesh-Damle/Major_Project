@@ -9,11 +9,34 @@ import pgsRoute from "./routes/pgs.routes.js";
 
 const app = express();
 
-// middlewares
-app.use(cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true
-}));
+//middleware
+// Specify the allowed origin(s)
+const allowedOrigins = [
+  "http://localhost:5173",
+];
+
+// Enable CORS for all routes
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Check if the origin is in the allowed list, or if it's a same-origin request (null)
+      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // Allow credentials (cookies, authorization headers)
+  })
+);
+
+// Your routes and other middleware
+// ...
+
+// Handle preflight requests
+app.options("*", cors());
+
+
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static("public"));
