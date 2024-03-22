@@ -3,15 +3,21 @@ import axios from "axios";
 import { useForm, Controller } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import { loginContext } from "../../provider/authContext";
+import { useContext } from "react";
+
 
 const SignUp = () => {
   const { control, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
+  const {setIsLoggedIn}=useContext(loginContext);
+
 
   const mutation = useMutation({
     mutationKey: ['register'],
     mutationFn: (formData) => { return axios.post("/api/v1/auth/register", formData, { withCredentials: true }) },
     onSuccess(data) {
+      setIsLoggedIn({login: false, signup: true});
       navigate("/signin")
       toast.success(data.data.message)
     },
