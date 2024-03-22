@@ -23,7 +23,7 @@ const ListProperty = () => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={handleClick}
-        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center"
+        className="inline-flex items-center font-medium px-6 py-2.5 text-white border-none rounded transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-110 z-10 bg-blue-gradient"
         type="button"
       >
         List Property 
@@ -63,7 +63,7 @@ const ListProperty = () => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         className={`absolute z-10 ${isHovered ? "block" : "hidden"} bg-white divide-y divide-gray-100 rounded-lg shadow w-56`}
-        style={{left: "50%", transform: "translateX(-50%)" }}
+        style={{left: "45%", transform: "translateX(-50%)" }}
       >
         <ul className="py-2 text-sm text-gray-700 divide-y divide-gray-100 font-medium" aria-labelledby="dropdownHoverButton">
           <li>
