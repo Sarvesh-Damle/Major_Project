@@ -7,7 +7,6 @@ import Property from './Pages/Property.jsx';
 import Contact, {ContactInputBox, ContactTextArea} from './Pages/Contact.jsx';
 import Team from './Pages/Team.jsx';
 import Error from './Pages/Error.jsx';
-import About from './Pages/About.jsx';
 import Featured from './Home/Featured.jsx';
 import ListProperty from './Pages/ListingForms/ListProperty.jsx';
 import SearchBar from './Home/SearchBar.jsx';
@@ -17,4 +16,4 @@ import Professionals from './Pages/ListingForms/Professionals.jsx';
 import PropertyOwner from './Pages/ListingForms/PropertyOwner.jsx';
 import ResetPassword from './Authentication/ResetPassword.jsx';
 
-export {Navbar, Footer, Home, SignIn, SignUp, Property, Contact, ContactInputBox, ContactTextArea, Team, Error, About, Featured, ListProperty, SearchBar, Testimonials, Students, Professionals, PropertyOwner, ResetPassword};
+export {Navbar, Footer, Home, SignIn, SignUp, Property, Contact, ContactInputBox, ContactTextArea, Team, Error, Featured, ListProperty, SearchBar, Testimonials, Students, Professionals, PropertyOwner, ResetPassword};
