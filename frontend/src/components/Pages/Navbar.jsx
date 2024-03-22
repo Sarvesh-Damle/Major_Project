@@ -1,80 +1,66 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ListProperty from "./ListingForms/ListProperty";
+import { loginContext } from "../../provider/authContext";
+import { FaRegCircleUser } from "react-icons/fa6";
+import { BiMenuAltRight } from "react-icons/bi";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { toast } from "react-toastify";
+import OutsideClickHandler from "react-outside-click-handler";
 
 const Navbar = () => {
-  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const { isLoggedIn, setIsLoggedIn } = useContext(loginContext);
+  const mutation = useMutation({
+    mutationKey: ["logout"],
+    mutationFn: () => {
+      return axios.post("/api/v1/auth/logout", {}, { withCredentials: true })
+    },
+    onSuccess(data) {
+      setIsLoggedIn({ login: false, signup: false });
+      navigate("/");
+      toast.success(data.data.message);
+    },
+    onError(error) {
+      setIsLoggedIn({ login: false, signup: false });
+      let message = error.response?.data?.message;
+      toast.error(message);
+    }
+
+  })
+  const [menuOpened, setMenuOpened] = useState(false);
 
   return (
-    <header className={`flex items-center w-full bg-white`}>
-      <div className="container">
-        <div className="relative flex items-center justify-between -mx-4">
-          <div className="max-w-full px-4 w-60"  >
-            <div className="block w-full py-5 cursor-pointer" onClick={()=>navigate("/")} >
-              <img
-                src="https://res.cloudinary.com/sarvesh-damle/image/upload/v1696435051/Buddies_MajorProject/logos/logo_black2_zrvewb.png"
-                alt="logo"
-                className="w-full"
-              />
-            </div>
-          </div>
-          <div className="flex items-center justify-between w-full px-4">
+    <header className="bg-black text-white">
+      <div className="flex items-center flex-wrap gap-y-8 p-6 innerWidth py-4 text-secondary justify-between h-container">
+        <img
+          src="https://res.cloudinary.com/sarvesh-damle/image/upload/v1696443430/Buddies_MajorProject/logos/logo_transparent_yf8nw4.png"
+          alt="logo"
+          className="w-[100px] h-auto cursor-pointer"
+          onClick={() => navigate("/")}
+        />
+        <OutsideClickHandler onOutsideClick={() => setMenuOpened(false)}>
+          <div className={menuOpened ? "flexCenter gap-8 hover:cursor-pointer max-lg:text-black max-lg:absolute max-lg:top-12 max-lg:right-16 max-lg:bg-white max-lg:flex-col max-lg:flex max-lg:font-medium max-lg:gap-8 max-lg:p-12 max-lg:rounded-[10px] max-lg:items-start max-lg:shadow-md transition-all duration-300 ease-in z-10  text-black h-menu" : "flexCenter gap-8 hover:cursor-pointer max-lg:text-black max-lg:absolute max-lg:top-12 max-lg:right-[-330px] max-lg:bg-white max-lg:flex-col max-lg:flex max-lg:font-medium max-lg:gap-8 max-lg:p-12 max-lg:rounded-[10px] max-lg:items-start max-lg:shadow-md transition-all duration-300 ease-in z-10 h-menu"}>
+            <Link to="/" className="hover:text-white">Home</Link>
+            <Link to="/contact" className="hover:text-white">Contact & Support</Link>
+            <Link to="/team" className="hover:text-white">Our Team</Link>
             <div>
-              <button
-                // @click="navbarOpen = !navbarOpen"
-                onClick={() => setOpen(!open)}
-                // :className="navbarOpen && 'navbarTogglerActive' "
-                id="navbarToggler"
-                className={` ${
-                  open && "navbarTogglerActive"
-                } absolute right-4 top-1/2 block -translate-y-1/2 rounded-lg px-3 py-[6px] ring-primary focus:ring-2 lg:hidden`}
-               >
-                <span className="relative my-[6px] block h-[2px] w-[30px] bg-black"></span>
-                <span className="relative my-[6px] block h-[2px] w-[30px] bg-black"></span>
-                <span className="relative my-[6px] block h-[2px] w-[30px] bg-black"></span>
-              </button>
-              <nav
-                // :className="!navbarOpen && 'hidden' "
-                id="navbarCollapse"
-                className={`absolute right-4 top-full w-full max-w-[250px] rounded-lg bg-white py-5 px-6 shadow lg:static lg:block lg:w-full lg:max-w-full lg:shadow-none ${
-                  !open && "hidden"
-                } `}
-              >
-                <ul className="block lg:flex">
-                  <ListItem
-                    navItemStyles="text-dark hover:text-primary"
-                    NavLink="/"
-                  >
-                    Home
-                  </ListItem>
-                  <ListItem
-                    navItemStyles="text-dark hover:text-primary"
-                    NavLink="/about"
-                  >
-                    About
-                  </ListItem>
-                  <ListItem
-                    navItemStyles="text-dark hover:text-primary"
-                    NavLink="/contact"
-                  >
-                    Contact & Support
-                  </ListItem>
-                  <ListItem
-                    navItemStyles="text-dark hover:text-primary"
-                    NavLink="/team"
-                  >
-                    Our Team
-                  </ListItem>
-                </ul>
-              </nav>
+              <ListProperty />
             </div>
-            <div className="justify-end hidden pr-16 sm:flex lg:pr-0">
-                <ListProperty/>
-                <Link to="/signin" className="py-3 text-base font-medium px-7 text-dark hover:text-primary">Sign in</Link>
-                <Link to="/signup" className="py-3 text-base font-medium text-dark rounded-lg bg-primary px-7 hover:bg-opacity-90">Sign Up</Link>
-            </div>
+            {isLoggedIn.login ? (<div className="flex items-center gap-4 h-[50px] mx-2 " >
+              <div className="w-[50px] h-[50px] flex justify-center items-center " >
+                <FaRegCircleUser size={30} className="hover:scale-105 active:text-violet-400" />
+              </div>
+              <button onClick={() => mutation.mutate()} className="w-full h-[40px] rounded-lg  flex items-center justify-center mr-2 text-black font-semibold bg-slate-300 hover:bg-slate-400 active:bg-slate-200 text-xl" >Logout</button>
+            </div>) : (<div className="flex gap-2" >
+              <Link to="/signin" className="font-medium px-6 py-2 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-105 bg-blue-gradient">Sign in</Link>
+              {isLoggedIn.signup ? (<></>) : (<Link to="/signup" className="font-medium px-6 py-2 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-105 bg-blue-gradient">Sign Up</Link>)}
+            </div>)}
           </div>
+        </OutsideClickHandler>
+        <div className="block lg:hidden menu-icon" onClick={() => setMenuOpened(prev => !prev)}>
+          <BiMenuAltRight size={30} />
         </div>
       </div>
     </header>
@@ -82,19 +68,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-const ListItem = ({ children, navItemStyles, NavLink }) => {
-  const navigate = useNavigate();
-  return (
-    <>
-      <li>
-        <div
-          onClick={()=>navigate(NavLink)}
-          className={`flex py-2 text-base font-medium lg:ml-12 lg:inline-flex cursor-pointer ${navItemStyles}`}
-        >
-          {children}
-        </div>
-      </li>
-    </>
-  );
-};
