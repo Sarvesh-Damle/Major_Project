@@ -3,10 +3,13 @@ import axios from "axios";
 import { useForm, Controller } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import { loginContext } from "../../provider/authContext";
+import { useContext } from "react";
 
 const SignIn = () => {
   const { control, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
+  const {setIsLoggedIn}=useContext(loginContext);
 
   const mutation = useMutation({
     mutationKey: ['login'],
@@ -17,10 +20,12 @@ const SignIn = () => {
       )
     },
     onSuccess (data) {
-      navigate("/")
+      setIsLoggedIn({login: true, signup: false});
+      navigate("/");
       toast.success(data.data.message)
     },
     onError (error) {
+      setIsLoggedIn(false);
       let message = error.response?.data?.message;
       toast.error(message);
     }
@@ -69,7 +74,7 @@ const SignIn = () => {
                     rules={{
                       required: "Password is required",
                       minLength: {
-                        value: 8,
+                        value: 5,
                         message: "Password must be atleast 8 characters long"
                       }
                     }}
