@@ -89,7 +89,7 @@ const SignIn = () => {
 
                 <div className="mb-10">
                   <button
-                    className="border-primary w-full cursor-pointer rounded-md border bg-primary py-3 px-5 text-base text-blue-500 transition hover:bg-opacity-90 hover:bg-blue-100"
+                    className="w-full font-medium px-6 py-2 text-white border-primary rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95 bg-blue-gradient"
                     type="submit"
                   >
                     Sign In
@@ -395,18 +395,3 @@ const SignIn = () => {
 };
 
 export default SignIn;
-
-const InputBox = ({ type, placeholder, name, value, onChange }) => {
-  return (
-    <div className="mb-6">
-      <input
-        type={type}
-        placeholder={placeholder}
-        name={name}
-        className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
-        value={value}
-        onChange={onChange}
-      />
-    </div>
-  );
-};
