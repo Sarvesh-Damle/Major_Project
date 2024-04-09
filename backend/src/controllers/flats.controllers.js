@@ -1,53 +1,98 @@
 import Flat from "../models/flats.models.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
-export const createFlat = async (req, res, next) => {
-  const newFlat = new Flat(req.body);
-  try {
-    const savedFlat = await newFlat.save();
-    res.status(200).json(savedFlat);
-  } catch (error) {
-    next(error);
+export const createFlat = asyncHandler(async (req, res) => {
+  const flatData = req.body;
+  if (!flatData) {
+    throw new ApiError(400, "Fields are required for property to be listed");
   }
-};
+  let propertyPhotosUrls = [];
+  if (
+    req.files &&
+    req.files.property_photos &&
+    Array.isArray(req.files.property_photos)
+  ) {
+    for (let i = 0; i < Math.min(req.files.property_photos.length, 5); i++) {
+      const photosLocalPath = req.files.property_photos[i].path;
+      const propertyPhoto = await uploadOnCloudinary(photosLocalPath);
+      if (!propertyPhoto) {
+        throw new ApiError(400, "Failed to upload property photo");
+      }
+      propertyPhotosUrls.push(propertyPhoto.url);
+    }
+  }
+  if (propertyPhotosUrls.length === 0) {
+    throw new ApiError(400, "Please provide property photos");
+  }
 
-export const updateFlat = async (req, res, next) => {
-  try {
-    const updatedFlat = await Flat.findByIdAndUpdate(
-      req.params.id,
-      { $set: req.body },
-      { new: true }
+  const flat = await Flat.create({
+    ...flatData,
+    property_photos: propertyPhotosUrls,
+  });
+  if (!flat) {
+    throw new ApiError(500, "Something went wrong while listing the property");
+  }
+
+  return res
+    .status(201)
+    .json(new ApiResponse(200, flat, "Flat Property listed successfully"));
+});
+
+export const updateFlat = asyncHandler(async (req, res) => {
+  const updatedFlat = await Flat.findByIdAndUpdate(
+    req.query.id,
+    { $set: req.body },
+    { new: true }
+  );
+  if (!updatedFlat) {
+    throw new ApiError(500, "Something went wrong while updating the property");
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedFlat, "Flat Updated Successfully"));
+});
+
+export const deleteFlat = asyncHandler(async (req, res) => {
+  await Flat.findByIdAndDelete(req.query.id);
+  return res.status(200).json(new ApiResponse(200, "Flat has been deleted"));
+});
+
+export const getFlat = asyncHandler(async (req, res) => {
+  const flat = await Flat.findById(req.query.id);
+  if (!flat) {
+    throw new ApiError(
+      500,
+      "Something went wrong while fetching the flat property"
     );
-    res.status(200).json(updatedFlat);
-  } catch (error) {
-    next(error);
   }
-};
+  return res
+    .status(200)
+    .json(new ApiResponse(200, flat, "Flat founded successfully"));
+});
 
-export const deleteFlat = async (req, res, next) => {
-  try {
-    await Flat.findByIdAndDelete(req.params.id);
-    res.status(200).json("Flat has been deleted");
-  } catch (error) {
-    next(error);
+export const getAllFlat = asyncHandler(async (req, res) => {
+  const {city, locality} = req.query;
+  if (!city) {
+    throw new ApiError(400, "City paramater not found");
   }
-};
-
-export const getFlat = async (req, res, next) => {
-  // const failed = true;
-  // if (failed) return next(createError(401, "You are not authenticated!"));
-  try {
-    const flat = await Flat.findById(req.params.id);
-    res.status(200).json(flat);
-  } catch (error) {
-    next(error);
+  let query = {};
+  if (city) {
+    query.city = {$regex: new RegExp(city, "i")};
   }
-};
-
-export const getAllFlat = async (req, res, next) => {
-  try {
-    const flats = await Flat.find();
-    res.status(200).json(flats);
-  } catch (error) {
-    next(error);
+  if (locality) {
+    query.locality = {$regex: new RegExp(locality, "i")};
   }
-};
+  const flats = await Flat.find(query);
+  if (!flats) {
+    throw new ApiError(
+      500,
+      "Something went wrong while fetching Flat properties"
+    );
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, flats, "Flats found successfully"));
+});
