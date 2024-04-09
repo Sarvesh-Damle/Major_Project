@@ -1,12 +1,15 @@
 import { Controller, useFormContext } from "react-hook-form";
 import { useState } from "react";
 import MultiSelect from "./MultiSelect";
-import { amenities, rules } from "../../../data/Property.js";
+import { pg_amenities, rules, states } from "../../../data/Property.js";
+import { DropdownSelectOptions } from "./Hostels.jsx";
 
 const PGs = () => {
   const { control, formState: { errors }, setValue } = useFormContext();
 
   const [foodIncluded, setFoodIncluded] = useState(false);
+  const [selectedState, setSelectedState] = useState("");
+
   return (
     <>
       {/* pg_name */}
@@ -49,6 +52,63 @@ const PGs = () => {
               <label htmlFor="city">City: </label>
               <input {...field} type="text" placeholder="Enter City..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" />
               {errors.city && <p className='text-red-600'>{errors.city.message}</p>}
+            </>
+          )}
+        />
+      </div>
+      <div className="mb-6">
+        <Controller
+          name="locality"
+          defaultValue=""
+          control={control}
+          rules={{
+            required: "Locality is required",
+            pattern: {
+              value: /^[A-Za-z0-9\s.,#-]+$/,
+              message: "Locality can contain only letters, numbers and spaces"
+            }
+          }}
+          render={({ field }) => (
+            <>
+              <label htmlFor="locality">Locality: </label>
+              <input {...field} type="text" placeholder="Enter locality..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" />
+              {errors.locality && <p className='text-red-600'>{errors.locality.message}</p>}
+            </>
+          )}
+        />
+      </div>
+      <div className="mb-6">
+        <DropdownSelectOptions
+          name={"state"}
+          title={"State: "}
+          dropdownTitle={"Select State"}
+          options={states}
+          selectedValue={selectedState}
+          setSelectedValue={(setSelectedState)}
+          errors={errors.state}
+        />
+      </div>
+      <div className="mb-6">
+        <Controller
+          name="pincode"
+          defaultValue=""
+          control={control}
+          rules={{
+            required: "Pincode is required",
+            minLength: {
+              value: 6,
+              message: "Pincode must be of only 6 digits"
+            },
+            maxLength: {
+              value: 6,
+              message: "Pincode must be of only 6 digits"
+            }
+          }}
+          render={({ field }) => (
+            <>
+              <label htmlFor="pincode">Pincode: </label>
+              <input {...field} type="number" placeholder="Enter Pincode..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" />
+              {errors.pincode && <p className='text-red-600'>{errors.pincode.message}</p>}
             </>
           )}
         />
@@ -325,7 +385,7 @@ const PGs = () => {
           control={control}
           render={({ field }) => (
             <>
-              <MultiSelect value={field.value} onChange={field.onChange} onBlur={field.onBlur} title="Select Amenities" data={amenities} onSelect={value => setValue("amenities", value)} />
+              <MultiSelect value={field.value} onChange={field.onChange} onBlur={field.onBlur} title="Select Amenities" data={pg_amenities} onSelect={value => setValue("amenities", value)} />
               {errors.amenities && <p className="text-red-600">{errors.amenities.message}</p>}
             </>
           )}
