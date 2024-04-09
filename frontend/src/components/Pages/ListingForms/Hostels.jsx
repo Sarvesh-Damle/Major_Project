@@ -1,11 +1,47 @@
 import { Controller, useFormContext } from "react-hook-form";
 import { useState } from "react";
+import { hostel_types, pg_amenities, room_types, rules, states } from "../../../data/Property";
+import MultiSelect from "./MultiSelect";
+import axios from "axios";
 
 const Hostels = () => {
-  const { control, formState: { errors } } = useFormContext();
+  const { control, formState: { errors }, setValue } = useFormContext();
+  const [files, setFiles] = useState(null);
+  const [progress, setProgress] = useState({ started: false, pc: 0 })
+  const [msg, setMsg] = useState(null);
+
+  function handleUpload() {
+    if (!files) {
+      setMsg("No file selected");
+      return;
+    }
+    const fd = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      fd.append(`files${i+1}`, files[i]);
+    }
+    setMsg("Uploading...")
+    setProgress(prev => {
+      return {...prev, started: true}
+    })
+    axios.post("http://httpbin.org/post", fd, {
+      onUploadProgress: (progressEvent) => {
+        setProgress(prev => {
+          return {...prev, pc: progressEvent.progress * 100}
+        })
+      }, headers: {
+        "Custom-Header": "value",
+      }
+    }).then(res => {
+      setMsg("Upload Successful")
+      console.log(res.data)
+    }).catch(err => {
+      setMsg("Upload Failed");
+      console.error(err)
+    });
+  }
 
   const [selectedHostelType, setSelectedHostelType] = useState("");
-  const [selectedRoomType, setSelectedRoomType] = useState("");
+  const [selectedState, setSelectedState] = useState("");
 
   return (
     <>
@@ -53,6 +89,63 @@ const Hostels = () => {
       </div>
       <div className="mb-6">
         <Controller
+          name="locality"
+          defaultValue=""
+          control={control}
+          rules={{
+            required: "Locality is required",
+            pattern: {
+              value: /^[A-Za-z0-9\s.,#-]+$/,
+              message: "Locality can contain only letters, numbers and spaces"
+            }
+          }}
+          render={({ field }) => (
+            <>
+              <label htmlFor="locality">Locality: </label>
+              <input {...field} type="text" placeholder="Enter locality..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" />
+              {errors.locality && <p className='text-red-600'>{errors.locality.message}</p>}
+            </>
+          )}
+        />
+      </div>
+      <div className="mb-6">
+        <DropdownSelectOptions
+          name={"state"}
+          title={"State: "}
+          dropdownTitle={"Select State"}
+          options={states}
+          selectedValue={selectedState}
+          setSelectedValue={(setSelectedState)}
+          errors={errors.state}
+        />
+      </div>
+      <div className="mb-6">
+        <Controller
+          name="pincode"
+          defaultValue=""
+          control={control}
+          rules={{
+            required: "Pincode is required",
+            minLength: {
+              value: 6,
+              message: "Pincode must be of only 6 digits"
+            },
+            maxLength: {
+              value: 6,
+              message: "Pincode must be of only 6 digits"
+            }
+          }}
+          render={({ field }) => (
+            <>
+              <label htmlFor="pincode">Pincode: </label>
+              <input {...field} type="number" placeholder="Enter Pincode..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" />
+              {errors.pincode && <p className='text-red-600'>{errors.pincode.message}</p>}
+            </>
+          )}
+        />
+      </div>
+      <div className="mb-6">
+        <Controller
           name="address"
           defaultValue=""
           control={control}
@@ -66,7 +159,7 @@ const Hostels = () => {
           render={({ field }) => (
             <>
               <label htmlFor="address">Address: </label>
-              <input {...field} type="text" placeholder="Enter Address..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" />
+              <input {...field} type="text" placeholder="Enter Full Address..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" />
               {errors.address && <p className='text-red-600'>{errors.address.message}</p>}
             </>
           )}
@@ -77,21 +170,23 @@ const Hostels = () => {
           name={"type_of_hostel"}
           title={"Hostel Type: "}
           dropdownTitle={"Select Type of Hostel"}
-          options={["Boys-Hostel", "Girls-Hostel"]}
+          options={hostel_types}
           selectedValue={selectedHostelType}
           setSelectedValue={(setSelectedHostelType)}
           errors={errors.type_of_hostel}
         />
       </div>
       <div className="mb-6">
-        <DropdownSelectOptions
-          name={"room_type"}
-          title="Type of Room: "
-          dropdownTitle="Select Type of Room"
-          options={["Single", "Double-Sharing", "Triple-Sharing", "Four-Sharing"]}
-          selectedValue={selectedRoomType}
-          setSelectedValue={setSelectedRoomType}
-          errors={errors.room_type}
+        <Controller
+          name="room_type"
+          defaultValue={[]}
+          control={control}
+          render={({ field }) => (
+            <>
+              <MultiSelect value={field.value} onChange={field.onChange} onBlur={field.onBlur} title="Select types of Rooms Provided" data={room_types} onSelect={value => setValue("room_type", value)} />
+              {errors.room_type && <p className="text-red-600">{errors.room_type.message}</p>}
+            </>
+          )}
         />
       </div>
       <div className="mb-6">
@@ -129,7 +224,7 @@ const Hostels = () => {
           }}
           render={({ field }) => (
             <>
-              <label htmlFor="distance_from_nearest_railway_station">Distance from nearest railway station: </label>
+              <label htmlFor="distance_from_nearest_railway_station">Distance from nearest railway station: (in meters)</label>
               <input {...field} type="number" placeholder="Enter distance from station..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" />
               {errors.distance_from_nearest_railway_station && <p className='text-red-600'>{errors.distance_from_nearest_railway_station.message}</p>}
             </>
@@ -150,7 +245,7 @@ const Hostels = () => {
           }}
           render={({ field }) => (
             <>
-              <label htmlFor="distance_from_bus_stop">Distance from Bus stop: </label>
+              <label htmlFor="distance_from_bus_stop">Distance from nearest Bus stop: (in meters)</label>
               <input {...field} type="number" placeholder="Enter distance from bus stop..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" />
               {errors.distance_from_bus_stop && <p className='text-red-600'>{errors.distance_from_bus_stop.message}</p>}
             </>
@@ -171,9 +266,37 @@ const Hostels = () => {
           }}
           render={({ field }) => (
             <>
-              <label htmlFor="description">Description: </label>
+              <label htmlFor="description">Description about the property: </label>
               <input {...field} type="text" placeholder="Enter Description..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" />
               {errors.description && <p className='text-red-600'>{errors.description.message}</p>}
+            </>
+          )}
+        />
+      </div>
+      {/* amenities */}
+      <div className="mb-6">
+        <Controller
+          name="amenities"
+          defaultValue={[]}
+          control={control}
+          render={({ field }) => (
+            <>
+              <MultiSelect value={field.value} onChange={field.onChange} onBlur={field.onBlur} title="Select Amenities" data={pg_amenities} onSelect={value => setValue("amenities", value)} />
+              {errors.amenities && <p className="text-red-600">{errors.amenities.message}</p>}
+            </>
+          )}
+        />
+      </div>
+      {/* rules */}
+      <div className="mb-6">
+        <Controller
+          name="rules"
+          defaultValue={[]}
+          control={control}
+          render={({ field }) => (
+            <>
+              <MultiSelect value={field.value} onChange={field.onChange} onBlur={field.onBlur} title="Select Rules" data={rules} onSelect={value => setValue("rules", value)} />
+              {errors.rules && <p className="text-red-600">{errors.rules.message}</p>}
             </>
           )}
         />
@@ -199,9 +322,37 @@ const Hostels = () => {
           )}
         />
       </div>
-      {/* facilities */}
-      {/* rules */}
-      {/* amenities */}
+      {/* photos */}
+      <div className="mb-6">
+        <Controller
+          name="property_photos"
+          defaultValue={[]}
+          control={control}
+          rules={{
+            required: "Property Photos are required",
+          }}
+          render={({ field }) => (
+            <>
+              <label htmlFor="property_photos">Upload Property Photos: </label>
+              <div className="flex">
+                <input
+                  {...field}
+                  type="file"
+                  name="property_photos"
+                  multiple
+                  accept="image/*"
+                  // onChange={e => setFiles(e.target.files)}
+                  className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
+                />
+                {/* <button className="w-fit font-medium px-5 py-0.5 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95 bg-blue-gradient" onClick={handleUpload}>Upload</button> */}
+              </div>
+              {/* {progress.started && <progress max="100" value={progress.pc}></progress>}
+              {msg && <span>{msg}</span>} */}
+              {errors.property_photos && <p className='text-red-600'>{errors.property_photos.message}</p>}
+            </>
+          )}
+        />
+      </div>
       <div className="mb-6 flex gap-1.5">
         <Controller
           name="featured"
@@ -218,29 +369,11 @@ const Hostels = () => {
           )}
         />
       </div>
-      {/* photos */}
-      <div className="mb-6">
-        <Controller
-          name="property_photos"
-          defaultValue=""
-          control={control}
-          rules={{
-            required: "Property Photos are required"
-          }}
-          render={({ field }) => (
-            <>
-              <label htmlFor="property_photos">Upload Property Photos: </label>
-              <input {...field} type="file" name="propertyImage" multiple accept="image/*" className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" />
-              {errors.property_photos && <p className='text-red-600'>{errors.property_photos.message}</p>}
-            </>
-          )}
-        />
-      </div>
     </>
   )
 };
 
-const DropdownSelectOptions = ({ name, options, title, dropdownTitle, selectedValue, setSelectedValue, errors }) => {
+export const DropdownSelectOptions = ({ name, options, title, dropdownTitle, selectedValue, setSelectedValue, errors }) => {
   const { setValue } = useFormContext();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -261,7 +394,7 @@ const DropdownSelectOptions = ({ name, options, title, dropdownTitle, selectedVa
         <button
           type="button"
           onClick={toggleDropdown}
-          className="text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
+          className="text-white bg-blue-gradient bg-opacity-50 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
           aria-haspopup="true"
           aria-expanded={isOpen ? 'true' : 'false'}
         >
