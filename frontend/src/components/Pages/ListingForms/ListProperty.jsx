@@ -26,7 +26,7 @@ const ListProperty = () => {
         className="inline-flex items-center font-medium px-6 py-2.5 text-white border-none rounded transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-110 z-10 bg-blue-gradient"
         type="button"
       >
-        List Property 
+        List Your Property 
         {isHovered ?
             (<svg
               className="w-2.5 h-2.5 ms-3"
