@@ -6,6 +6,8 @@ import usersRoute from "./routes/users.routes.js";
 import hostelsRoute from "./routes/hostels.routes.js";
 import flatsRoute from "./routes/flats.routes.js";
 import pgsRoute from "./routes/pgs.routes.js";
+import favouritesRoute from "./routes/favourites.routes.js";
+import contactsRoute from "./routes/contact.routes.js";
 
 const app = express();
 
@@ -13,6 +15,7 @@ const app = express();
 // Specify the allowed origin(s)
 const allowedOrigins = [
   "http://localhost:5173",
+  "http://localhost:8000"
 ];
 
 // Enable CORS for all routes
@@ -48,6 +51,8 @@ app.use("/api/v1/users", usersRoute);
 app.use("/api/v1/flats", flatsRoute);
 app.use("/api/v1/hostels", hostelsRoute);
 app.use("/api/v1/pgs", pgsRoute);
+app.use("/api/v1/favourites", favouritesRoute);
+app.use("/api/v1/contact", contactsRoute)
 
 app.use((err, req, res, next) => {
   const errorStatus = err.status || 500;
