@@ -40,7 +40,7 @@ const PGsSchema = new mongoose.Schema(
     },
     state: {
       type: String,
-      default: "Maharashtra"
+      default: "Maharashtra",
     },
     pincode: {
       type: String,
@@ -95,6 +95,7 @@ const PGsSchema = new mongoose.Schema(
     },
     property_photos: {
       type: [String],
+      required: true,
     },
   },
   { timestamps: true }
