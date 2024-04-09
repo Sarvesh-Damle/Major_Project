@@ -29,6 +29,8 @@ export const furnished_status = [
 
 export const hostel_types = ["Boys-Hostel", "Girls-Hostel"];
 
+export const states = ["Maharashtra"];
+
 export const room_types = [
   "Single",
   "Double-Sharing",
