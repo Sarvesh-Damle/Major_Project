@@ -18,6 +18,6 @@ export const accordion_data = [
       icon: <MdAnalytics />,
       heading: "Get properties closer to your work",
       detail:
-        "Exercitation in fugiat est ut ad ea cupidatat ut in cupidatat occaecat ut occaecat consequat est minim minim esse tempor laborum consequat esse adipisicing eu reprehenderit enim.",
+        "Search Properties closer to your college/work or by locality/city and choose the best property that suits you.",
     },
   ]
