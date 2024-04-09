@@ -1,30 +1,61 @@
 import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
 import "swiper/css";
-import { propertiesData } from "../../data/Property.js";
+// import { propertiesData } from "../../data/Property.js";
 import { sliderSettings } from "../utils/common.js";
+import PropertyCard from "./PropertyCard.jsx";
+import { usePropertiesFlats, usePropertiesHostels, usePropertiesPGs } from "../../hooks/useProperties.js";
+import Loader from "../Pages/Loader.jsx";
+import ErrorComponent from "../Pages/ErrorComponent.jsx";
 
 const Properties = () => {
+    const { data, isLoading, isError, refetch } = usePropertiesHostels();
+    const { data: data2, isLoading: isLoading2, isError: isError2 } = usePropertiesPGs();
+    const { data: data3, isLoading: isLoading3, isError: isError3 } = usePropertiesFlats();
+
+    if (isLoading) return <Loader />
+    if (isError) return <ErrorComponent/>
+    if (isLoading2) return <Loader />
+    if (isError2) return <ErrorComponent/>
+    if (isLoading3) return <Loader />
+    if (isError3) return <ErrorComponent/>
+
     return (
         <section className="r-wrapper">
             <div className="p-6 innerWidth overflow-hidden relative r-container">
                 <div className="flexColStart mb-8 max-lg:items-center r-head">
                     <span className="orangeText">Best Choices</span>
-                    <span className="primaryText max-md:text-2xl">Popular Properties</span>
+                    <span className="primaryText max-md:text-2xl">Popular Hostel Properties</span>
                 </div>
+                {/* Hostel Properties: */}
                 <Swiper {...sliderSettings}>
                     <SliderButtons />
-                    {propertiesData && propertiesData.map((card, index) => (
+                    {data && data.data.slice(0, 8).map((card, index) => (
                         <SwiperSlide key={index}>
-                            <div className="flexColStart gap-2 p-4 rounded-xl max-w-max m-auto transition-all duration-300 ease-in hover:scale-105 hover:cursor-pointer hover:bg-gradient-to-b from-[#ffffff] to-[#eeeef7] shadow hover:shadow-lg r-card ">
-                                <img src={card.image} alt="property-image"
-                                    className="w-[100%] max-sm:w-[95%]" />
-                                <span className="secondaryText text-xl font-semibold r-price">
-                                    <span className="text-orange-500">Rs. </span>
-                                    <span>{card.price}</span>
-                                </span>
-                                <span className="primaryText max-sm:text-2xl">{card.name}</span>
-                                <span className="secondaryText text-xs">{card.detail}</span>
-                            </div>
+                            <PropertyCard card={card} />
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
+                <div className="flexColStart mb-8 max-lg:items-center r-head">
+                    <span className="primaryText max-md:text-2xl">Popular PGs</span>
+                </div>
+                {/* PG Properties */}
+                <Swiper {...sliderSettings}>
+                    <SliderButtons />
+                    {data2 && data2.data.slice(0, 8).map((card, index) => (
+                        <SwiperSlide key={index}>
+                            <PropertyCard card={card} />
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
+                <div className="flexColStart mb-8 max-lg:items-center r-head">
+                    <span className="primaryText max-md:text-2xl">Popular Flats</span>
+                </div>
+                {/* Flat Properties */}
+                <Swiper {...sliderSettings}>
+                    <SliderButtons />
+                    {data3 && data3.data.slice(0, 8).map((card, index) => (
+                        <SwiperSlide key={index}>
+                            <PropertyCard card={card} />
                         </SwiperSlide>
                     ))}
                 </Swiper>
@@ -36,7 +67,7 @@ const Properties = () => {
 const SliderButtons = () => {
     const swiper = useSwiper();
     return (
-        <div className="flex justify-center sticky gap-4 my-4 z-10 r-buttons">
+        <div className="flex justify-center sticky gap-4 mb-4 mt-8 z-10 r-buttons">
             <button onClick={() => swiper.slidePrev()} className="bg-[#EEEEFF] px-3 py-1 text-xl text-blue border-none rounded-lg shadow cursor-pointer">&lt;</button>
             <button onClick={() => swiper.slideNext()} className="bg-white px-3 py-1 text-xl text-blue border-none rounded-lg shadow-md cursor-pointer">&gt;</button>
         </div>
