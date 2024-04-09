@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import ListProperty from "./ListingForms/ListProperty";
 import { loginContext } from "../../provider/authContext";
 import { FaRegCircleUser } from "react-icons/fa6";
@@ -42,15 +42,15 @@ const Navbar = () => {
         />
         <OutsideClickHandler onOutsideClick={() => setMenuOpened(false)}>
           <div className={menuOpened ? "flexCenter gap-8 hover:cursor-pointer max-lg:text-black max-lg:absolute max-lg:top-12 max-lg:right-16 max-lg:bg-white max-lg:flex-col max-lg:flex max-lg:font-medium max-lg:gap-8 max-lg:p-12 max-lg:rounded-[10px] max-lg:items-start max-lg:shadow-md transition-all duration-300 ease-in z-10  text-black h-menu" : "flexCenter gap-8 hover:cursor-pointer max-lg:text-black max-lg:absolute max-lg:top-12 max-lg:right-[-330px] max-lg:bg-white max-lg:flex-col max-lg:flex max-lg:font-medium max-lg:gap-8 max-lg:p-12 max-lg:rounded-[10px] max-lg:items-start max-lg:shadow-md transition-all duration-300 ease-in z-10 h-menu"}>
-            <Link to="/" className="hover:text-white">Home</Link>
-            <Link to="/contact" className="hover:text-white">Contact & Support</Link>
-            <Link to="/team" className="hover:text-white">Our Team</Link>
+            <NavLink to="/" className="hover:text-white">Home</NavLink>
+            <NavLink to="/contact" className="hover:text-white">Contact & Support</NavLink>
+            <NavLink to="/team" className="hover:text-white">Our Team</NavLink>
             <div>
               <ListProperty />
             </div>
             {isLoggedIn.login ? (<div className="flex items-center gap-4 h-[50px] mx-2 " >
               <div className="w-[50px] h-[50px] flex justify-center items-center " >
-                <FaRegCircleUser size={30} className="hover:scale-105 active:text-violet-400" />
+                <FaRegCircleUser size={30} className="hover:scale-105 active:text-violet-400" onClick={() => navigate("/profile")} />
               </div>
               <button onClick={() => mutation.mutate()} className="w-full h-[40px] rounded-lg  flex items-center justify-center mr-2 text-black font-semibold bg-slate-300 hover:bg-slate-400 active:bg-slate-200 text-xl" >Logout</button>
             </div>) : (<div className="flex gap-2" >
