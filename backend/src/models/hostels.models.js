@@ -35,7 +35,7 @@ const hostelsSchema = new mongoose.Schema(
     },
     state: {
       type: String,
-      default: "Maharashtra"
+      default: "Maharashtra",
     },
     pincode: {
       type: String,
@@ -50,7 +50,7 @@ const hostelsSchema = new mongoose.Schema(
       required: true,
     },
     room_type: {
-      type: String,
+      type: [String],
       required: true,
     },
     rent_amount: {
@@ -83,6 +83,7 @@ const hostelsSchema = new mongoose.Schema(
     },
     property_photos: {
       type: [String],
+      required: true,
     },
     featured: {
       type: Boolean,
