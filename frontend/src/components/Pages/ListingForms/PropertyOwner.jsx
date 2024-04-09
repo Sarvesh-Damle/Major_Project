@@ -1,111 +1,176 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useContext, useState } from 'react';
+import { useForm, Controller, FormProvider } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import Input from './Input';
-import Button from './Button';
+import { useMutation } from "@tanstack/react-query";
+import Hostels from './Hostels.jsx';
+import PGs from './PGs.jsx';
+import Flats from './Flats.jsx';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { loginContext } from '../../../provider/authContext.js';
 
 const PropertyOwner = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const [error, setError] = useState("");
-  const [phoneNumEntered, setPhoneNumEntered] = useState(false);
+  const methods = useForm();
+  const control = methods.control;
+  const errors = methods.formState.errors;
   const navigate = useNavigate();
+  const { isLoggedIn } = useContext(loginContext);
+  const mutation = useMutation({
+    mutationKey: ['listing-property'],
+    mutationFn: (formData) => {
+      let url;
+      if (showHostelsForm) {
+        url = "add-property-hostel";
+      }
+      if (showFlatsForm) {
+        url = "add-property-flat";
+      }
+      if (showPGsForm) {
+        url = "add-property-pg";
+      }
+      return axios.post(`/api/v1/${url}`, formData, { withCredentials: true })
+    },
+    onSuccess(data) {
+      navigate("/")
+      toast.success(data.data.message)
+    },
+    onError(error) {
+      let message = error.response?.data?.message;
+      toast.error(message);
+    }
+  })
 
-  const login = async (data) => {
-    setError("");
-    try {
-      // Your login logic here
-      console.log(data);
-      navigate("/");
-    } catch (error) {
-      setError("An error occurred while logging in. Please try again."); // General error message
+  const [showHostelsForm, setShowHostelsForm] = useState(false);
+  const [showPGsForm, setShowPGsForm] = useState(false);
+  const [showFlatsForm, setShowFlatsForm] = useState(false);
+
+  const handleHostelsForm = () => {
+    if (!isLoggedIn.login) {
+      toast.error("Please login!!")
+    } else {
+      setShowHostelsForm(true);
+      setShowFlatsForm(false);
+      setShowPGsForm(false);
     }
   }
-  const handlePhoneClick = () => {
-    setPhoneNumEntered(true);
+  const handleFlatsForm = () => {
+    if (!isLoggedIn.login) {
+      toast.error("Please login!!")
+    } else {
+      setShowFlatsForm(true);
+      setShowHostelsForm(false);
+      setShowPGsForm(false);
+    }
+  }
+  const handlePGsForm = () => {
+    if (!isLoggedIn.login) {
+      toast.error("Please login!!")
+    } else {
+      setShowPGsForm(true);
+      setShowFlatsForm(false);
+      setShowHostelsForm(false);
+    }
   }
 
   return (
     <>
-      <div className='flex justify-center items-center font-medium text-xl mt-4'>Listing Property - For Property Owner</div>
+      <div className='flex justify-center items-center font-medium text-xl mt-8'>Listing Property - For Property Owner</div>
       <div className='flex items-center justify-center h-auto'>
         <div className='flex flex-col sm:w-1/3 w-full'>
-          {error && <p className='text-red-600 mt-4 text-center'>{error}</p>}
-          <form onSubmit={handleSubmit(login)} className='mt-4' action='/api/v1/--' method='post' encType='multipart/form-data'>
-            <div className='space-y-5 m-4 p-5 shadow-md rounded-lg'>
-              <Input
-                label='Name: '
-                placeholder='Enter your name...'
-                type='text'
-              // autoComplete='username'
-              // {...register("name", {
-              //   required: "Name is required",
-              //   pattern: {
-              //     value: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
-              //     message: "Name must be a valid name"
-              //   }
-              // })}
-              />
-              {errors.name && <p className='text-red-600'>{errors.name.message}</p>}
-              <Input
-                label='Phone Number: '
-                type='number'
-                placeholder='Enter your phone number...'
-                onClick={handlePhoneClick}
-                // autoComplete='current-password'
-                {...register("phone", {
-                  required: "Phone Number is required",
-                  minLength: {
-                    value: 10,
-                    message: "Phone Number must be of 10 digits"
-                  },
-                  maxLength: {
-                    value: 10,
-                    message: "Phone Number must be of 10 digits"
-                  },
-                })}
-              />
-              {errors.phone && <p className='text-red-600'>{errors.phone.message}</p>}
-              {phoneNumEntered ? (<Input
-                label='OTP: '
-                type='number'
-                placeholder='Enter OTP...'
-                // autoComplete='current-password'
-                {...register("otp", {
-                  required: "Phone Number is required",
-                  minLength: {
-                    value: 4,
-                    message: "OTP must be of 4 digits"
-                  },
-                  maxLength: {
-                    value: 4,
-                    message: "OTP must be of 4 digits"
-                  },
-                })}
-              />) : null}
-              {errors.otp && <p className='text-red-600'>{errors.otp.message}</p>}
-              <Input
-                label='Email: '
-                placeholder='Enter your email...'
-                type='email'
-                autoComplete='username'
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
-                    message: "Email address must be a valid address"
-                  }
-                })}
-              />
-              {errors.email && <p className='text-red-600'>{errors.email.message}</p>}
-              <input type="file" name="propertyImage" accept="image/*" />
-              <Button
-                type='submit'
-                className='w-full'
-              >
-                Submit
-              </Button>
-            </div>
-          </form>
+          <FormProvider {...methods}>
+            <form onSubmit={methods.handleSubmit(formData => {
+              console.log(formData);
+              navigate("/");
+              toast.success("Property Listed Successfully")
+            })} className='mt-4' action='/api/v1/--' method='post' encType='multipart/form-data'>
+              <div className='space-y-5 m-4 p-5 shadow-md rounded-lg'>
+                <div className="mb-6">
+                  <Controller
+                    name="name"
+                    defaultValue=""
+                    control={control}
+                    rules={{
+                      required: "Name is required",
+                      pattern: {
+                        value: /^[A-Za-z\s]+$/,
+                        message: "Name must contain only letters and spaces"
+                      }
+                    }}
+                    render={({ field }) => (
+                      <>
+                        <label htmlFor="name">Name: </label>
+                        <input {...field} type="name" placeholder="Enter your name..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" autoComplete="name" />
+                        {errors.name && <p className='text-red-600'>{errors.name.message}</p>}
+                      </>
+                    )}
+                  />
+                </div>
+                <div className="mb-6">
+                  <Controller
+                    name="phoneNumber"
+                    defaultValue=""
+                    control={control}
+                    rules={{
+                      required: "Phone Number is required",
+                      minLength: {
+                        value: 10,
+                        message: "Phone Number must be of 10 digits"
+                      },
+                      maxLength: {
+                        value: 10,
+                        message: "Phone Number must be of 10 digits"
+                      }
+                    }}
+                    render={({ field }) => (
+                      <>
+                        <label htmlFor="phoneNumber">Phone Number: </label>
+                        <input {...field} type="number" placeholder="Enter your phone number..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" autoComplete="tel" />
+                        {errors.phoneNumber && <p className='text-red-600'>{errors.phoneNumber.message}</p>}
+                      </>
+                    )}
+                  />
+                </div>
+                <div className="mb-6">
+                  <Controller
+                    name="email"
+                    defaultValue=""
+                    control={control}
+                    rules={{
+                      required: "Email is required",
+                      pattern: {
+                        value: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+                        message: "Email address must be a valid address"
+                      }
+                    }}
+                    render={({ field }) => (
+                      <>
+                        <label htmlFor="email">Email: </label>
+                        <input {...field} type="email" placeholder="Enter your email..." className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none" autoComplete="email" />
+                        {errors.email && <p className='text-red-600'>{errors.email.message}</p>}
+                      </>
+                    )}
+                  />
+                </div>
+                <div className='flex gap-1.5'>
+                  <label htmlFor="property-type">Choose Property to list: </label>
+                  <input type="radio" name="property-type" id="property-type" onClick={handleHostelsForm} />
+                  Hostels
+                  <input type="radio" name="property-type" id="property-type" onClick={handleFlatsForm} />
+                  Flats
+                  <input type="radio" name="property-type" id="property-type" onClick={handlePGsForm} />
+                  PGs
+                </div>
+                {(showHostelsForm || showFlatsForm || showPGsForm) && (<div>
+                  {showHostelsForm && <Hostels />}
+                  {showPGsForm && <PGs />}
+                  {showFlatsForm && <Flats />}
+                  <div className='flex justify-center'>
+                    <button type='submit' className='w-full font-medium px-6 py-2 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-105 bg-blue-gradient'>Submit</button>
+                  </div>
+                </div>)}
+              </div>
+            </form>
+          </FormProvider>
         </div>
       </div>
     </>
