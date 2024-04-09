@@ -45,22 +45,6 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "User with email or phone Number already exists");
   }
 
-  // // Make the check only for owner fields
-  // const photosLocalPath = req.files?.property_photos[0]?.path;
-  //  // or
-  // let photosLocalPath;
-  // if (req.files && Array.isArray(req.files.property_photos) && req.files.property_photos.length > 0) {
-  //   photosLocalPath = req.files.property_photos[0].path;
-  // }
-  // if (!photosLocalPath) {
-  //   throw new ApiError(400, "Please provide property photos");
-  // }
-
-  // const propertyPhotos = await uploadOnCloudinary(photosLocalPath);
-  // if (!propertyPhotos) {
-  //   throw new ApiError(400, "Please provide property photos");
-  // }
-
   const user = await User.create({
     name,
     email,
@@ -82,31 +66,6 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res, next) => {
-  //   try {
-  //     const user = await User.findOne({
-  //       name: req.body.name,
-  //     });
-  //     if (!user) return next(createError(404, "User not found!"));
-  //     const isPasswordCorrect = await bcrypt.compare(
-  //       req.body.password,
-  //       user.password
-  //     );
-  //     if (!isPasswordCorrect)
-  //       return next(createError(400, "Wrong password or username!"));
-  //     const token = jwt.sign(
-  //       { id: user._id, isAdmin: user.isAdmin },
-  //       process.env.JWT
-  //     );
-  //     const { password, isAdmin, ...otherDetails } = user._doc;
-  //     res
-  //       .cookie("access_token", token, {
-  //         httpOnly: true,
-  //       })
-  //       .status(200)
-  //       .json({ ...otherDetails });
-  //   } catch (error) {
-  //     next(error);
-  //   }
   // ------------------------------------------------------
   // req body -> data
   // email or phoneNumber through verification
@@ -259,7 +218,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 const getCurrentUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
-    .json(new ApiResponse(200, req.user, "Current User Fetched Successfully"));
+    .json(new ApiResponse(200,req.user, "Current User Fetched Successfully"));
 });
 
 const getAllUsers = asyncHandler(async (req, res) => {
