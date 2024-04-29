@@ -19,7 +19,6 @@ const Footer = () => {
           </div>
 
           <LinkGroup header="Resources">
-            <NavLink link="/" label="XYZ" />
             <NavLink link="/" label="Our Products" />
           </LinkGroup>
           <LinkGroup header="Company">
