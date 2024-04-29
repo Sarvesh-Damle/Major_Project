@@ -34,8 +34,10 @@ const HostelProperty = () => {
   const handleLike = async () => {
     if (isLoggedIn.login) {
       setLiked(prev => !prev);
-      liked===false ? await axios.post("/api/v1/favourites/add-favourites", {propertyId: id, propertyTag: "hostel"}, {withCredentials: true}) : null;
-      toast.success("Added property to favourites!!");
+      if (!liked) {
+        await axios.post("/api/v1/favourites/add-favourites", {propertyId: id, propertyTag: "hostel"}, {withCredentials: true});
+        toast.success("Added property to favourites!!");
+      }
     } else {
       toast.error("Please login!!", { position: "bottom-right" })
     }
