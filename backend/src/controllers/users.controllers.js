@@ -2,12 +2,13 @@ import User from "../models/users.models.js";
 
 export const updateUser = async (req, res, next) => {
   try {
+    const {name, email, phoneNumber, admin} = req.body;
     const updatedUser = await User.findByIdAndUpdate(
-      req.params.id,
-      { $set: req.body },
+      req.query.id,
+      { $set: {name, email, phoneNumber, isAdmin:admin }},
       { new: true }
     );
-    res.status(200).json(updatedUser);
+    res.status(200).json({message: "User updated successfully", updatedUser});
   } catch (error) {
     next(error);
   }
@@ -15,8 +16,13 @@ export const updateUser = async (req, res, next) => {
 
 export const deleteUser = async (req, res, next) => {
   try {
-    await User.findByIdAndDelete(req.params.id);
-    res.status(200).json("Hotel has been deleted");
+    const user = await User.findById(req.query.id);
+    if (!user) {
+      res.status(200).json({ message: "User not found" });
+    } else {
+      await User.findByIdAndDelete(req.query.id);
+      res.status(200).json({ message: "User has been deleted successfully" });
+    }
   } catch (error) {
     next(error);
   }
@@ -26,8 +32,8 @@ export const getUser = async (req, res, next) => {
   // const failed = true;
   // if (failed) return next(createError(401, "You are not authenticated!"));
   try {
-    const User = await User.findById(req.params.id);
-    res.status(200).json(User);
+    const user = await User.findById(req.query.id).select("-password -refreshToken");
+    res.status(200).json(user);
   } catch (error) {
     next(error);
   }
@@ -35,7 +41,7 @@ export const getUser = async (req, res, next) => {
 
 export const getAllUser = async (req, res, next) => {
   try {
-    const Users = await User.find();
+    const Users = await User.find().select("-password -refreshToken -isAdmin");
     res.status(200).json(Users);
   } catch (error) {
     next(error);
