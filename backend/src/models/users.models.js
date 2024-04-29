@@ -30,6 +30,10 @@ const usersSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    credits: {
+      type: Number,
+      default: 0
+    },
     refreshToken: {
       type: String,
     },
