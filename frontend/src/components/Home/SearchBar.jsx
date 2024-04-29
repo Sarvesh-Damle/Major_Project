@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { HiLocationMarker } from "react-icons/hi";
-import { useNavigate } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import { searchData } from "../../data/Search.js";
 
 function SearchBar() {
   const [isDropdownOpenCity, setIsDropdownOpenCity] = useState(false);
@@ -18,10 +18,14 @@ function SearchBar() {
   // const [isDropdownOpenFlat, setIsDropdownOpenFlat] = useState(false);
   // const [searchValueFlat, setSearchValueFlat] = useState("");
   const [instituteName, setInstituteName] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
+  const [showResults, setShowResults] = useState(false);
 
-  const navigate = useNavigate();
+  const navigate = useHistory();
 
   const toggleDropdownCity = () => {
+    setIsDropdownOpenLocality(false);
+    setIsDropdownOpen(false);
     setIsDropdownOpenCity(!isDropdownOpenCity);
   };
 
@@ -31,6 +35,8 @@ function SearchBar() {
   };
 
   const toggleDropdownLocality = () => {
+    setIsDropdownOpenCity(false);
+    setIsDropdownOpen(false);
     setIsDropdownOpenLocality(!isDropdownOpenLocality);
   };
 
@@ -40,6 +46,8 @@ function SearchBar() {
   };
 
   const toggleDropdown = () => {
+    setIsDropdownOpenCity(false);
+    setIsDropdownOpenLocality(false);
     setIsDropdownOpen(!isDropdownOpen);
   };
 
@@ -81,7 +89,7 @@ function SearchBar() {
   //   if (searchValueLocality) {
   //     queryParams.append("locality", searchValueLocality);
   //   }
-  //   navigate(`/search?${queryParams.toString()}`);
+  //   navigate.push(`/search?${queryParams.toString()}`);
   // }
   const handleSearch = (e) => {
     e.preventDefault();
@@ -107,13 +115,38 @@ function SearchBar() {
     if (searchValueLocality) {
       url = url.concat(`&locality=${searchValueLocality.toLowerCase()}`);
     }
-    navigate(url);
+    navigate.push(url);
+  }
+  let lastSelectedLocality;
+  const handleFilter = (e) => {
+    const searchWord = e.target.value.toLowerCase();
+    setInstituteName(searchWord);
+    const newFilter = searchData.filter((value) => {
+      return value.name.toLowerCase().includes(searchWord);
+    })
+    setFilteredData(newFilter);
+    if (searchWord === "") {
+      setShowResults(false);
+    }
+  }
+  const handleSearchClick = (value) => {
+    if (instituteName === "None") {
+      setShowResults(false);
+      setInstituteName("");
+    }
+    if (instituteName === "") {
+      setShowResults(false);
+    }
+    setInstituteName(value.name);
+    setShowResults(true);
+    lastSelectedLocality = value.name.split(",").pop().trim();
+    setSearchValueLocality(lastSelectedLocality);
   }
 
   return (
-    <form onSubmit={handleSearch} className="flex flex-col items-center sm:flex-row sm:justify-center max-lg:flex-wrap mt-8 mb-14">
+    <form onSubmit={handleSearch} className="flex flex-col sm:flex-row sm:justify-center max-lg:flex-wrap mt-8 mb-14">
       {/* city search */}
-      <div className="relative max-sm:mb-2">
+      <div className="relative max-sm:mb-4 max-sm:mx-8 max-sm:flex max-sm:flex-wrap">
         <button
           className="w-full text-center inline-flex items-center font-medium px-6 py-3 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95 bg-blue-gradient"
           type="button"
@@ -173,7 +206,7 @@ function SearchBar() {
         </div>
       </div>
       {/* locality search */}
-      <div className="relative max-sm:mb-2">
+      <div className="relative max-sm:mb-4 max-sm:mx-7 max-sm:flex max-sm:flex-wrap">
         <button
           className="w-full text-center inline-flex items-center font-medium px-6 py-3 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95 bg-blue-gradient mx-1"
           type="button"
@@ -229,10 +262,17 @@ function SearchBar() {
             <li className="block px-4 py-2 cursor-pointer hover:bg-gray-100" onClick={() => handleDropdownItemClickLocality("Andheri")}>
               Andheri
             </li>
+            <li className="block px-4 py-2 cursor-pointer hover:bg-gray-100" onClick={() => handleDropdownItemClickLocality("Matunga")}>
+              Matunga
+            </li>
+            <li className="block px-4 py-2 cursor-pointer hover:bg-gray-100" onClick={() => handleDropdownItemClickLocality("Vashi")}>
+              Vashi
+            </li>
           </ul>
         </div>
       </div>
-      <div className="relative max-sm:mb-2">
+      {/* type search */}
+      <div className="relative max-sm:mb-4 max-sm:mx-6 max-sm:flex max-sm:flex-wrap">
         <button
           className="w-full text-center inline-flex items-center font-medium px-6 py-3 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95 bg-blue-gradient mx-2"
           type="button"
@@ -288,8 +328,7 @@ function SearchBar() {
           </ul>
         </div>
       </div>
-      {/* Type of sub parts */}
-{/*       
+      {/* Type of sub parts
       {searchValue === "Hostels" ? (
         <div className="relative mt-2 sm:mt-0 sm:ml-1">
           <button
@@ -458,17 +497,21 @@ function SearchBar() {
           </ul>
         </div>
       </div>) : null} */}
-      <div className="w-1/3 flex max-sm:flex-col gap-0.5 justify-center items-center mx-1 ml-3">
-        <input
-          type="search"
-          className="w-full max-sm:w-[250%] flex gap-y-8 items-center bg-white rounded border-2 border-solid border-gray-300 border-opacity-50 p-3 my-2 mx-0.5 justify-between"
-          placeholder="Search near your College, Company..."
-          value={instituteName}
-          onChange={(e) => setInstituteName(e.target.value)}
-        />
+      <div className="w-1/3 flex max-sm:flex-col max-sm:flex-wrap max-sm:w-96 gap-0.5 max-sm:gap-3 max-sm:justify-center max-sm:items-center justify-center mx-1 ml-3">
+        {/* custom search bar */}
+        <div className="w-full flex flex-col gap-0.5 search">
+          <div className="flex searchInputs">
+            <input type="search" placeholder="Search near your College, Company..." className="w-full max-sm:w-[250%] flex gap-y-8  bg-white rounded-lg border-2 border-solid border-gray-300 border-opacity-50 p-3 mx-0.5 justify-between" onChange={handleFilter} value={instituteName} />
+          </div>
+          {filteredData.length > 0 && (<div className={` w-[340px] h-[200px] bg-white shadow-gray-800 overflow-hidden overflow-y-auto no-scrollbar dataResult ${showResults ? "hidden" : "block"}`}>
+            {filteredData.map((value, index) => {
+              return <div key={index} className="w-[100%] h-[50px] flex text-black cursor-pointer hover:bg-gray-200 dataItem" onClick={() => {handleSearchClick(value)}}><p className="ml-[10px]">{value.name}</p></div>
+            })}
+          </div>)}
+        </div>
         <button
           type="submit"
-          className="px-1.5 gap-3 w-32 h-14 flex justify-center items-center font-medium ml-0.5 bg-blue-gradient text-white rounded-lg border-none transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95"
+          className="px-1.5 gap-3 w-32 max-sm:w-40 h-14 flex justify-center items-center font-medium ml-0.5 bg-blue-gradient text-white rounded-lg border-none transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95"
         >
           <svg className="w-4 h-4 mt-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
             <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />

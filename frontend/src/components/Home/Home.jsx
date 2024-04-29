@@ -2,21 +2,20 @@ import Card from './Cards.jsx';
 import Flatmates from './Flatmates.jsx';
 import Featured from './Featured.jsx';
 import Rooms from './Rooms.jsx';
-import { CardArray1, CardArray2 } from '../../data/CardData.js';
-import { Outlet } from 'react-router-dom';
 import SearchBar from './SearchBar.jsx';
 import Testimonials from './Testimonials/Testimonials.jsx';
 import testimonialsData from './Testimonials/testimonialsData.js';
 import Hero from './Hero.jsx';
 import Properties from './Properties.jsx';
 import Value from './Value/Value.jsx';
+import Map from '../Map/Map.jsx';
 
 const Home = () => {
   return (
     <div>
       <Hero/>
-      {/* <SearchBar/> */}
-      <Properties/>
+      <SearchBar/>
+      {/* <Properties/> */}
       <Value/>
       {/* <Featured /> */}
       {/* <Rooms /> */}
@@ -27,7 +26,6 @@ const Home = () => {
       <h1 className="flex justify-center items-center text-3xl p-1 my-2">Flatmates</h1>
       <Flatmates /> */}
       <Testimonials testimonials={testimonialsData}/>
-      <Outlet />
     </div>
   )
 }
