@@ -1,12 +1,11 @@
 import { truncate } from "lodash";
-import { useNavigate } from "react-router-dom";
-import { AiFillHeart } from "react-icons/ai";
+import { useHistory } from "react-router-dom";
 import Heart from "../Pages/Heart";
 
 const PropertyCard = ({ card }) => {
     let url = "hostels";
     let propertyTag = "hostel";
-    const navigate = useNavigate();
+    const navigate = useHistory();
     if (card.flat_type) {
         url = "flats";
         propertyTag = "flat"
@@ -18,7 +17,7 @@ const PropertyCard = ({ card }) => {
     return (
         <>
             <div className="flexColStart gap-2 p-4 rounded-xl max-w-max m-auto transition-all duration-300 ease-in hover:scale-105 hover:cursor-pointer hover:bg-gradient-to-b from-[#ffffff] to-[#eeeef7] shadow hover:shadow-lg relative z-0 r-card"
-                onClick={() => navigate(`/${url}`)}
+                onClick={() => navigate.push(`/${url}`)}
             >
                 <Heart id={card._id} propertyTag={propertyTag} />
                 <img src={card.property_photos[0]} alt="property-image"
