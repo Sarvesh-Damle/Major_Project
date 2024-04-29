@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useMutation } from "@tanstack/react-query";
 import Hostels from './Hostels.jsx';
 import PGs from './PGs.jsx';
@@ -13,25 +13,25 @@ const PropertyOwner = () => {
   const methods = useForm();
   const control = methods.control;
   const errors = methods.formState.errors;
-  const navigate = useNavigate();
+  const navigate = useHistory();
   const { isLoggedIn } = useContext(loginContext);
   const mutation = useMutation({
     mutationKey: ['listing-property'],
     mutationFn: (formData) => {
       let url;
       if (showHostelsForm) {
-        url = "add-property-hostel";
+        url = "hostels/add-property";
       }
       if (showFlatsForm) {
-        url = "add-property-flat";
+        url = "flats/add-property-flat";
       }
       if (showPGsForm) {
-        url = "add-property-pg";
+        url = "pgs/add-property-pg";
       }
       return axios.post(`/api/v1/${url}`, formData, { withCredentials: true })
     },
     onSuccess(data) {
-      navigate("/")
+      navigate.push("/")
       toast.success(data.data.message)
     },
     onError(error) {
@@ -79,10 +79,9 @@ const PropertyOwner = () => {
         <div className='flex flex-col sm:w-1/3 w-full'>
           <FormProvider {...methods}>
             <form onSubmit={methods.handleSubmit(formData => {
+              mutation.mutate(formData);
               console.log(formData);
-              navigate("/");
-              toast.success("Property Listed Successfully")
-            })} className='mt-4' action='/api/v1/--' method='post' encType='multipart/form-data'>
+            })} className='mt-4' encType='multipart/form-data'>
               <div className='space-y-5 m-4 p-5 shadow-md rounded-lg'>
                 <div className="mb-6">
                   <Controller
