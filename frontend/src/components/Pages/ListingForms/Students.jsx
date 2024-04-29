@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Input from './Input';
-import Button from './Button';
 import axios from 'axios';
 
 const Students = () => {
@@ -11,7 +10,7 @@ const Students = () => {
   const [collegeCloser, setCollegeCloser] = useState(false);
   const [phoneNumEntered, setPhoneNumEntered] = useState(false);
   const [tiffins, setTiffins] = useState(false);
-  const navigate = useNavigate();
+  const navigate = useHistory();
 
   const login = async (data) => {
     setError("");
@@ -53,14 +52,14 @@ const Students = () => {
                 label='Name: '
                 placeholder='Enter your name...'
                 type='text'
-              // autoComplete='username'
-              {...register("name", {
-                required: "Name is required",
-                pattern: {
-                  value: /^[A-Za-z\s]+$/,
-                  message: "Name must contain only letters and spaces"
-                }
-              })}
+                // autoComplete='username'
+                {...register("name", {
+                  required: "Name is required",
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message: "Name must contain only letters and spaces"
+                  }
+                })}
               />
               {errors.name && <p className='text-red-600'>{errors.name.message}</p>}
               <Input
@@ -114,12 +113,12 @@ const Students = () => {
                 })}
               /> */}
               {/* {errors.email && <p className='text-red-600'>{errors.email.message}</p>} */}
-              <div>            
-              <label htmlFor="College">Is this property closer to your college? </label>
-              <label htmlFor="Yes">Yes</label>
-              <input type="radio" required name='College' onClick={handleClickCollegeCloser} />
-              <label htmlFor="No">No</label>
-              <input type="radio" required name='College' onClick={handleClickCollegeNotCloser} />
+              <div>
+                <label htmlFor="College">Is this property closer to your college? </label>
+                <label htmlFor="Yes">Yes</label>
+                <input type="radio" required name='College' onClick={handleClickCollegeCloser} />
+                <label htmlFor="No">No</label>
+                <input type="radio" required name='College' onClick={handleClickCollegeNotCloser} />
               </div>
               {collegeCloser ? (<Input
                 label='College Name: '
@@ -174,11 +173,11 @@ const Students = () => {
               />
               {errors.ownerPhone && <p className='text-red-600'>{errors.ownerPhone.message}</p>}
               <div>
-              <label htmlFor="College">Do you have any tiffin services phone number, that you recommend? </label>
-              <label htmlFor="Yes">Yes</label>
-              <input type="radio" required name='Tiffins' onClick={handleClickTiffins} />
-              <label htmlFor="No">No</label>
-              <input type="radio" required name='Tiffins' onClick={handleClickNotTiffins} />
+                <label htmlFor="College">Do you have any tiffin services phone number, that you recommend? </label>
+                <label htmlFor="Yes">Yes</label>
+                <input type="radio" required name='Tiffins' onClick={handleClickTiffins} />
+                <label htmlFor="No">No</label>
+                <input type="radio" required name='Tiffins' onClick={handleClickNotTiffins} />
               </div>
               {tiffins ? (
                 <Input
@@ -203,12 +202,9 @@ const Students = () => {
                   name="property_photos"
                   accept="property_photos/*"
                 /> */}
-              <Button
-                type='submit'
-                className='w-full'
-              >
-                Submit
-              </Button>
+              <div className='flex justify-center'>
+                <button type='submit' className='w-full font-medium px-6 py-2 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-105 bg-blue-gradient'>Submit</button>
+              </div>
             </div>
           </form>
         </div>
