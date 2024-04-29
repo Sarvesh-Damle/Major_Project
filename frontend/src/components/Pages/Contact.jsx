@@ -1,12 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Contact = () => {
   const { control, handleSubmit, formState: { errors } } = useForm();
-  const navigate = useNavigate();
+  const navigate = useHistory();
 
 
   const mutation = useMutation({
@@ -26,7 +26,7 @@ const Contact = () => {
 
   return (
     <>
-      <section className="bg-white py-20 lg:py-[120px] mx-4 overflow-hidden relative z-10">
+      <section className="bg-white py-20 lg:py-[120px] mx-4 overflow-hidden relative">
         <div className="flex flex-wrap -mx-4 lg:justify-between">
           <div className="w-full flex justify-center px-4 lg:w-1/2 xl:w-6/12">
             <div className="mb-12 max-w-[570px] lg:mb-0">
