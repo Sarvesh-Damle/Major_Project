@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const Card = (props) => {
   return (
@@ -36,7 +36,7 @@ const SingleCard = ({
   CardDescription3,
   CardTitle,
 }) => {
-  const navigate = useNavigate();
+  const navigate = useHistory();
   return (
     <>
       {/*  */}
