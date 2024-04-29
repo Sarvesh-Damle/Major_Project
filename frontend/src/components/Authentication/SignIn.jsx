@@ -1,14 +1,15 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import axios from "axios";
 import { useForm, Controller } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { loginContext } from "../../provider/authContext";
 import { useContext } from "react";
+import OAuth from "./OAuth";
 
 const SignIn = () => {
   const { control, handleSubmit, formState: { errors } } = useForm();
-  const navigate = useNavigate();
+  const navigate = useHistory();
   const {setIsLoggedIn}=useContext(loginContext);
 
   const mutation = useMutation({
@@ -21,7 +22,7 @@ const SignIn = () => {
     },
     onSuccess (data) {
       setIsLoggedIn({login: true, signup: false});
-      navigate("/");
+      navigate.push("/")
       toast.success(data.data.message)
     },
     onError (error) {
@@ -87,7 +88,7 @@ const SignIn = () => {
                   />
                 </div>
 
-                <div className="mb-10">
+                <div className="mb-8">
                   <button
                     className="w-full font-medium px-6 py-2 text-white border-primary rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95 bg-blue-gradient"
                     type="submit"
@@ -96,7 +97,11 @@ const SignIn = () => {
                   </button>
                 </div>
               </form>
-              <p className="mb-6 text-base text-gray-600">Connect With</p>
+              {/* <p className="mb-6 text-base text-gray-600">Connect With</p> */}
+              <div className="mb-4">
+              <OAuth/>
+              </div>
+{/*               
               <ul className="-mx-2 mb-12 flex justify-between">
                 <li className="w-full px-2">
                   <a
@@ -155,7 +160,7 @@ const SignIn = () => {
                     </svg>
                   </a>
                 </li>
-              </ul>
+              </ul> */}
               <Link
                 to="/reset-password"
                 className="mb-2 inline-block text-base text-gray-600 hover:text-primary hover:underline"
