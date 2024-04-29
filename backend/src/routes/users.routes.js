@@ -7,6 +7,7 @@ import {
 } from "../controllers/users.controllers.js";
 import { verifyAdmin, verifyToken, verifyUser } from "../utils/verifyToken.js";
 import { getCurrentUser } from "../controllers/auth.controllers.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
@@ -23,13 +24,13 @@ const router = express.Router();
 // });
 
 // UPDATE
-router.put("/:id", verifyUser, updateUser);
+router.put("/update-user", verifyJWT, updateUser);
 // DELETE
-router.delete("/:id", verifyUser, deleteUser);
+router.delete("/delete-user", verifyJWT, verifyAdmin, deleteUser);
 // GET
-// router.get("/:id", verifyUser, getUser);
+router.get("/get-user-info", verifyJWT, getUser);
 // GET ALL
-router.get("/", verifyAdmin, getAllUser);
+router.get("/", verifyJWT, verifyAdmin, getAllUser);
 
 router.get("/me",verifyToken,getCurrentUser);
 
