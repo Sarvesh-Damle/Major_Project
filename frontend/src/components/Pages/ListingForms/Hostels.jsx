@@ -2,46 +2,18 @@ import { Controller, useFormContext } from "react-hook-form";
 import { useState } from "react";
 import { hostel_types, pg_amenities, room_types, rules, states } from "../../../data/Property";
 import MultiSelect from "./MultiSelect";
-import axios from "axios";
 
 const Hostels = () => {
   const { control, formState: { errors }, setValue } = useFormContext();
-  const [files, setFiles] = useState(null);
-  const [progress, setProgress] = useState({ started: false, pc: 0 })
-  const [msg, setMsg] = useState(null);
-
-  function handleUpload() {
-    if (!files) {
-      setMsg("No file selected");
-      return;
-    }
-    const fd = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      fd.append(`files${i+1}`, files[i]);
-    }
-    setMsg("Uploading...")
-    setProgress(prev => {
-      return {...prev, started: true}
-    })
-    axios.post("http://httpbin.org/post", fd, {
-      onUploadProgress: (progressEvent) => {
-        setProgress(prev => {
-          return {...prev, pc: progressEvent.progress * 100}
-        })
-      }, headers: {
-        "Custom-Header": "value",
-      }
-    }).then(res => {
-      setMsg("Upload Successful")
-      console.log(res.data)
-    }).catch(err => {
-      setMsg("Upload Failed");
-      console.error(err)
-    });
-  }
+  const [imagesPreview, setImagesPreview] = useState([]);
 
   const [selectedHostelType, setSelectedHostelType] = useState("");
   const [selectedState, setSelectedState] = useState("");
+
+  const createProductImagesChange = (e) => {
+    const files = Array.from(e.target.files);
+    setImagesPreview(files.map(file => URL.createObjectURL(file)));
+  };
 
   return (
     <>
@@ -273,7 +245,6 @@ const Hostels = () => {
           )}
         />
       </div>
-      {/* amenities */}
       <div className="mb-6">
         <Controller
           name="amenities"
@@ -287,7 +258,6 @@ const Hostels = () => {
           )}
         />
       </div>
-      {/* rules */}
       <div className="mb-6">
         <Controller
           name="rules"
@@ -322,7 +292,7 @@ const Hostels = () => {
           )}
         />
       </div>
-      {/* photos */}
+
       <div className="mb-6">
         <Controller
           name="property_photos"
@@ -341,30 +311,17 @@ const Hostels = () => {
                   name="property_photos"
                   multiple
                   accept="image/*"
-                  // onChange={e => setFiles(e.target.files)}
+                  value=""
+                  onChange={(e) => { field.onChange(Array.from(e.target.files)); createProductImagesChange(e); }}
                   className="border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none"
                 />
-                {/* <button className="w-fit font-medium px-5 py-0.5 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95 bg-blue-gradient" onClick={handleUpload}>Upload</button> */}
+
+              </div><div className="w-full my-2 overflow-auto flex gap-x-8">
+                {imagesPreview.map((image, index) => (
+                  <img key={index} src={image} alt={`Property Preview ${index}`} className="w-40 h-40" />
+                ))}
               </div>
-              {/* {progress.started && <progress max="100" value={progress.pc}></progress>}
-              {msg && <span>{msg}</span>} */}
               {errors.property_photos && <p className='text-red-600'>{errors.property_photos.message}</p>}
-            </>
-          )}
-        />
-      </div>
-      <div className="mb-6 flex gap-1.5">
-        <Controller
-          name="featured"
-          defaultValue=""
-          control={control}
-          render={({ field }) => (
-            <>
-              <label htmlFor="featured">Do you want your property in featured section: </label>
-              <input {...field} type="radio" id="featured-yes" value="Yes" />
-              <label htmlFor="featured-yes">Yes</label>
-              <input {...field} type="radio" id="featured-no" value="No" />
-              <label htmlFor="featured-no">No</label>
             </>
           )}
         />
