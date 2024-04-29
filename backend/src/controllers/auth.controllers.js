@@ -1,14 +1,10 @@
 import User from "../models/users.models.js";
-import bcrypt from "bcryptjs";
-import { createError } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
-import {
-  deleteFromCloudinary,
-  uploadOnCloudinary,
-} from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import axios from "axios";
+import bcrypt from "bcryptjs";
 
 const generateRefreshAndAccessTokens = async (userId) => {
   try {
@@ -50,7 +46,6 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
     phoneNumber,
-    // photos: propertyPhotos?.url || ""
   });
 
   const createdUser = await User.findById(user._id).select(
@@ -59,6 +54,18 @@ const registerUser = asyncHandler(async (req, res) => {
   if (!createdUser) {
     throw new ApiError(500, "Something went wrong while registering a user");
   }
+
+  await axios.post("http://localhost:4000/backend-email-service/email", {
+    to: email,
+    subject: "User Registration Successful!",
+    body: `   Thank you, for registering with Buddies!!
+    
+    
+    We are always ready to help by providing the best services for our customers.
+    
+    We believe in convenience and getting you a good place to live`,
+    user: "Buddies.com",
+  });
 
   return res
     .status(201)
@@ -92,6 +99,73 @@ const loginUser = asyncHandler(async (req, res, next) => {
 
   if (!isPasswordValid) {
     throw new ApiError(400, "your password is incorrect");
+  }
+
+  const { accessToken, refreshToken } = await generateRefreshAndAccessTokens(
+    user._id
+  );
+
+  const loggedInUser = await User.findById(user._id).select(
+    "-password -refreshToken"
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  }; // makes it secure so that only server can modify the cookies
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      new ApiResponse(
+        200,
+        {
+          user: loggedInUser,
+          accessToken,
+          refreshToken,
+        },
+        "User Logged In Successfully"
+      )
+    );
+});
+
+const google = asyncHandler(async (req, res, next) => {
+  const { email } = req.body;
+  
+  if (!email) {
+    throw new ApiError(400, "email is required");
+  }
+  
+  const user = await User.findOne({ email });
+  
+  if (!user) {
+    const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+    const hashedPassword = bcrypt.hashSync(generatedPassword, 10);
+    const user = await User.create({
+      name: req.body.name.split(" ").join("").toLowerCase(),
+      email: req.body.email,
+      password: hashedPassword,
+      phoneNumber: "",
+    });
+  
+    const createdUser = await User.findById(user._id).select(
+      "-password -refreshToken"
+    );
+    const options = {
+      httpOnly: true,
+      secure: true,
+    }; // makes it secure so that only server can modify the cookies
+    if (!createdUser) {
+      throw new ApiError(500, "Something went wrong while registering a user");
+    }
+  
+    return res
+      .status(201)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json(new ApiResponse(200, createdUser, "User registered successfully"));
   }
 
   const { accessToken, refreshToken } = await generateRefreshAndAccessTokens(
@@ -218,7 +292,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 const getCurrentUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
-    .json(new ApiResponse(200,req.user, "Current User Fetched Successfully"));
+    .json(new ApiResponse(200, req.user, "Current User Fetched Successfully"));
 });
 
 const getAllUsers = asyncHandler(async (req, res) => {
@@ -337,4 +411,5 @@ export {
   getCurrentUser,
   getAllUsers,
   updateAccountDetails,
+  google
 };
