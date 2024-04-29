@@ -1,5 +1,5 @@
 import useFetch from "../../hooks/useFetch.js";
-import { useNavigate } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 const Rooms = () => {
     const { data, loading, error } = useFetch("/api/apartments/countByType");
@@ -40,7 +40,7 @@ const SingleCard = ({
     CardDescription,
     CardTitle,
 }) => {
-    const navigate = useNavigate();
+    const navigate = useHistory();
     return (
         <>
             {/*  */}

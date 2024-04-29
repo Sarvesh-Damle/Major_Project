@@ -20,7 +20,7 @@ const Value = () => {
                     <span className="primaryText max-sm:text-3xl">Value We Give to You</span>
                     <span className="secondaryText">We are always ready to help by providing the best services for our customers <br /> We believe in convenience and getting you a good place to live</span>
 
-                    <Accordion className="mt-8 border-none accordion" allowMultipleExpanded={false} preExpanded={[0]}>
+                    <Accordion className="mt-8 border-none" allowMultipleExpanded={false} preExpanded={[0]}>
                         {accordion_data.map((item, index) => {
                             return (
                                 <AccordionItem className="bg-white border border-gray-400 border-opacity-25 rounded-lg overflow-hidden mb-5 accordionItem shadow-lg" key={index} uuid={index}>
