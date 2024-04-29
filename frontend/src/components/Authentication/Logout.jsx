@@ -1,7 +1,7 @@
-import {useNavigate} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 
 const Logout = () => {
-    const navigate = useNavigate();
+    const navigate = useHistory();
     const handleLogout = async () => {
         try {
             await fetch('/api/v1/logout', {
