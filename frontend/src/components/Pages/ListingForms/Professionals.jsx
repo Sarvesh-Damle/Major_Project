@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Input from './Input';
-import Button from './Button';
 
 const Professionals = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -10,7 +9,7 @@ const Professionals = () => {
   const [companyCloser, setCompanyCloser] = useState(false);
   const [phoneNumEntered, setPhoneNumEntered] = useState(false);
   const [tiffins, setTiffins] = useState(false);
-  const navigate = useNavigate();
+  const navigate = useHistory();
 
   const login = async (data) => {
     setError("");
@@ -112,12 +111,12 @@ const Professionals = () => {
                 })}
               /> */}
               {/* {errors.email && <p className='text-red-600'>{errors.email.message}</p>} */}
-              <div>            
-              <label htmlFor="Company">Is this property closer to your company? </label>
-              <label htmlFor="Yes">Yes</label>
-              <input type="radio" required name='Company' onClick={handleClickCompanyCloser} />
-              <label htmlFor="No">No</label>
-              <input type="radio" required name='Company' onClick={handleClickCompanyNotCloser} />
+              <div>
+                <label htmlFor="Company">Is this property closer to your company? </label>
+                <label htmlFor="Yes">Yes</label>
+                <input type="radio" required name='Company' onClick={handleClickCompanyCloser} />
+                <label htmlFor="No">No</label>
+                <input type="radio" required name='Company' onClick={handleClickCompanyNotCloser} />
               </div>
               {companyCloser ? (<Input
                 label='Company Name: '
@@ -172,11 +171,11 @@ const Professionals = () => {
               />
               {errors.ownerPhone && <p className='text-red-600'>{errors.ownerPhone.message}</p>}
               <div>
-              <label htmlFor="College">Do you have any tiffin services phone number, that you recommend? </label>
-              <label htmlFor="Yes">Yes</label>
-              <input type="radio" required name='Tiffins' onClick={handleClickTiffins} />
-              <label htmlFor="No">No</label>
-              <input type="radio" required name='Tiffins' onClick={handleClickNotTiffins} />
+                <label htmlFor="College">Do you have any tiffin services phone number, that you recommend? </label>
+                <label htmlFor="Yes">Yes</label>
+                <input type="radio" required name='Tiffins' onClick={handleClickTiffins} />
+                <label htmlFor="No">No</label>
+                <input type="radio" required name='Tiffins' onClick={handleClickNotTiffins} />
               </div>
               {tiffins ? (
                 <Input
@@ -196,12 +195,9 @@ const Professionals = () => {
                 />
               ) : null}
               {errors.tiffinPhone && <p className='text-red-600'>{errors.tiffinPhone.message}</p>}
-              <Button
-                type='submit'
-                className='w-full'
-              >
-                Submit
-              </Button>
+              <div className='flex justify-center'>
+                <button type='submit' className='w-full font-medium px-6 py-2 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-105 bg-blue-gradient'>Submit</button>
+              </div>
             </div>
           </form>
         </div>
