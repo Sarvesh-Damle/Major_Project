@@ -16,3 +16,11 @@ export const sliderSettings = {
         },
     }
 }
+
+export const updateFavourites = (_id, favourites) => {
+    if (favourites.includes(_id)) {
+        return favourites.filter((property_id) => property_id !== _id);
+    } else {
+        return {...favourites, _id}
+    }
+}
