@@ -49,7 +49,7 @@ const FlatsSchema = new mongoose.Schema(
       required: true,
     },
     distance_from_nearest_railway_station: {
-      type: String,
+      type: Number,
       required: true,
     },
     distance_from_bus_stop: {
@@ -103,5 +103,13 @@ const FlatsSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Indexes for query optimization
+FlatsSchema.index({ city: 1, locality: 1 });
+FlatsSchema.index({ featured: 1 });
+FlatsSchema.index({ owner_email: 1 });
+FlatsSchema.index({ flat_type: 1 });
+FlatsSchema.index({ rent_amount: 1 });
+FlatsSchema.index({ createdAt: -1 });
 
 export default mongoose.model("Flat", FlatsSchema);

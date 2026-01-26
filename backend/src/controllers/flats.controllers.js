@@ -36,15 +36,19 @@ export const createFlat = asyncHandler(async (req, res) => {
   if (!flat) {
     throw new ApiError(500, "Something went wrong while listing the property");
   }
-  await axios.post("http://localhost:4000/backend-email-service/email", {
-    to: hostelData.email,
-    subject: "Property Registration Process has began!",
-    body: `   Thank you, for providing property details!!\n\nOur Team will verify the property and will surely get back to you`,
-    user: "Buddies.com",
-  });
+  try {
+    await axios.post("http://localhost:4000/backend-email-service/email", {
+      to: flatData.owner_email,
+      subject: "Property Registration Process has began!",
+      body: `Thank you, for providing property details!\n\nOur Team will verify the property and will surely get back to you`,
+      user: "Buddies.com",
+    });
+  } catch {
+    // Email service unavailable - non-critical, continue
+  }
   return res
     .status(201)
-    .json(new ApiResponse(200, flat, "Flat Property listed successfully"));
+    .json(new ApiResponse(201, flat, "Flat Property listed successfully"));
 });
 
 export const updateFlat = asyncHandler(async (req, res) => {
@@ -63,13 +67,12 @@ export const updateFlat = asyncHandler(async (req, res) => {
 });
 
 export const deleteFlat = asyncHandler(async (req, res) => {
-  const flat = await Hostel.findById(req.query.id);
+  const flat = await Flat.findById(req.query.id);
   if (!flat) {
-    return res.status(200).json(new ApiResponse(200, "Flat not found"));
-  } else {
-    await Flat.findByIdAndDelete(req.query.id);
+    return res.status(404).json(new ApiResponse(404, null, "Flat not found"));
   }
-  return res.status(200).json(new ApiResponse(200, "Flat has been deleted"));
+  await Flat.findByIdAndDelete(req.query.id);
+  return res.status(200).json(new ApiResponse(200, null, "Flat has been deleted"));
 });
 
 export const getFlat = asyncHandler(async (req, res) => {
@@ -139,14 +142,21 @@ export const countNotVerifiedFlats = asyncHandler(async (req, res) => {
 
 export const verifyFlat = asyncHandler(async (req, res) => {
   const { id, featured } = req.body;
-  await Flat.findByIdAndUpdate(id, { $set: { featured } }, { new: true });
-  await axios.post("http://localhost:4000/backend-email-service/email", {
-    to: hostelData.email,
-    subject: "Property Listed Successfully!",
-    body: `   Thank you, your property has been listed!!`,
-    user: "Buddies.com",
-  });
+  const flatData = await Flat.findByIdAndUpdate(id, { $set: { featured } }, { new: true });
+  if (!flatData) {
+    throw new ApiError(404, "Flat not found");
+  }
+  try {
+    await axios.post("http://localhost:4000/backend-email-service/email", {
+      to: flatData.owner_email,
+      subject: "Property Listed Successfully!",
+      body: `Thank you, your property has been listed!`,
+      user: "Buddies.com",
+    });
+  } catch {
+    // Email service unavailable - non-critical, continue
+  }
   return res
     .status(200)
-    .json(new ApiResponse(200, "Flat verified successfully"));
+    .json(new ApiResponse(200, flatData, "Flat verified successfully"));
 });

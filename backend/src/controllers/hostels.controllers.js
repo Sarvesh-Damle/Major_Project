@@ -43,7 +43,7 @@ export const createHostel = asyncHandler(async (req, res) => {
   // }
   return res
     .status(201)
-    .json(new ApiResponse(200, hostel, "Hostel Property listed successfully"));
+    .json(new ApiResponse(201, hostel, "Hostel Property listed successfully"));
 });
 
 export const updateHostel = asyncHandler(async (req, res) => {
@@ -196,55 +196,54 @@ export const countHostelsByType = asyncHandler(async (req, res) => {
     );
 });
 
-export const countByAddress = async (req, res, next) => {
+export const countByAddress = asyncHandler(async (req, res) => {
   const address = req.query.address.split(",");
-  try {
-    const list = await Promise.all(
-      address.map((address) => {
-        return Hostel.countDocuments({ address: address });
-      })
-    );
-    res.status(200).json(list);
-  } catch (error) {
-    next(error);
-  }
-};
+  const list = await Promise.all(
+    address.map((addr) => {
+      return Hostel.countDocuments({ address: addr });
+    })
+  );
+  res.status(200).json(new ApiResponse(200, list, "Counted by address"));
+});
 
-export const countByType = async (req, res, next) => {
-  try {
-    const singleRoomCount = await Hostel.countDocuments({
-      room_type: "Single Room",
-    });
-    const doubleSharingCount = await Hostel.countDocuments({
-      room_type: "Double Sharing",
-    });
-    const tripleSharingCount = await Hostel.countDocuments({
-      room_type: "Triple Sharing",
-    });
-    const fourSharingCount = await Hostel.countDocuments({
-      room_type: "Four Sharing",
-    });
-    res.status(200).json([
-      { room_type: "Single Room", count: singleRoomCount },
-      { room_type: "Double Sharing", count: doubleSharingCount },
-      { room_type: "Triple Sharing", count: tripleSharingCount },
-      { room_type: "Four Sharing", count: fourSharingCount },
-    ]);
-  } catch (error) {
-    next(error);
-  }
-};
+export const countByType = asyncHandler(async (req, res) => {
+  const singleRoomCount = await Hostel.countDocuments({
+    room_type: "Single Room",
+  });
+  const doubleSharingCount = await Hostel.countDocuments({
+    room_type: "Double Sharing",
+  });
+  const tripleSharingCount = await Hostel.countDocuments({
+    room_type: "Triple Sharing",
+  });
+  const fourSharingCount = await Hostel.countDocuments({
+    room_type: "Four Sharing",
+  });
+  res.status(200).json(new ApiResponse(200, [
+    { room_type: "Single Room", count: singleRoomCount },
+    { room_type: "Double Sharing", count: doubleSharingCount },
+    { room_type: "Triple Sharing", count: tripleSharingCount },
+    { room_type: "Four Sharing", count: fourSharingCount },
+  ], "Counted by room type"));
+});
 
 export const verifyHostel = asyncHandler(async (req, res) => {
   const { id, featured } = req.body;
-  await Hostel.findByIdAndUpdate(id, { $set: { featured } }, { new: true });
-  await axios.post("http://localhost:4000/backend-email-service/email", {
-    to: hostelData.email,
-    subject: "Property Listed Successfully!",
-    body: `   Thank you, your property has been listed!!`,
-    user: "Buddies.com",
-  });
+  const hostelData = await Hostel.findByIdAndUpdate(id, { $set: { featured } }, { new: true });
+  if (!hostelData) {
+    throw new ApiError(404, "Hostel not found");
+  }
+  try {
+    await axios.post("http://localhost:4000/backend-email-service/email", {
+      to: hostelData.owner_email,
+      subject: "Property Listed Successfully!",
+      body: `Thank you, your property has been listed!`,
+      user: "Buddies.com",
+    });
+  } catch {
+    // Email service unavailable - non-critical, continue
+  }
   return res
     .status(200)
-    .json(new ApiResponse(200, "Hostel verified successfully"));
+    .json(new ApiResponse(200, hostelData, "Hostel verified successfully"));
 });

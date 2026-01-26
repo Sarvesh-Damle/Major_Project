@@ -24,10 +24,19 @@ export const contact = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiResponse(200, query, "Message Submitted Successfully"));
+    .json(new ApiResponse(201, query, "Message submitted successfully"));
 });
 
 export const deleteContact = asyncHandler(async (req, res) => {
+  const contact = await Contact.findById(req.query.id);
+
+  if (!contact) {
+    throw new ApiError(404, "Contact message not found");
+  }
+
   await Contact.findByIdAndDelete(req.query.id);
-  return res.status(200).json(new ApiResponse(200, "Message query has been deleted"));
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Contact message deleted successfully"));
 });
