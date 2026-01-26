@@ -1,44 +1,41 @@
-import axios from "axios";
-import Table from "../Table/Table.jsx";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import Loader from "../../../components/Pages/Loader.jsx"
-import ErrorComponent from "../../../components/Pages/ErrorComponent.jsx";
-import { UserDeleteButton, UserEditButton } from "../Buttons.jsx";
-import { toast } from "react-toastify";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min.js";
+import axios from 'axios';
+import Table from '../Table/Table.jsx';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import Loader from '@/pages/Loader.jsx';
+import ErrorComponent from '@/pages/ErrorComponent.jsx';
+import { UserDeleteButton, UserEditButton } from '../Buttons.jsx';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const User = () => {
-  const navigate = useHistory();
+  const navigate = useNavigate();
   const mutation = useMutation({
     mutationKey: ['user-delete'],
     mutationFn: (prop) => {
-      return axios.delete(`/api/v1/users/delete-user?id=${prop._id}`,
-        {withCredentials: true}
-      )
+      return axios.delete(`/api/v1/users/delete-user?id=${prop._id}`, { withCredentials: true });
     },
-    onSuccess (data) {
-      toast.success(data.data.message); 
+    onSuccess(data) {
+      toast.success(data.data.message);
       refetch();
     },
-    onError (error) {
+    onError(error) {
       let message = error.response?.data?.message;
       toast.error(message);
-    }
-  })
+    },
+  });
   const handleDelete = (prop) => {
-    mutation.mutate({_id: prop._id});
+    mutation.mutate({ _id: prop._id });
   };
   const handleEdit = (prop) => {
-    console.log(prop)
-    navigate.push(`/dashboard/users/edit-user/${prop._id}`);
+    navigate(`/dashboard/users/edit-user/${prop._id}`);
   };
 
   let column = [
-    { field: "name", filter: true },
-    { field: "email", filter: true },
-    { field: "phoneNumber" },
+    { field: 'name', filter: true },
+    { field: 'email', filter: true },
+    { field: 'phoneNumber' },
     {
-      field: "Edit",
+      field: 'Edit',
       cellRenderer: (prop) => (
         // <EnrollButton func={handleEnroll} {...props} />
         // <button><MdModeEdit size={20} className="text-gray-600"/></button>
@@ -46,7 +43,7 @@ const User = () => {
       ),
     },
     {
-      field: "Delete",
+      field: 'Delete',
       cellRenderer: (prop) => (
         // <ViewAssigned func={view} {...props} />
         // <button><MdDelete size={23} className="text-red-400"/></button>
@@ -55,29 +52,32 @@ const User = () => {
     },
   ];
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["User"],
+    queryKey: ['User'],
     queryFn: async () => {
-      const response = await axios.get("/api/v1/users", { withCredentials: true });
+      const response = await axios.get('/api/v1/users', { withCredentials: true });
       return response.data;
-    }
-  })
-  
-  if (isLoading) return <div className="flex h-screen w-screen justify-center items-center"><Loader /></div>
-  if (isError) return <ErrorComponent />
+    },
+  });
+
+  if (isLoading)
+    return (
+      <div className='flex h-screen w-screen justify-center items-center'>
+        <Loader />
+      </div>
+    );
+  if (isError) return <ErrorComponent />;
   return (
-    <div className="w-[100vw] h-[90vh] bg-slate-100">
-      <div className="mr-3">
-        <div className="flex justify-between items-center  h-[120px] ">
-          <div className="w-[250px] ml-5 ">
-            <h1 className="text-2xl">Users</h1>
+    <div className='w-[100vw] h-[90vh] bg-slate-100'>
+      <div className='mr-3'>
+        <div className='flex justify-between items-center  h-[120px] '>
+          <div className='w-[250px] ml-5 '>
+            <h1 className='text-2xl'>Users</h1>
           </div>
         </div>
-        <div className="mt-2">
-          {!isLoading && <Table rowData={data} colDefs={column} />}
-        </div>
+        <div className='mt-2'>{!isLoading && <Table rowData={data} colDefs={column} />}</div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default User
+export default User;

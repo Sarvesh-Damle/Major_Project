@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
-import axios from "axios";
-import {toast} from "react-toastify";
+import { useState, useEffect, useCallback } from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const useFetch = (url) => {
   const [data, setData] = useState([]);
@@ -13,7 +13,7 @@ const useFetch = (url) => {
       const res = await axios.get(url);
       setData(res.data);
     } catch (error) {
-      toast.error("Something went wrong")
+      toast.error('Something went wrong');
       setError(error);
     }
     setLoading(false);
