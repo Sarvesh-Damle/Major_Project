@@ -83,7 +83,6 @@ const PropertyOwner = () => {
             <form
               onSubmit={methods.handleSubmit((formData) => {
                 mutation.mutate(formData);
-                console.log(formData);
               })}
               className='mt-4'
               encType='multipart/form-data'
