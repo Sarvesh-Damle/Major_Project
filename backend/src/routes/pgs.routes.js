@@ -1,6 +1,5 @@
 import express from "express";
-import PG from "../models/pgs.models.js";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { verifyJWT, verifyAdmin } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import {
   countNotVerifiedPGs,
@@ -13,7 +12,13 @@ import {
   updatePG,
   verifyPG,
 } from "../controllers/pgs.controllers.js";
-import { verifyAdmin } from "../utils/verifyToken.js";
+import {
+  createPGValidator,
+  idQueryValidator,
+  verifyPropertyValidator,
+  getAllPropertiesValidator,
+  validate,
+} from "../validators/index.js";
 
 const router = express.Router();
 
@@ -21,41 +26,48 @@ const router = express.Router();
 router.post(
   "/add-property-pg",
   verifyJWT,
-  upload.fields([
-    {
-      name: "property_photos",
-      maxCount: 5,
-    },
-  ]),
+  upload.fields([{ name: "property_photos", maxCount: 5 }]),
+  createPGValidator,
+  validate,
   createPG
 );
 
 // UPDATE
 router.put(
   "/update-pg",
-  upload.fields([
-    {
-      name: "property_photos",
-      maxCount: 5,
-    },
-  ]),
+  verifyJWT,
+  upload.fields([{ name: "property_photos", maxCount: 5 }]),
+  idQueryValidator,
+  validate,
   updatePG
 );
-router.put("/verify-pg", verifyJWT, verifyAdmin, verifyPG);
+
+router.put(
+  "/verify-pg",
+  verifyJWT,
+  verifyAdmin,
+  verifyPropertyValidator,
+  validate,
+  verifyPG
+);
+
 // DELETE
-router.delete("/delete-pg", verifyJWT, verifyAdmin,deletePG);
+router.delete(
+  "/delete-pg",
+  verifyJWT,
+  verifyAdmin,
+  idQueryValidator,
+  validate,
+  deletePG
+);
 
 // GET
-router.get("/find-pg", getPG);
+router.get("/find-pg", idQueryValidator, validate, getPG);
 router.get("/count-verified-pgs", countVerifiedPGs);
 router.get("/count-unverified-pgs", countNotVerifiedPGs);
 
 // GET ALL
-router.get("/find-all-pgs", getAllPG);
+router.get("/find-all-pgs", getAllPropertiesValidator, validate, getAllPG);
 router.get("/find-all-pgs-info", verifyJWT, verifyAdmin, getAllPGsInfo);
-
-// pending...
-// router.get("/countByAddress", countByAddress);
-// router.get("/countByType", countByType);
 
 export default router;
