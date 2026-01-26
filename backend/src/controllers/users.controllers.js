@@ -1,49 +1,56 @@
 import User from "../models/users.models.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { ApiError } from "../utils/ApiError.js";
 
-export const updateUser = async (req, res, next) => {
-  try {
-    const {name, email, phoneNumber, admin} = req.body;
-    const updatedUser = await User.findByIdAndUpdate(
-      req.query.id,
-      { $set: {name, email, phoneNumber, isAdmin:admin }},
-      { new: true }
-    );
-    res.status(200).json({message: "User updated successfully", updatedUser});
-  } catch (error) {
-    next(error);
-  }
-};
+export const updateUser = asyncHandler(async (req, res) => {
+  const { name, email, phoneNumber, admin } = req.body;
 
-export const deleteUser = async (req, res, next) => {
-  try {
-    const user = await User.findById(req.query.id);
-    if (!user) {
-      res.status(200).json({ message: "User not found" });
-    } else {
-      await User.findByIdAndDelete(req.query.id);
-      res.status(200).json({ message: "User has been deleted successfully" });
-    }
-  } catch (error) {
-    next(error);
-  }
-};
+  const updatedUser = await User.findByIdAndUpdate(
+    req.query.id,
+    { $set: { name, email, phoneNumber, isAdmin: admin } },
+    { new: true }
+  ).select("-password -refreshToken");
 
-export const getUser = async (req, res, next) => {
-  // const failed = true;
-  // if (failed) return next(createError(401, "You are not authenticated!"));
-  try {
-    const user = await User.findById(req.query.id).select("-password -refreshToken");
-    res.status(200).json(user);
-  } catch (error) {
-    next(error);
+  if (!updatedUser) {
+    throw new ApiError(404, "User not found");
   }
-};
 
-export const getAllUser = async (req, res, next) => {
-  try {
-    const Users = await User.find().select("-password -refreshToken -isAdmin");
-    res.status(200).json(Users);
-  } catch (error) {
-    next(error);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedUser, "User updated successfully"));
+});
+
+export const deleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.query.id);
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
   }
-};
+
+  await User.findByIdAndDelete(req.query.id);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "User deleted successfully"));
+});
+
+export const getUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.query.id).select("-password -refreshToken");
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "User fetched successfully"));
+});
+
+export const getAllUser = asyncHandler(async (req, res) => {
+  const users = await User.find().select("-password -refreshToken -isAdmin");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, users, "All users fetched successfully"));
+});
