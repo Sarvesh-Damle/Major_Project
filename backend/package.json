@@ -1,16 +1,29 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "This is backend of buddies major project",
-  "main": "index.js",
+  "description": "Backend API for Buddies property rental platform",
+  "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+    "dev": "nodemon -r dotenv/config src/index.js",
+    "start": "node -r dotenv/config src/index.js",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.js\"",
+    "validate-env": "node -r dotenv/config scripts/validate-env.js"
   },
-  "keywords": [],
+  "keywords": [
+    "rental",
+    "property",
+    "hostel",
+    "pg",
+    "flat"
+  ],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "axios": "^1.6.8",
     "bcryptjs": "^2.4.3",
@@ -29,6 +42,7 @@
     "multer": "1.4.5-lts.1"
   },
   "devDependencies": {
+    "eslint": "^8.57.1",
     "nodemon": "^3.0.3",
     "prettier": "3.2.5"
   }
