@@ -95,4 +95,12 @@ const hostelsSchema = new mongoose.Schema(
 
 hostelsSchema.plugin(mongooseAggregatePaginate);
 
+// Indexes for query optimization
+hostelsSchema.index({ city: 1, locality: 1 });
+hostelsSchema.index({ featured: 1 });
+hostelsSchema.index({ owner_email: 1 });
+hostelsSchema.index({ type_of_hostel: 1 });
+hostelsSchema.index({ rent_amount: 1 });
+hostelsSchema.index({ createdAt: -1 });
+
 export default mongoose.model("Hostel", hostelsSchema);

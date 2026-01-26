@@ -5,35 +5,25 @@ import {
   getUser,
   updateUser,
 } from "../controllers/users.controllers.js";
-import { verifyAdmin, verifyToken, verifyUser } from "../utils/verifyToken.js";
 import { getCurrentUser } from "../controllers/auth.controllers.js";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { verifyJWT, verifyAdmin, verifyOwnerOrAdmin } from "../middlewares/auth.middleware.js";
+import { idQueryValidator, validate } from "../validators/index.js";
 
 const router = express.Router();
 
-// router.get("/checkauthentication", verifyToken, (req, res, next) => {
-//     res.send("Hello user, you are logged in")
-// });
-
-// router.get("/checkuser/:id", verifyUser, (req, res, next) => {
-//     res.send("Hello user, you are logged in and you can delete your account")
-// });
-
-// router.get("/checkadmin/:id", verifyAdmin, (req, res, next) => {
-//     res.send("Hello admin, you are logged in and you can delete any account")
-// });
-
 // UPDATE
-router.put("/update-user", verifyJWT, updateUser);
+router.put("/update-user", verifyJWT, idQueryValidator, validate, updateUser);
+
 // DELETE
-router.delete("/delete-user", verifyJWT, verifyAdmin, deleteUser);
-// GET
-router.get("/get-user-info", verifyJWT, getUser);
-// GET ALL
+router.delete("/delete-user", verifyJWT, verifyAdmin, idQueryValidator, validate, deleteUser);
+
+// GET current user
+router.get("/me", verifyJWT, getCurrentUser);
+
+// GET user by id
+router.get("/get-user-info", verifyJWT, idQueryValidator, validate, getUser);
+
+// GET ALL users (admin only)
 router.get("/", verifyJWT, verifyAdmin, getAllUser);
-
-router.get("/me",verifyToken,getCurrentUser);
-
-
 
 export default router;
