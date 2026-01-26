@@ -17,7 +17,7 @@ npm run preview   # Preview production build
 ### Entry Points
 
 - `src/main.jsx` - App bootstrap with providers
-- `src/App.jsx` - Root component with routing
+- `src/App.jsx` - Root component with routing, Suspense, ErrorBoundary
 
 ### Folder Structure
 
@@ -29,7 +29,9 @@ src/
 │   ├── Authentication/ # SignIn, SignUp, OAuth, ResetPassword
 │   ├── Home/           # Landing page components
 │   ├── ListProperties/ # Property listing views
-│   └── Map/            # Leaflet map integration
+│   ├── Map/            # Leaflet map integration
+│   ├── ui/             # Reusable UI components
+│   └── ErrorBoundary.jsx
 ├── pages/              # Page components (Contact, Profile, etc.)
 │   └── ListingForms/   # Property listing forms
 ├── hooks/              # Custom React hooks
@@ -44,7 +46,6 @@ src/
 
 - **React Query** - Server state (`useQuery`, `useMutation`)
 - **Context API** - Auth state (`authContext.js`)
-- **Redux Toolkit** - Available but sparingly used
 
 ### Data Fetching
 
@@ -54,15 +55,43 @@ import { useQuery } from '@tanstack/react-query';
 const { data, isLoading } = useQuery({ queryKey: ['key'], queryFn: fetchFn });
 
 // Custom hooks available
-import { useFetch } from '@/hooks/useFetch';
+import { useFetch } from '@/hooks/useFetch'; // With AbortController
 import { useProperties } from '@/hooks/useProperties';
 ```
 
-### Routing (React Router v5)
+### Routing (React Router v6)
 
 ```javascript
-import { Switch, Route, useHistory, useParams } from 'react-router-dom';
-// Note: NOT v6 - uses Switch instead of Routes
+import { Routes, Route, useNavigate, useParams } from 'react-router-dom';
+
+// Navigation
+const navigate = useNavigate();
+navigate('/path');
+navigate('/path', { replace: true });
+```
+
+### Code Splitting
+
+```javascript
+// Route-based lazy loading in App.jsx
+const Home = lazy(() => import('./components/Home/Home.jsx'));
+const SignIn = lazy(() => import('./components/Authentication/SignIn.jsx'));
+
+// Wrap with Suspense
+<Suspense fallback={<Loader />}>
+  <Routes>...</Routes>
+</Suspense>;
+```
+
+### Error Handling
+
+```javascript
+// ErrorBoundary wraps all routes
+<ErrorBoundary>
+  <Suspense fallback={<Loader />}>
+    <Routes>...</Routes>
+  </Suspense>
+</ErrorBoundary>
 ```
 
 ### Styling
@@ -70,21 +99,18 @@ import { Switch, Route, useHistory, useParams } from 'react-router-dom';
 - **Tailwind CSS** - Utility-first, configured in `tailwind.config.js`
 - Class-based styling, no CSS modules
 
-### Forms
-
-- **react-hook-form** for form state management
-- Validation handled within form components
-
 ## Important Files
 
-| File                          | Purpose                                |
-| ----------------------------- | -------------------------------------- |
-| `src/firebase.js`             | Firebase configuration                 |
-| `src/provider/authContext.js` | Authentication context                 |
-| `src/hooks/useFetch.js`       | Generic data fetching hook             |
-| `src/hooks/useProperties.js`  | Property-specific queries              |
-| `src/data/Property.js`        | Static property data                   |
-| `src/data/Search.js`          | Search constants (colleges, companies) |
+| File                                | Purpose                               |
+| ----------------------------------- | ------------------------------------- |
+| `src/App.jsx`                       | Routes, lazy loading, error boundary  |
+| `src/firebase.js`                   | Firebase configuration (env vars)     |
+| `src/provider/authContext.js`       | Authentication context                |
+| `src/hooks/useFetch.js`             | Generic fetching with AbortController |
+| `src/hooks/useProperties.js`        | Property-specific queries             |
+| `src/components/ui/Dropdown.jsx`    | Reusable dropdown component           |
+| `src/components/ui/SearchInput.jsx` | Reusable search input                 |
+| `src/components/ErrorBoundary.jsx`  | Error boundary component              |
 
 ## Environment Variables
 
@@ -100,6 +126,33 @@ VITE_FIREBASE_APP_ID=
 VITE_API_URL=http://localhost:8000/api/v1
 ```
 
+## Build Configuration
+
+### Vite Config (`vite.config.js`)
+
+```javascript
+// Manual chunks for vendor splitting
+manualChunks: {
+  vendor: ['react', 'react-dom', 'react-router-dom'],
+  firebase: ['firebase/app', 'firebase/auth'],
+  maps: ['leaflet', 'react-leaflet'],
+}
+
+// Terser options - remove console in production
+terserOptions: {
+  compress: { drop_console: true }
+}
+```
+
+## Performance Optimizations
+
+1. **React.memo** on list components (PropertiesCard)
+2. **useCallback** for memoized handlers
+3. **AbortController** in useFetch for request cancellation
+4. **Lazy loading** for images (`loading="lazy"`)
+5. **Route-based code splitting** with React.lazy
+6. **Vendor chunking** in Vite config
+
 ## Code Quality
 
 - **ESLint** - Configured with React and Prettier plugins
@@ -114,3 +167,6 @@ VITE_API_URL=http://localhost:8000/api/v1
 3. Keep components focused and single-purpose
 4. Use React Query for API data, Context for auth state
 5. Handle loading/error states explicitly
+6. Wrap route components with React.lazy for code splitting
+7. Use ErrorBoundary for graceful error handling
+8. Memoize expensive list components with React.memo

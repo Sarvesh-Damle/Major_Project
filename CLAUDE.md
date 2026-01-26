@@ -17,14 +17,17 @@ Major_Project/
 ```bash
 cd backend
 npm install
-npm start          # Runs on http://localhost:8000
+npm run validate-env   # Check environment variables
+npm run dev            # Development with hot reload (http://localhost:8000)
+npm start              # Production mode
 ```
 
 ### Frontend
 ```bash
 cd frontend
 npm install
-npm run dev        # Runs on http://localhost:5173
+npm run dev            # Development (http://localhost:5173)
+npm run build          # Production build
 ```
 
 ## Tech Stack Overview
@@ -32,10 +35,12 @@ npm run dev        # Runs on http://localhost:5173
 | Layer     | Technology                                    |
 |-----------|-----------------------------------------------|
 | Frontend  | React 18, Vite, Tailwind CSS, React Query     |
-| Backend   | Node.js, Express.js, MongoDB, Mongoose        |
+| Backend   | Node.js 18+, Express.js, MongoDB, Mongoose    |
 | Auth      | JWT (Access/Refresh tokens), Firebase (OAuth) |
 | Storage   | Cloudinary (images)                           |
 | Maps      | Leaflet, ESRI Geocoder                        |
+| Security  | Helmet, express-rate-limit, express-validator |
+| Logging   | Winston (backend)                             |
 
 ## API Base URL
 
@@ -44,11 +49,34 @@ npm run dev        # Runs on http://localhost:5173
 
 ## Environment Files
 
-Both `frontend/.env` and `backend/.env` are required. See respective README files for required variables.
+Both `frontend/.env` and `backend/.env` are required. See:
+- `backend/.env.example` for backend variables
+- `frontend/README.md` for frontend variables
 
 ## Development Notes
 
 - Both packages use ES Modules (`"type": "module"`)
-- Frontend uses `react-router-dom` v5 (Switch, Route, useHistory)
-- Backend follows MVC pattern with utility classes (ApiError, ApiResponse, asyncHandler)
+- Frontend uses **React Router v6** (Routes, Route, useNavigate)
+- Backend follows MVC pattern with validators and middleware
 - Run `npm run lint` and `npm run format` before committing
+
+## Key Features
+
+### Frontend Optimizations
+- Route-based code splitting with React.lazy
+- Vendor chunking in Vite config
+- React.memo on list components
+- AbortController for request cancellation
+- ErrorBoundary for graceful error handling
+
+### Backend Security
+- Helmet for secure HTTP headers
+- Rate limiting (100/15min general, 10/15min auth)
+- Input validation with express-validator
+- CORS with configurable origins
+- Stack traces hidden in production
+
+### Database
+- MongoDB indexes on frequently queried fields
+- Batch queries for favorites (no N+1)
+- Mongoose with aggregate pagination support
