@@ -39,9 +39,6 @@ const HostelProperties = () => {
         }
         break;
       case 'Type of Hostel':
-        // const newTypeOfHostel = typeOfHostel.includes(value) ? typeOfHostel.filter((item) => item !== value) : [...typeOfHostel, value];
-        // setTypeOfHostel(newTypeOfHostel)
-        // console.log(typeOfHostel)
         break;
       case 'Sharing Type':
         if (sharingType.includes(value)) {
