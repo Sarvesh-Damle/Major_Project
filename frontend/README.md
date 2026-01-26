@@ -1,8 +1,43 @@
-# React + Vite
+# Buddies Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The user interface for the Buddies property rental platform. Built with React and Vite, offering a fast and responsive experience for searching and listing properties.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Property Search:** Filter by city, locality, and property type (Hostel, PG, Flat).
+- **Interactive Maps:** View property locations using Leaflet maps.
+- **User Dashboard:** Manage profile and favorites.
+- **Admin Dashboard:** Manage users and property verifications.
+- **Responsive Design:** Styled with Tailwind CSS for mobile and desktop.
+
+## Tech Stack
+
+- **React** (Vite)
+- **Tailwind CSS**
+- **React Query**
+- **Firebase** (for some auth features)
+
+## Getting Started
+
+1.  **Install Dependencies:**
+
+    ```bash
+    npm install
+    ```
+
+2.  **Environment Setup:**
+    Create a `.env` file with necessary keys (e.g., `VITE_FIREBASE_API_KEY`).
+
+3.  **Run Development Server:**
+    ```bash
+    npm run dev
+    ```
+    Access the app at `http://localhost:5173`.
+
+## Build
+
+To create a production build:
+
+```bash
+npm run build
+```
