@@ -13,9 +13,15 @@ import {
   updateHostel,
   verifyHostel,
 } from "../controllers/hostels.controllers.js";
-import { verifyAdmin } from "../utils/verifyToken.js";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { verifyJWT, verifyAdmin } from "../middlewares/auth.middleware.js";
 import { handleFileUploadError, upload } from "../middlewares/multer.middleware.js";
+import {
+  createHostelValidator,
+  idQueryValidator,
+  verifyPropertyValidator,
+  getAllPropertiesValidator,
+  validate,
+} from "../validators/index.js";
 
 const router = express.Router();
 
@@ -23,13 +29,10 @@ const router = express.Router();
 router.post(
   "/add-property",
   verifyJWT,
-  upload.fields([
-    {
-      name: "property_photos",
-      maxCount: 5
-    }
-  ]),
+  upload.fields([{ name: "property_photos", maxCount: 5 }]),
   handleFileUploadError,
+  createHostelValidator,
+  validate,
   createHostel
 );
 
@@ -37,31 +40,42 @@ router.post(
 router.put(
   "/update-hostel",
   verifyJWT,
-  upload.fields([
-    {
-      name: "property_photos",
-      maxCount: 5,
-    },
-  ]),
+  upload.fields([{ name: "property_photos", maxCount: 5 }]),
+  idQueryValidator,
+  validate,
   updateHostel
 );
 
-router.put("/verify-hostel", verifyJWT, verifyAdmin, verifyHostel);
+router.put(
+  "/verify-hostel",
+  verifyJWT,
+  verifyAdmin,
+  verifyPropertyValidator,
+  validate,
+  verifyHostel
+);
 
 // DELETE
-router.delete("/delete-hostel", verifyJWT, verifyAdmin, deleteHostel);
+router.delete(
+  "/delete-hostel",
+  verifyJWT,
+  verifyAdmin,
+  idQueryValidator,
+  validate,
+  deleteHostel
+);
 
 // GET
-router.get("/find-hostel", getHostel);
+router.get("/find-hostel", idQueryValidator, validate, getHostel);
 router.get("/count-verified-hostels", countVerifiedHostels);
 router.get("/count-unverified-hostels", countNotVerifiedHostels);
 router.get("/count-hostel-type", countHostelsByType);
 
 // GET ALL
-router.get("/find-all-hostels", getAllHostel);
+router.get("/find-all-hostels", getAllPropertiesValidator, validate, getAllHostel);
 router.get("/find-all-hostels-info", verifyJWT, verifyAdmin, getAllHostelsInfo);
 
-// pending...
+// Count endpoints
 router.get("/countByAddress", countByAddress);
 router.get("/countByType", countByType);
 

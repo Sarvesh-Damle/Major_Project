@@ -36,15 +36,19 @@ export const createPG = asyncHandler(async (req, res) => {
   if (!pg) {
     throw new ApiError(500, "Something went wrong while listing the property");
   }
-  await axios.post("http://localhost:4000/backend-email-service/email", {
-    to: hostelData.email,
-    subject: "Property Registration Process has began!",
-    body: `   Thank you, for providing property details!!\n\nOur Team will verify the property and will surely get back to you`,
-    user: "Buddies.com",
-  });
+  try {
+    await axios.post("http://localhost:4000/backend-email-service/email", {
+      to: pgData.owner_email,
+      subject: "Property Registration Process has began!",
+      body: `Thank you, for providing property details!\n\nOur Team will verify the property and will surely get back to you`,
+      user: "Buddies.com",
+    });
+  } catch {
+    // Email service unavailable - non-critical, continue
+  }
   return res
     .status(201)
-    .json(new ApiResponse(200, pg, "PG Property listed successfully"));
+    .json(new ApiResponse(201, pg, "PG Property listed successfully"));
 });
 
 export const updatePG = asyncHandler(async (req, res) => {
@@ -139,14 +143,21 @@ export const countNotVerifiedPGs = asyncHandler(async (req, res) => {
 
 export const verifyPG = asyncHandler(async (req, res) => {
   const { id, featured } = req.body;
-  await PG.findByIdAndUpdate(id, { $set: { featured } }, { new: true });
-  await axios.post("http://localhost:4000/backend-email-service/email", {
-    to: hostelData.email,
-    subject: "Property Listed Successfully!",
-    body: `   Thank you, your property has been listed!!`,
-    user: "Buddies.com",
-  });
+  const pgData = await PG.findByIdAndUpdate(id, { $set: { featured } }, { new: true });
+  if (!pgData) {
+    throw new ApiError(404, "PG not found");
+  }
+  try {
+    await axios.post("http://localhost:4000/backend-email-service/email", {
+      to: pgData.owner_email,
+      subject: "Property Listed Successfully!",
+      body: `Thank you, your property has been listed!`,
+      user: "Buddies.com",
+    });
+  } catch {
+    // Email service unavailable - non-critical, continue
+  }
   return res
     .status(200)
-    .json(new ApiResponse(200, "PG verified successfully"));
+    .json(new ApiResponse(200, pgData, "PG verified successfully"));
 });

@@ -51,7 +51,7 @@ const PGsSchema = new mongoose.Schema(
       required: true,
     },
     distance_from_nearest_railway_station: {
-      type: String,
+      type: Number,
       required: true,
     },
     distance_from_bus_stop: {
@@ -100,5 +100,13 @@ const PGsSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Indexes for query optimization
+PGsSchema.index({ city: 1, locality: 1 });
+PGsSchema.index({ featured: 1 });
+PGsSchema.index({ owner_email: 1 });
+PGsSchema.index({ preferred_tennats: 1 });
+PGsSchema.index({ rent_amount: 1 });
+PGsSchema.index({ createdAt: -1 });
 
 export default mongoose.model("PG", PGsSchema);
