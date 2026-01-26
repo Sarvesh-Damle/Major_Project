@@ -1,27 +1,21 @@
-import { useState } from "react";
-import { HiLocationMarker } from "react-icons/hi";
-import { useHistory } from "react-router-dom";
-import { toast } from "react-toastify";
-import { searchData } from "../../data/Search.js";
+import { useState } from 'react';
+import { HiLocationMarker } from 'react-icons/hi';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { searchData } from '../../data/Search.js';
 
 function SearchBar() {
   const [isDropdownOpenCity, setIsDropdownOpenCity] = useState(false);
-  const [searchValueCity, setSearchValueCity] = useState("");
+  const [searchValueCity, setSearchValueCity] = useState('');
   const [isDropdownOpenLocality, setIsDropdownOpenLocality] = useState(false);
-  const [searchValueLocality, setSearchValueLocality] = useState("");
+  const [searchValueLocality, setSearchValueLocality] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
-  // const [isDropdownOpenHostel, setIsDropdownOpenHostel] = useState(false);
-  // const [searchValueHostel, setSearchValueHostel] = useState("");
-  // const [isDropdownOpenPG, setIsDropdownOpenPG] = useState(false);
-  // const [searchValuePG, setSearchValuePG] = useState("");
-  // const [isDropdownOpenFlat, setIsDropdownOpenFlat] = useState(false);
-  // const [searchValueFlat, setSearchValueFlat] = useState("");
-  const [instituteName, setInstituteName] = useState("");
+  const [searchValue, setSearchValue] = useState('');
+  const [instituteName, setInstituteName] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [showResults, setShowResults] = useState(false);
 
-  const navigate = useHistory();
+  const navigate = useNavigate();
 
   const toggleDropdownCity = () => {
     setIsDropdownOpenLocality(false);
@@ -89,108 +83,117 @@ function SearchBar() {
   //   if (searchValueLocality) {
   //     queryParams.append("locality", searchValueLocality);
   //   }
-  //   navigate.push(`/search?${queryParams.toString()}`);
+  //   navigate(`/search?${queryParams.toString()}`);
   // }
   const handleSearch = (e) => {
     e.preventDefault();
-    let url = "";
-    if (searchValue === "Hostels") {
-      url = "/hostels";
+    let url = '';
+    if (searchValue === 'Hostels') {
+      url = '/hostels';
     }
-    if (searchValue === "PGs") {
-      url = "/pgs";
+    if (searchValue === 'PGs') {
+      url = '/pgs';
     }
-    if (searchValue === "Flats") {
-      url = "/flats";
+    if (searchValue === 'Flats') {
+      url = '/flats';
     }
     if (!searchValue) {
-      toast.error("Please select type!");
+      toast.error('Please select type!');
       return;
     }
     if (!searchValueCity) {
-      toast.error("Please select city!");
+      toast.error('Please select city!');
       return;
     }
     url = url.concat(`?city=${searchValueCity.toLowerCase()}`);
     if (searchValueLocality) {
       url = url.concat(`&locality=${searchValueLocality.toLowerCase()}`);
     }
-    navigate.push(url);
-  }
+    navigate(url);
+  };
   let lastSelectedLocality;
   const handleFilter = (e) => {
     const searchWord = e.target.value.toLowerCase();
     setInstituteName(searchWord);
     const newFilter = searchData.filter((value) => {
       return value.name.toLowerCase().includes(searchWord);
-    })
+    });
     setFilteredData(newFilter);
-    if (searchWord === "") {
+    if (searchWord === '') {
       setShowResults(false);
     }
-  }
+  };
   const handleSearchClick = (value) => {
-    if (instituteName === "None") {
+    if (instituteName === 'None') {
       setShowResults(false);
-      setInstituteName("");
+      setInstituteName('');
     }
-    if (instituteName === "") {
+    if (instituteName === '') {
       setShowResults(false);
     }
     setInstituteName(value.name);
     setShowResults(true);
-    lastSelectedLocality = value.name.split(",").pop().trim();
+    lastSelectedLocality = value.name.split(',').pop().trim();
     setSearchValueLocality(lastSelectedLocality);
-  }
+  };
 
   return (
-    <form onSubmit={handleSearch} className="flex flex-col sm:flex-row sm:justify-center max-lg:flex-wrap mt-8 mb-14">
+    <form
+      onSubmit={handleSearch}
+      className='flex flex-col sm:flex-row sm:justify-center max-lg:flex-wrap mt-8 mb-14'
+    >
       {/* city search */}
-      <div className="relative max-sm:mb-4 max-sm:mx-8 max-sm:flex max-sm:flex-wrap">
+      <div className='relative max-sm:mb-4 max-sm:mx-8 max-sm:flex max-sm:flex-wrap'>
         <button
-          className="w-full text-center inline-flex items-center font-medium px-6 py-3 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95 bg-blue-gradient"
-          type="button"
+          className='w-full text-center inline-flex items-center font-medium px-6 py-3 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95 bg-blue-gradient'
+          type='button'
           onClick={toggleDropdownCity}
         >
-          {searchValueCity || "Select city"}
-          {isDropdownOpenCity ?
-            (<svg
-              className="w-2.5 h-2.5 ms-3"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 10 6"
+          {searchValueCity || 'Select city'}
+          {isDropdownOpenCity ? (
+            <svg
+              className='w-2.5 h-2.5 ms-3'
+              aria-hidden='true'
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 10 6'
             >
               <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M1 5 5 1 9 5"
+                stroke='currentColor'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='M1 5 5 1 9 5'
               />
-            </svg>) : (<svg
-              className="w-2.5 h-2.5 ms-3"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 10 6"
+            </svg>
+          ) : (
+            <svg
+              className='w-2.5 h-2.5 ms-3'
+              aria-hidden='true'
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 10 6'
             >
               <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="m1 1 4 4 4-4"
+                stroke='currentColor'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='m1 1 4 4 4-4'
               />
-            </svg>)}
+            </svg>
+          )}
         </button>
         <div
-          className={`absolute z-10 ${isDropdownOpenCity ? "block" : "hidden"} bg-white divide-y divide-gray-100 rounded-lg shadow w-56`}
-          style={{ top: "calc(100% + 5px)", left: "50%", transform: "translateX(-50%)" }}
+          className={`absolute z-10 ${isDropdownOpenCity ? 'block' : 'hidden'} bg-white divide-y divide-gray-100 rounded-lg shadow w-56`}
+          style={{ top: 'calc(100% + 5px)', left: '50%', transform: 'translateX(-50%)' }}
           onMouseLeave={() => setIsDropdownOpenCity(false)}
         >
-          <ul className="py-2 text-sm text-gray-700 divide-y divide-gray-100 font-medium">
-            <li className="block px-4 py-2 cursor-pointer hover:bg-gray-100" onClick={() => handleDropdownItemClickCity("Mumbai")}>
+          <ul className='py-2 text-sm text-gray-700 divide-y divide-gray-100 font-medium'>
+            <li
+              className='block px-4 py-2 cursor-pointer hover:bg-gray-100'
+              onClick={() => handleDropdownItemClickCity('Mumbai')}
+            >
               Mumbai
             </li>
             {/* <li className="block px-4 py-2 cursor-pointer hover:bg-gray-100" onClick={() => handleDropdownItemClickCity("Pune")}>
@@ -206,123 +209,156 @@ function SearchBar() {
         </div>
       </div>
       {/* locality search */}
-      <div className="relative max-sm:mb-4 max-sm:mx-7 max-sm:flex max-sm:flex-wrap">
+      <div className='relative max-sm:mb-4 max-sm:mx-7 max-sm:flex max-sm:flex-wrap'>
         <button
-          className="w-full text-center inline-flex items-center font-medium px-6 py-3 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95 bg-blue-gradient mx-1"
-          type="button"
+          className='w-full text-center inline-flex items-center font-medium px-6 py-3 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95 bg-blue-gradient mx-1'
+          type='button'
           onClick={toggleDropdownLocality}
         >
-          {searchValueLocality || "Select Locality"}
-          {isDropdownOpenLocality ?
-            (<svg
-              className="w-2.5 h-2.5 ms-3"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 10 6"
+          {searchValueLocality || 'Select Locality'}
+          {isDropdownOpenLocality ? (
+            <svg
+              className='w-2.5 h-2.5 ms-3'
+              aria-hidden='true'
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 10 6'
             >
               <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M1 5 5 1 9 5"
+                stroke='currentColor'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='M1 5 5 1 9 5'
               />
-            </svg>) : (<svg
-              className="w-2.5 h-2.5 ms-3"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 10 6"
+            </svg>
+          ) : (
+            <svg
+              className='w-2.5 h-2.5 ms-3'
+              aria-hidden='true'
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 10 6'
             >
               <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="m1 1 4 4 4-4"
+                stroke='currentColor'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='m1 1 4 4 4-4'
               />
-            </svg>)}
+            </svg>
+          )}
         </button>
         <div
-          className={`absolute z-10 ${isDropdownOpenLocality ? "block" : "hidden"} bg-white divide-y divide-gray-100 rounded-lg shadow w-56`}
-          style={{ top: "calc(100% + 5px)", left: "50%", transform: "translateX(-50%)" }}
+          className={`absolute z-10 ${isDropdownOpenLocality ? 'block' : 'hidden'} bg-white divide-y divide-gray-100 rounded-lg shadow w-56`}
+          style={{ top: 'calc(100% + 5px)', left: '50%', transform: 'translateX(-50%)' }}
           onMouseLeave={() => setIsDropdownOpenLocality(false)}
         >
-          <ul className="py-2 text-sm text-gray-700 divide-y divide-gray-100 font-medium">
-            <li className="block px-4 py-2 cursor-pointer hover:bg-gray-100" onClick={() => handleDropdownItemClickLocality("Wadala")}>
+          <ul className='py-2 text-sm text-gray-700 divide-y divide-gray-100 font-medium'>
+            <li
+              className='block px-4 py-2 cursor-pointer hover:bg-gray-100'
+              onClick={() => handleDropdownItemClickLocality('Wadala')}
+            >
               Wadala
             </li>
-            <li className="block px-4 py-2 cursor-pointer hover:bg-gray-100" onClick={() => handleDropdownItemClickLocality("Dadar")}>
+            <li
+              className='block px-4 py-2 cursor-pointer hover:bg-gray-100'
+              onClick={() => handleDropdownItemClickLocality('Dadar')}
+            >
               Dadar
             </li>
-            <li className="block px-4 py-2 cursor-pointer hover:bg-gray-100" onClick={() => handleDropdownItemClickLocality("Thane")}>
+            <li
+              className='block px-4 py-2 cursor-pointer hover:bg-gray-100'
+              onClick={() => handleDropdownItemClickLocality('Thane')}
+            >
               Thane
             </li>
-            <li className="block px-4 py-2 cursor-pointer hover:bg-gray-100" onClick={() => handleDropdownItemClickLocality("Andheri")}>
+            <li
+              className='block px-4 py-2 cursor-pointer hover:bg-gray-100'
+              onClick={() => handleDropdownItemClickLocality('Andheri')}
+            >
               Andheri
             </li>
-            <li className="block px-4 py-2 cursor-pointer hover:bg-gray-100" onClick={() => handleDropdownItemClickLocality("Matunga")}>
+            <li
+              className='block px-4 py-2 cursor-pointer hover:bg-gray-100'
+              onClick={() => handleDropdownItemClickLocality('Matunga')}
+            >
               Matunga
             </li>
-            <li className="block px-4 py-2 cursor-pointer hover:bg-gray-100" onClick={() => handleDropdownItemClickLocality("Vashi")}>
+            <li
+              className='block px-4 py-2 cursor-pointer hover:bg-gray-100'
+              onClick={() => handleDropdownItemClickLocality('Vashi')}
+            >
               Vashi
             </li>
           </ul>
         </div>
       </div>
       {/* type search */}
-      <div className="relative max-sm:mb-4 max-sm:mx-6 max-sm:flex max-sm:flex-wrap">
+      <div className='relative max-sm:mb-4 max-sm:mx-6 max-sm:flex max-sm:flex-wrap'>
         <button
-          className="w-full text-center inline-flex items-center font-medium px-6 py-3 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95 bg-blue-gradient mx-2"
-          type="button"
+          className='w-full text-center inline-flex items-center font-medium px-6 py-3 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95 bg-blue-gradient mx-2'
+          type='button'
           onClick={toggleDropdown}
         >
-          {searchValue || "Select type"}
-          {isDropdownOpen ?
-            (<svg
-              className="w-2.5 h-2.5 ms-3"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 10 6"
+          {searchValue || 'Select type'}
+          {isDropdownOpen ? (
+            <svg
+              className='w-2.5 h-2.5 ms-3'
+              aria-hidden='true'
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 10 6'
             >
               <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M1 5 5 1 9 5"
+                stroke='currentColor'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='M1 5 5 1 9 5'
               />
-            </svg>) : (<svg
-              className="w-2.5 h-2.5 ms-3"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 10 6"
+            </svg>
+          ) : (
+            <svg
+              className='w-2.5 h-2.5 ms-3'
+              aria-hidden='true'
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 10 6'
             >
               <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="m1 1 4 4 4-4"
+                stroke='currentColor'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='m1 1 4 4 4-4'
               />
-            </svg>)}
+            </svg>
+          )}
         </button>
         <div
-          className={`absolute z-10 ${isDropdownOpen ? "block" : "hidden"} bg-white divide-y divide-gray-100 rounded-lg shadow w-56`}
-          style={{ top: "calc(100% + 5px)", left: "50%", transform: "translateX(-50%)" }}
+          className={`absolute z-10 ${isDropdownOpen ? 'block' : 'hidden'} bg-white divide-y divide-gray-100 rounded-lg shadow w-56`}
+          style={{ top: 'calc(100% + 5px)', left: '50%', transform: 'translateX(-50%)' }}
           onMouseLeave={() => setIsDropdownOpen(false)}
         >
-          <ul className="py-2 text-sm text-gray-700 divide-y divide-gray-100 font-medium">
-            <li className="block px-4 py-2 cursor-pointer hover:bg-gray-100" onClick={() => handleDropdownItemClick("Hostels")}>
+          <ul className='py-2 text-sm text-gray-700 divide-y divide-gray-100 font-medium'>
+            <li
+              className='block px-4 py-2 cursor-pointer hover:bg-gray-100'
+              onClick={() => handleDropdownItemClick('Hostels')}
+            >
               Hostels
             </li>
-            <li className="block px-4 py-2 cursor-pointer hover:bg-gray-100" onClick={() => handleDropdownItemClick("PGs")}>
+            <li
+              className='block px-4 py-2 cursor-pointer hover:bg-gray-100'
+              onClick={() => handleDropdownItemClick('PGs')}
+            >
               PGs
             </li>
-            <li className="block px-4 py-2 cursor-pointer hover:bg-gray-100" onClick={() => handleDropdownItemClick("Flats")}>
+            <li
+              className='block px-4 py-2 cursor-pointer hover:bg-gray-100'
+              onClick={() => handleDropdownItemClick('Flats')}
+            >
               Flats
             </li>
           </ul>
@@ -497,24 +533,56 @@ function SearchBar() {
           </ul>
         </div>
       </div>) : null} */}
-      <div className="w-1/3 flex max-sm:flex-col max-sm:flex-wrap max-sm:w-96 gap-0.5 max-sm:gap-3 max-sm:justify-center max-sm:items-center justify-center mx-1 ml-3">
+      <div className='w-1/3 flex max-sm:flex-col max-sm:flex-wrap max-sm:w-96 gap-0.5 max-sm:gap-3 max-sm:justify-center max-sm:items-center justify-center mx-1 ml-3'>
         {/* custom search bar */}
-        <div className="w-full flex flex-col gap-0.5 search">
-          <div className="flex searchInputs">
-            <input type="search" placeholder="Search near your College, Company..." className="w-full max-sm:w-[250%] flex gap-y-8  bg-white rounded-lg border-2 border-solid border-gray-300 border-opacity-50 p-3 mx-0.5 justify-between" onChange={handleFilter} value={instituteName} />
+        <div className='w-full flex flex-col gap-0.5 search'>
+          <div className='flex searchInputs'>
+            <input
+              type='search'
+              placeholder='Search near your College, Company...'
+              className='w-full max-sm:w-[250%] flex gap-y-8  bg-white rounded-lg border-2 border-solid border-gray-300 border-opacity-50 p-3 mx-0.5 justify-between'
+              onChange={handleFilter}
+              value={instituteName}
+            />
           </div>
-          {filteredData.length > 0 && (<div className={` w-[340px] h-[200px] bg-white shadow-gray-800 overflow-hidden overflow-y-auto no-scrollbar dataResult ${showResults ? "hidden" : "block"}`}>
-            {filteredData.map((value, index) => {
-              return <div key={index} className="w-[100%] h-[50px] flex text-black cursor-pointer hover:bg-gray-200 dataItem" onClick={() => {handleSearchClick(value)}}><p className="ml-[10px]">{value.name}</p></div>
-            })}
-          </div>)}
+          {filteredData.length > 0 && (
+            <div
+              className={` w-[340px] h-[200px] bg-white shadow-gray-800 overflow-hidden overflow-y-auto no-scrollbar dataResult ${showResults ? 'hidden' : 'block'}`}
+            >
+              {filteredData.map((value, index) => {
+                return (
+                  <div
+                    key={index}
+                    className='w-[100%] h-[50px] flex text-black cursor-pointer hover:bg-gray-200 dataItem'
+                    onClick={() => {
+                      handleSearchClick(value);
+                    }}
+                  >
+                    <p className='ml-[10px]'>{value.name}</p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
         <button
-          type="submit"
-          className="px-1.5 gap-3 w-32 max-sm:w-40 h-14 flex justify-center items-center font-medium ml-0.5 bg-blue-gradient text-white rounded-lg border-none transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95"
+          type='submit'
+          className='px-1.5 gap-3 w-32 max-sm:w-40 h-14 flex justify-center items-center font-medium ml-0.5 bg-blue-gradient text-white rounded-lg border-none transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95'
         >
-          <svg className="w-4 h-4 mt-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+          <svg
+            className='w-4 h-4 mt-1'
+            aria-hidden='true'
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 20 20'
+          >
+            <path
+              stroke='currentColor'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth='2'
+              d='m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z'
+            />
           </svg>
           <span>Search</span>
         </button>
@@ -526,13 +594,19 @@ function SearchBar() {
 export const SearchBar2 = () => {
   return (
     <>
-      <div className="flex flex-wrap gap-y-8 items-center bg-white rounded border-2 border-solid border-gray-400 border-opacity-50 py-2 px-4 justify-between w-[100%] search-bar">
-        <HiLocationMarker className="text-blue" size={25} />
-        <input type="text" placeholder="Enter locality, city..." className="border-none outline-none text-black font-medium text-lg" />
-        <button className="font-medium px-6 py-2.5 text-white border-none rounded transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-110 bg-blue-gradient">Search</button>
+      <div className='flex flex-wrap gap-y-8 items-center bg-white rounded border-2 border-solid border-gray-400 border-opacity-50 py-2 px-4 justify-between w-[100%] search-bar'>
+        <HiLocationMarker className='text-blue' size={25} />
+        <input
+          type='text'
+          placeholder='Enter locality, city...'
+          className='border-none outline-none text-black font-medium text-lg'
+        />
+        <button className='font-medium px-6 py-2.5 text-white border-none rounded transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-110 bg-blue-gradient'>
+          Search
+        </button>
       </div>
     </>
-  )
-}
+  );
+};
 
 export default SearchBar;
