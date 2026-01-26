@@ -69,7 +69,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiResponse(200, createdUser, "User registered successfully"));
+    .json(new ApiResponse(201, createdUser, "User registered successfully"));
 });
 
 const loginUser = asyncHandler(async (req, res, next) => {
@@ -131,43 +131,37 @@ const loginUser = asyncHandler(async (req, res, next) => {
     );
 });
 
-const google = asyncHandler(async (req, res, next) => {
-  const { email } = req.body;
-  
+const google = asyncHandler(async (req, res) => {
+  const { email, name } = req.body;
+
   if (!email) {
     throw new ApiError(400, "email is required");
   }
-  
-  const user = await User.findOne({ email });
-  
+
+  let user = await User.findOne({ email });
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
   if (!user) {
+    // Create new user for Google OAuth
     const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
     const hashedPassword = bcrypt.hashSync(generatedPassword, 10);
-    const user = await User.create({
-      name: req.body.name.split(" ").join("").toLowerCase(),
-      email: req.body.email,
+    user = await User.create({
+      name: name?.split(" ").join("").toLowerCase() || email.split("@")[0],
+      email,
       password: hashedPassword,
       phoneNumber: "",
     });
-  
-    const createdUser = await User.findById(user._id).select(
-      "-password -refreshToken"
-    );
-    const options = {
-      httpOnly: true,
-      secure: true,
-    }; // makes it secure so that only server can modify the cookies
-    if (!createdUser) {
+
+    if (!user) {
       throw new ApiError(500, "Something went wrong while registering a user");
     }
-  
-    return res
-      .status(201)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
-      .json(new ApiResponse(200, createdUser, "User registered successfully"));
   }
 
+  // Generate tokens for both new and existing users
   const { accessToken, refreshToken } = await generateRefreshAndAccessTokens(
     user._id
   );
@@ -175,11 +169,6 @@ const google = asyncHandler(async (req, res, next) => {
   const loggedInUser = await User.findById(user._id).select(
     "-password -refreshToken"
   );
-
-  const options = {
-    httpOnly: true,
-    secure: true,
-  }; // makes it secure so that only server can modify the cookies
 
   return res
     .status(200)
