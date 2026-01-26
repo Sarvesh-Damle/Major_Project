@@ -5,8 +5,12 @@ Node.js + Express API server for the Buddies property rental platform.
 ## Commands
 
 ```bash
-npm start         # Start with nodemon (development)
-npm test          # Run tests (not configured yet)
+npm run dev           # Start with nodemon (development)
+npm start             # Start production server
+npm run lint          # Run ESLint
+npm run lint:fix      # Fix ESLint errors
+npm run format        # Format with Prettier
+npm run validate-env  # Validate environment variables
 ```
 
 ## Architecture
@@ -19,9 +23,10 @@ npm test          # Run tests (not configured yet)
 ```
 src/
 ├── controllers/    # Request handlers (business logic)
-├── models/         # Mongoose schemas
-├── routes/         # Route definitions
-├── middlewares/    # Auth, file upload
+├── models/         # Mongoose schemas with indexes
+├── routes/         # Route definitions with validators
+├── middlewares/    # Auth, file upload, validation
+├── validators/     # Input validation schemas
 ├── utils/          # Helper classes and functions
 └── db/             # Database connection
 ```
@@ -29,9 +34,9 @@ src/
 ## MVC Pattern
 
 ```
-Request → Route → Controller → Model → Database
-                      ↓
-                  Response (ApiResponse)
+Request → Route → Validator → Controller → Model → Database
+                                 ↓
+                             Response (ApiResponse)
 ```
 
 ## Key Patterns
@@ -52,7 +57,7 @@ export const getItems = asyncHandler(async (req, res) => {
 ```javascript
 // Always use ApiError for throwing errors
 throw new ApiError(404, 'Resource not found');
-throw new ApiError(400, 'Validation failed', errors);
+throw new ApiError(400, 'Validation failed');
 
 // asyncHandler wraps async functions and catches errors
 ```
@@ -71,11 +76,35 @@ new ApiResponse(statusCode, data, message)
 }
 ```
 
+### Input Validation
+```javascript
+// validators/property.validators.js
+import { body, query } from 'express-validator';
+
+export const createPropertyValidator = [
+  body('owner_name').trim().notEmpty(),
+  body('owner_email').isEmail().normalizeEmail(),
+  body('rent_amount').isInt({ min: 0 }),
+];
+
+// In routes
+router.post('/add', verifyJWT, createPropertyValidator, validate, controller);
+```
+
+### Logging
+```javascript
+import logger from '../utils/logger.js';
+
+logger.info('Operation completed', { userId, action });
+logger.error('Error occurred', { error: err.message, stack: err.stack });
+logger.warn('Warning', { details });
+```
+
 ## API Routes
 
 | Route | Controller | Description |
 |-------|------------|-------------|
-| `/api/v1/auth` | auth.controllers.js | Register, Login, Logout, Refresh |
+| `/api/v1/auth` | auth.controllers.js | Register, Login, Logout, Refresh, Google OAuth |
 | `/api/v1/users` | users.controllers.js | User CRUD, Profile |
 | `/api/v1/hostels` | hostels.controllers.js | Hostel listings |
 | `/api/v1/pgs` | pgs.controllers.js | PG listings |
@@ -86,15 +115,31 @@ new ApiResponse(statusCode, data, message)
 ## Authentication
 
 ### JWT Strategy
-- **Access Token** - Short-lived, sent in Authorization header
-- **Refresh Token** - Long-lived, stored in HTTP-only cookie
+- **Access Token** - Short-lived (1d), sent in Authorization header or cookie
+- **Refresh Token** - Long-lived (10d), stored in HTTP-only cookie
 
 ### Middleware
 ```javascript
-import { verifyJWT } from '../middlewares/auth.middleware.js';
+import { verifyJWT, verifyAdmin } from '../middlewares/auth.middleware.js';
 
 // Protected route
 router.get('/protected', verifyJWT, controller);
+
+// Admin-only route
+router.delete('/admin-only', verifyJWT, verifyAdmin, controller);
+```
+
+## Security Middleware
+
+```javascript
+// app.js - Applied in order
+app.use(helmet());                    // Secure HTTP headers
+app.use(compression());               // Response compression
+app.use('/api/v1', generalLimiter);   // Rate limiting (100/15min)
+app.use('/api/v1/auth', authLimiter); // Stricter for auth (10/15min)
+app.use(cors({ ... }));               // CORS with env-based origins
+app.use(express.json({ limit: '10kb' })); // Body size limit
+app.use(requestLogger);               // Winston request logging
 ```
 
 ## File Upload
@@ -105,52 +150,59 @@ import { upload } from '../middlewares/multer.middleware.js';
 import { uploadOnCloudinary } from '../utils/cloudinary.js';
 
 // Route with file upload
-router.post('/upload', upload.single('image'), controller);
+router.post('/upload', upload.fields([{ name: 'photos', maxCount: 5 }]), controller);
 
 // In controller
-const result = await uploadOnCloudinary(req.file.path);
+const result = await uploadOnCloudinary(req.files.photos[0].path);
 ```
 
 ## Models
 
-| Model | File | Key Fields |
-|-------|------|------------|
-| User | users.models.js | email, password, refreshToken |
-| Hostel | hostels.models.js | name, address, price, amenities |
-| PG | pgs.models.js | name, address, price, amenities |
-| Flat | flats.models.js | name, address, price, amenities |
-| Favourite | favourites.models.js | user, propertyType, propertyId |
-| Contact | contact.models.js | name, email, message |
+| Model | File | Key Fields | Indexes |
+|-------|------|------------|---------|
+| User | users.models.js | email, password, refreshToken | email (unique) |
+| Hostel | hostels.models.js | hostel_name, city, rent_amount | city+locality, featured, type |
+| PG | pgs.models.js | pg_name, city, rent_amount | city+locality, featured, tenant |
+| Flat | flats.models.js | flat_type, city, rent_amount | city+locality, featured, type |
+| Favourite | favourites.models.js | userId, properties | userId |
+| Contact | contact.models.js | name, email, message | - |
 
 ## Environment Variables
 
 Required in `.env`:
 ```
 PORT=8000
-MONGO_URI=mongodb://localhost:27017/buddies
-CORS_ORIGIN=http://localhost:5173
+NODE_ENV=development
+ALLOWED_ORIGINS=http://localhost:5173,http://localhost:8000
 
-ACCESS_TOKEN_SECRET=your_secret
+MONGO_URI=mongodb+srv://...
+
+ACCESS_TOKEN_SECRET=your-secret
 ACCESS_TOKEN_EXPIRY=1d
-REFRESH_TOKEN_SECRET=your_secret
+REFRESH_TOKEN_SECRET=your-secret
 REFRESH_TOKEN_EXPIRY=10d
 
 CLOUDINARY_CLOUD_NAME=
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
+
+EMAIL_SERVICE_URL=http://localhost:4000  # Optional
 ```
 
 ## Code Quality
 
 - **ES Modules** - Use `import`/`export` syntax
+- **ESLint** - Configured in `.eslintrc.cjs`
 - **Prettier** - Code formatting (`.prettierrc`)
-- Run `npx prettier --write .` before committing
+- Run `npm run lint` before committing
 
 ## Development Guidelines
 
 1. Always wrap async controllers with `asyncHandler`
 2. Use `ApiError` for all error responses
 3. Use `ApiResponse` for all success responses
-4. Validate request data before processing
-5. Handle file cleanup on upload errors
-6. Use meaningful HTTP status codes
+4. Add validators for all routes accepting user input
+5. Use proper HTTP status codes (201 create, 404 not found, etc.)
+6. Log errors with `logger.error()`, info with `logger.info()`
+7. Handle file cleanup on upload errors
+8. Use database indexes for frequently queried fields
