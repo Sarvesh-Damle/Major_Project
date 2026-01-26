@@ -1,22 +1,22 @@
-import Card from './Cards.jsx';
-import Flatmates from './Flatmates.jsx';
-import Featured from './Featured.jsx';
-import Rooms from './Rooms.jsx';
+// import Card from './Cards.jsx';
+// import Flatmates from './Flatmates.jsx';
+// import Featured from './Featured.jsx';
+// import Rooms from './Rooms.jsx';
 import SearchBar from './SearchBar.jsx';
 import Testimonials from './Testimonials/Testimonials.jsx';
 import testimonialsData from './Testimonials/testimonialsData.js';
 import Hero from './Hero.jsx';
-import Properties from './Properties.jsx';
+// import Properties from './Properties.jsx';
 import Value from './Value/Value.jsx';
-import Map from '../Map/Map.jsx';
+// import Map from '../Map/Map.jsx';
 
 const Home = () => {
   return (
     <div>
-      <Hero/>
-      <SearchBar/>
+      <Hero />
+      <SearchBar />
       {/* <Properties/> */}
-      <Value/>
+      <Value />
       {/* <Featured /> */}
       {/* <Rooms /> */}
       {/* <h1 className="flex justify-center items-center text-3xl p-1 my-2">Flats/Rooms</h1>
@@ -25,9 +25,9 @@ const Home = () => {
       <Card image="https://res.cloudinary.com/sarvesh-damle/image/upload/v1699037701/Buddies_MajorProject/property_images/hostel_image_sgsi52.jpg" cardarray={CardArray2} />
       <h1 className="flex justify-center items-center text-3xl p-1 my-2">Flatmates</h1>
       <Flatmates /> */}
-      <Testimonials testimonials={testimonialsData}/>
+      <Testimonials testimonials={testimonialsData} />
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
