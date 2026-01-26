@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { loginContext } from './provider/authContext.js';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
 import Loader from './pages/Loader.jsx';
 import Navbar from './pages/Navbar.jsx';
 import Footer from './pages/Footer.jsx';
@@ -63,99 +64,101 @@ const App = () => {
       <loginContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
         {url_name === 'dashboard' ? null : <Navbar />}
         <ScrollToTop />
-        <Suspense fallback={<Loader />}>
-          <Routes>
-            <Route path='/' element={<Home />} />
-            <Route path='/signin' element={<SignIn />} />
-            <Route path='/signup' element={<SignUp />} />
-            <Route path='/hostels' element={<HostelProperties />} />
-            <Route path='/hostels/:propertyId' element={<HostelProperty />} />
-            <Route path='/pgs' element={<PGProperties />} />
-            <Route path='/pgs/:propertyId' element={<PGProperty />} />
-            <Route path='/flats' element={<FlatProperties />} />
-            <Route path='/flats/:propertyId' element={<FlatProperty />} />
-            <Route path='/profile' element={<Profile />} />
-            <Route path='/contact' element={<Contact />} />
-            <Route path='/team' element={<Team />} />
-            <Route path='/list' element={<ListProperty />} />
-            <Route path='/owner' element={<PropertyOwner />} />
-            <Route path='/students' element={<Students />} />
-            <Route path='/reset-password' element={<ResetPassword />} />
-            <Route
-              path='/dashboard'
-              element={
-                <ProtectedRoute>
-                  <AdminHome />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path='/dashboard/users'
-              element={
-                <ProtectedRoute>
-                  <User />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path='/dashboard/users/edit-user/:id'
-              element={
-                <ProtectedRoute>
-                  <EditUser />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path='/dashboard/hostels'
-              element={
-                <ProtectedRoute>
-                  <Hostel />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path='/dashboard/hostels/edit-hostel/:id'
-              element={
-                <ProtectedRoute>
-                  <EditHostel />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path='/dashboard/pgs'
-              element={
-                <ProtectedRoute>
-                  <PG />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path='/dashboard/pgs/edit-pg/:id'
-              element={
-                <ProtectedRoute>
-                  <EditPG />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path='/dashboard/flats'
-              element={
-                <ProtectedRoute>
-                  <Flat />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path='/dashboard/flats/edit-flat/:id'
-              element={
-                <ProtectedRoute>
-                  <EditFlat />
-                </ProtectedRoute>
-              }
-            />
-            <Route path='*' element={<Error />} />
-          </Routes>
-        </Suspense>
+        <ErrorBoundary>
+          <Suspense fallback={<Loader />}>
+            <Routes>
+              <Route path='/' element={<Home />} />
+              <Route path='/signin' element={<SignIn />} />
+              <Route path='/signup' element={<SignUp />} />
+              <Route path='/hostels' element={<HostelProperties />} />
+              <Route path='/hostels/:propertyId' element={<HostelProperty />} />
+              <Route path='/pgs' element={<PGProperties />} />
+              <Route path='/pgs/:propertyId' element={<PGProperty />} />
+              <Route path='/flats' element={<FlatProperties />} />
+              <Route path='/flats/:propertyId' element={<FlatProperty />} />
+              <Route path='/profile' element={<Profile />} />
+              <Route path='/contact' element={<Contact />} />
+              <Route path='/team' element={<Team />} />
+              <Route path='/list' element={<ListProperty />} />
+              <Route path='/owner' element={<PropertyOwner />} />
+              <Route path='/students' element={<Students />} />
+              <Route path='/reset-password' element={<ResetPassword />} />
+              <Route
+                path='/dashboard'
+                element={
+                  <ProtectedRoute>
+                    <AdminHome />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path='/dashboard/users'
+                element={
+                  <ProtectedRoute>
+                    <User />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path='/dashboard/users/edit-user/:id'
+                element={
+                  <ProtectedRoute>
+                    <EditUser />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path='/dashboard/hostels'
+                element={
+                  <ProtectedRoute>
+                    <Hostel />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path='/dashboard/hostels/edit-hostel/:id'
+                element={
+                  <ProtectedRoute>
+                    <EditHostel />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path='/dashboard/pgs'
+                element={
+                  <ProtectedRoute>
+                    <PG />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path='/dashboard/pgs/edit-pg/:id'
+                element={
+                  <ProtectedRoute>
+                    <EditPG />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path='/dashboard/flats'
+                element={
+                  <ProtectedRoute>
+                    <Flat />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path='/dashboard/flats/edit-flat/:id'
+                element={
+                  <ProtectedRoute>
+                    <EditFlat />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path='*' element={<Error />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
         {url_name === 'dashboard' ? null : <Footer />}
       </loginContext.Provider>
     </div>
