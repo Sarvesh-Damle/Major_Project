@@ -12,6 +12,7 @@ import pgsRoute from "./routes/pgs.routes.js";
 import favouritesRoute from "./routes/favourites.routes.js";
 import contactsRoute from "./routes/contact.routes.js";
 import { ApiResponse } from "./utils/ApiResponse.js";
+import logger, { requestLogger } from "./utils/logger.js";
 
 const app = express();
 
@@ -71,6 +72,9 @@ app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
+// Request logging
+app.use(requestLogger);
+
 // Routes
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/users", usersRoute);
@@ -86,9 +90,18 @@ app.use("*", (req, res) => {
 });
 
 // Global error handler
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
   const errorStatus = err.statusCode || err.status || 500;
   const errorMessage = err.message || "Something Went Wrong!";
+
+  // Log error
+  logger.error("Error occurred", {
+    status: errorStatus,
+    message: errorMessage,
+    url: req.originalUrl,
+    method: req.method,
+    stack: err.stack,
+  });
 
   return res.status(errorStatus).json({
     success: false,
