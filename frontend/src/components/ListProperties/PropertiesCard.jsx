@@ -1,26 +1,23 @@
+import { memo, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { truncate } from 'lodash';
-import { useContext } from 'react';
 import { loginContext } from '../../provider/authContext';
 import { toast } from 'react-toastify';
 
-const PropertiesCard = ({ card }) => {
+const PropertiesCard = memo(function PropertiesCard({ card }) {
   const navigate = useNavigate();
   const { isLoggedIn } = useContext(loginContext);
-  let url = 'hostels';
-  if (card.pg_name) {
-    url = 'pgs';
-  }
-  if (card.flat_type) {
-    url = 'flats';
-  }
-  const handleClick = () => {
-    if (isLoggedIn.login) {
-      navigate(`/${url}/${card._id}`);
-    } else {
+
+  const handleClick = useCallback(() => {
+    if (!isLoggedIn.login) {
       toast.error('Please login!!', { position: 'bottom-right' });
+      return;
     }
-  };
+    let url = 'hostels';
+    if (card.pg_name) url = 'pgs';
+    if (card.flat_type) url = 'flats';
+    navigate(`/${url}/${card._id}`);
+  }, [isLoggedIn.login, card._id, card.pg_name, card.flat_type, navigate]);
   return (
     <>
       <div
@@ -32,6 +29,7 @@ const PropertiesCard = ({ card }) => {
             src={card.property_photos[0]}
             alt='property-image'
             className='w-60 h-40 rounded-[10px]'
+            loading='lazy'
           />
         )}
         <span className='secondaryText text-xl font-semibold r-price'>
@@ -54,6 +52,6 @@ const PropertiesCard = ({ card }) => {
       </div>
     </>
   );
-};
+});
 
 export default PropertiesCard;
