@@ -3,6 +3,7 @@ import PropertiesCard from './PropertiesCard.jsx';
 import { useState, useMemo } from 'react';
 import { CardSkeletonGrid } from '@/components/ui/CardSkeleton.jsx';
 import ErrorComponent from '@/pages/ErrorComponent.jsx';
+import EmptyState from '@/components/ui/EmptyState.jsx';
 import { useLocation } from 'react-router-dom';
 import { CheckBoxDropdown, DropdownSelect } from './HostelProperties.jsx';
 import { localities, room_types, preferred_tennats } from '../../data/Property.js';
@@ -104,7 +105,11 @@ const PGProperties = () => {
           {properties.length > 0 ? (
             properties.map((card) => <PropertiesCard card={card} key={card._id} />)
           ) : (
-            <p className='text-gray-500'>No results found!</p>
+            <EmptyState
+              icon='search'
+              title='No PGs found'
+              message='Try adjusting your filters or search for a different location.'
+            />
           )}
         </div>
 

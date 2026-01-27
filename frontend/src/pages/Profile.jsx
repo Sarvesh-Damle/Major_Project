@@ -5,6 +5,7 @@ import Loader from './Loader';
 import ErrorComponent from './ErrorComponent';
 import 'swiper/css';
 import PropertiesCard from '@/components/ListProperties/PropertiesCard.jsx';
+import EmptyState from '@/components/ui/EmptyState.jsx';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { MdDelete } from 'react-icons/md';
@@ -202,7 +203,7 @@ const UserProfile = ({ data, refetchUserDetails }) => {
       {isEditMode && (
         <div className='flex justify-start items-center ml-20 mb-2 mt-10'>
           <button
-            className='font-medium px-6 py-2 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-105 bg-blue-gradient'
+            className='btn-primary'
             onClick={handleSave}
           >
             Save
@@ -212,7 +213,7 @@ const UserProfile = ({ data, refetchUserDetails }) => {
       {!isEditMode && (
         <div className='flex justify-start items-center ml-20 mb-2 mt-10'>
           <button
-            className='font-medium px-6 py-2 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-105 bg-blue-gradient'
+            className='btn-primary'
             onClick={() => setIsEditMode(true)}
           >
             Edit
@@ -264,7 +265,11 @@ const Favourites = ({ favourites, removeFavouritesMutation, selectedItem }) => {
       {(favourites?.data.hostel === undefined || favourites?.data.hostel.length === 0) &&
       (favourites?.data.pg === undefined || favourites?.data.pg.length === 0) &&
       (favourites?.data.flat === undefined || favourites?.data.flat.length === 0) ? (
-        <div className='flex justify-start p-2 mt-10 items-center'>Empty Favourites</div>
+        <EmptyState
+          icon='favorites'
+          title='No favourites yet'
+          message='Properties you add to favourites will appear here.'
+        />
       ) : (
         <>
           {selectedItem === 'See Favourites' && (
