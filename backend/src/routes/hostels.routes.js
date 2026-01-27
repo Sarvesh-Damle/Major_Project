@@ -12,6 +12,10 @@ import {
   getHostel,
   updateHostel,
   verifyHostel,
+  incrementHostelViews,
+  getTotalHostelViews,
+  bulkVerifyHostels,
+  bulkDeleteHostels,
 } from "../controllers/hostels.controllers.js";
 import { verifyJWT, verifyAdmin } from "../middlewares/auth.middleware.js";
 import { handleFileUploadError, upload } from "../middlewares/multer.middleware.js";
@@ -78,5 +82,13 @@ router.get("/find-all-hostels-info", verifyJWT, verifyAdmin, getAllHostelsInfo);
 // Count endpoints
 router.get("/countByAddress", countByAddress);
 router.get("/countByType", countByType);
+
+// Views tracking
+router.post("/increment-views", idQueryValidator, validate, incrementHostelViews);
+router.get("/total-views", verifyJWT, verifyAdmin, getTotalHostelViews);
+
+// Bulk operations
+router.put("/bulk-verify", verifyJWT, verifyAdmin, bulkVerifyHostels);
+router.delete("/bulk-delete", verifyJWT, verifyAdmin, bulkDeleteHostels);
 
 export default router;

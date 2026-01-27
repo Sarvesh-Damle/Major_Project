@@ -9,6 +9,10 @@ import {
   getFlat,
   updateFlat,
   verifyFlat,
+  incrementFlatViews,
+  getTotalFlatViews,
+  bulkVerifyFlats,
+  bulkDeleteFlats,
 } from "../controllers/flats.controllers.js";
 import { verifyJWT, verifyAdmin } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -69,5 +73,13 @@ router.get("/count-unverified-flats", countNotVerifiedFlats);
 // GET ALL
 router.get("/find-all-flats", getAllPropertiesValidator, validate, getAllFlat);
 router.get("/find-all-flats-info", verifyJWT, verifyAdmin, getAllFlatsInfo);
+
+// Views tracking
+router.post("/increment-views", idQueryValidator, validate, incrementFlatViews);
+router.get("/total-views", verifyJWT, verifyAdmin, getTotalFlatViews);
+
+// Bulk operations
+router.put("/bulk-verify", verifyJWT, verifyAdmin, bulkVerifyFlats);
+router.delete("/bulk-delete", verifyJWT, verifyAdmin, bulkDeleteFlats);
 
 export default router;
