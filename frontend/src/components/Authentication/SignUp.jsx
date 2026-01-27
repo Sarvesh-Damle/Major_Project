@@ -24,7 +24,7 @@ const SignUp = () => {
     onSuccess(data) {
       setIsLoggedIn({ login: false, signup: true });
       navigate('/signin');
-      toast.success(data.data.message, { position: 'bottom-right' });
+      toast.success(data.data.message);
     },
     onError(error) {
       let message = error.response?.data?.message;
