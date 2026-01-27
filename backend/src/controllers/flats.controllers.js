@@ -121,7 +121,7 @@ export const getFlat = asyncHandler(async (req, res) => {
 });
 
 export const getAllFlat = asyncHandler(async (req, res) => {
-  const { city, locality, page = 1, limit = 10 } = req.query;
+  const { city, locality, page = 1, limit = 10, minPrice, maxPrice, sortBy, flatType, furnishedStatus } = req.query;
   if (!city) {
     throw new ApiError(400, "City parameter not found");
   }
@@ -129,12 +129,29 @@ export const getAllFlat = asyncHandler(async (req, res) => {
   if (locality) {
     query.locality = { $regex: new RegExp(locality, "i") };
   }
+  if (flatType) {
+    query.flat_type = { $in: Array.isArray(flatType) ? flatType : [flatType] };
+  }
+  if (furnishedStatus) {
+    query.furnished_status = { $in: Array.isArray(furnishedStatus) ? furnishedStatus : [furnishedStatus] };
+  }
+  if (minPrice || maxPrice) {
+    query.rent_amount = {};
+    if (minPrice) query.rent_amount.$gte = parseInt(minPrice);
+    if (maxPrice) query.rent_amount.$lte = parseInt(maxPrice);
+  }
   query.featured = true;
+
+  // Determine sort order
+  let sortOption = { createdAt: -1 };
+  if (sortBy === "price_asc") sortOption = { rent_amount: 1 };
+  else if (sortBy === "price_desc") sortOption = { rent_amount: -1 };
+  else if (sortBy === "oldest") sortOption = { createdAt: 1 };
 
   const skip = (parseInt(page) - 1) * parseInt(limit);
   const total = await Flat.countDocuments(query);
   const flats = await Flat.find(query)
-    .sort({ createdAt: -1 })
+    .sort(sortOption)
     .skip(skip)
     .limit(parseInt(limit));
 
