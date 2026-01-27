@@ -23,7 +23,10 @@ const OAuth = () => {
       setIsLoggedIn({ login: true, signup: false });
       navigate('/');
     } catch (error) {
-      console.error('Could not sign in with google:', error);
+      toast.error('Could not sign in with Google');
+      if (import.meta.env.DEV) {
+        console.error('Google sign-in error:', error);
+      }
     }
   };
   return (

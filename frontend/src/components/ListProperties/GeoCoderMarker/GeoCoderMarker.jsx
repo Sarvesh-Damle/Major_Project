@@ -21,18 +21,18 @@ const GeoCoderMarker = ({ address }) => {
       .text(address)
       .run((err, results) => {
         if (err) {
-          console.error('Error geocoding address:', err);
+          if (import.meta.env.DEV) {
+            console.error('Geocoding error:', err);
+          }
           return;
         }
-        if (results && results.results && results.results.length > 0) {
+        if (results?.results?.length > 0) {
           const latlng = results.results[0].latlng;
           if (latlng) {
             const { lat, lng } = latlng;
             map.flyTo([lat, lng], 13, { duration: 3 });
             setPosition([lat, lng]);
           }
-        } else {
-          console.warn('No results found for address:', address);
         }
       });
   }, [address, map]);

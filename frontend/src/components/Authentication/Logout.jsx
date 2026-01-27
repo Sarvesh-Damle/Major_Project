@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Logout = () => {
   const navigate = useNavigate();
@@ -6,12 +7,14 @@ const Logout = () => {
     try {
       await fetch('/api/v1/logout', {
         method: 'POST',
-        credentials: 'include', // Include cookies in the request
+        credentials: 'include',
       });
-      // Redirect to the login page or perform any other action after logout
       navigate('/');
     } catch (error) {
-      console.error('Logout failed', error);
+      toast.error('Logout failed');
+      if (import.meta.env.DEV) {
+        console.error('Logout error:', error);
+      }
     }
   };
 
