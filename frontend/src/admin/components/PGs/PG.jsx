@@ -6,9 +6,13 @@ import ErrorComponent from '@/pages/ErrorComponent.jsx';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { PGDeleteButton, PGEditButton } from '../Buttons.jsx';
+import { useRef, useState, useCallback } from 'react';
 
 const PG = () => {
   const navigate = useNavigate();
+  const gridRef = useRef(null);
+  const [selectedRows, setSelectedRows] = useState([]);
+
   const mutation = useMutation({
     mutationKey: ['pg-delete'],
     mutationFn: (prop) => {
@@ -23,19 +27,73 @@ const PG = () => {
       toast.error(message);
     },
   });
+
+  const bulkVerifyMutation = useMutation({
+    mutationKey: ['pg-bulk-verify'],
+    mutationFn: ({ ids, featured }) => {
+      return axios.put('/api/v1/pgs/bulk-verify', { ids, featured }, { withCredentials: true });
+    },
+    onSuccess(data) {
+      toast.success(data.data.message);
+      setSelectedRows([]);
+      gridRef.current?.api?.deselectAll();
+      refetch();
+    },
+    onError(error) {
+      toast.error(error.response?.data?.message || 'Bulk verify failed');
+    },
+  });
+
+  const bulkDeleteMutation = useMutation({
+    mutationKey: ['pg-bulk-delete'],
+    mutationFn: (ids) => {
+      return axios.delete('/api/v1/pgs/bulk-delete', { data: { ids }, withCredentials: true });
+    },
+    onSuccess(data) {
+      toast.success(data.data.message);
+      setSelectedRows([]);
+      gridRef.current?.api?.deselectAll();
+      refetch();
+    },
+    onError(error) {
+      toast.error(error.response?.data?.message || 'Bulk delete failed');
+    },
+  });
+
   const handleDelete = (prop) => {
     mutation.mutate({ _id: prop._id });
   };
   const handleEdit = (prop) => {
     navigate(`/dashboard/pgs/edit-pg/${prop._id}`);
   };
+
+  const onSelectionChanged = useCallback(() => {
+    const selected = gridRef.current?.api?.getSelectedRows() || [];
+    setSelectedRows(selected);
+  }, []);
+
+  const handleBulkVerify = (featured) => {
+    if (selectedRows.length === 0) return;
+    const ids = selectedRows.map((row) => row._id);
+    bulkVerifyMutation.mutate({ ids, featured });
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedRows.length === 0) return;
+    if (!window.confirm(`Are you sure you want to delete ${selectedRows.length} PG(s)?`)) return;
+    const ids = selectedRows.map((row) => row._id);
+    bulkDeleteMutation.mutate(ids);
+  };
+
   let column = [
+    { headerCheckboxSelection: true, checkboxSelection: true, width: 50, pinned: 'left' },
     { field: 'pg_name', headerName: 'PG Name', filter: true, width: 160 },
     { field: 'city', filter: true, width: 130 },
     { field: 'locality', filter: true, width: 140 },
     { field: 'preferred_tennats', headerName: 'Preferred Tenants', filter: true, width: 168 },
     { field: 'rent_amount', headerName: 'Rent Amount', filter: true, width: 140 },
     { field: 'featured', headerName: 'Verified', filter: true, width: 100 },
+    { field: 'views', headerName: 'Views', filter: true, width: 90 },
     {
       field: 'Edit',
       width: 100,
@@ -70,8 +128,42 @@ const PG = () => {
             <h1 className='text-2xl'>PGs</h1>
           </div>
         </div>
+        {selectedRows.length > 0 && (
+          <div className='flex items-center gap-3 px-5 py-2 bg-blue-50 border border-blue-200 rounded-md mx-3 mb-2'>
+            <span className='text-sm font-medium text-blue-800'>
+              {selectedRows.length} selected
+            </span>
+            <button
+              onClick={() => handleBulkVerify(true)}
+              disabled={bulkVerifyMutation.isPending}
+              className='px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50'
+            >
+              Verify
+            </button>
+            <button
+              onClick={() => handleBulkVerify(false)}
+              disabled={bulkVerifyMutation.isPending}
+              className='px-3 py-1 text-sm bg-yellow-600 text-white rounded hover:bg-yellow-700 disabled:opacity-50'
+            >
+              Unverify
+            </button>
+            <button
+              onClick={handleBulkDelete}
+              disabled={bulkDeleteMutation.isPending}
+              className='px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50'
+            >
+              Delete
+            </button>
+          </div>
+        )}
         <div className='mt-2'>
-          <Table rowData={data.data} colDefs={column} />
+          <Table
+            ref={gridRef}
+            rowData={data.data}
+            colDefs={column}
+            rowSelection='multiple'
+            onSelectionChanged={onSelectionChanged}
+          />
         </div>
       </div>
     </div>

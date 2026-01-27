@@ -11,6 +11,10 @@ import {
   getPG,
   updatePG,
   verifyPG,
+  incrementPGViews,
+  getTotalPGViews,
+  bulkVerifyPGs,
+  bulkDeletePGs,
 } from "../controllers/pgs.controllers.js";
 import {
   createPGValidator,
@@ -69,5 +73,13 @@ router.get("/count-unverified-pgs", countNotVerifiedPGs);
 // GET ALL
 router.get("/find-all-pgs", getAllPropertiesValidator, validate, getAllPG);
 router.get("/find-all-pgs-info", verifyJWT, verifyAdmin, getAllPGsInfo);
+
+// Views tracking
+router.post("/increment-views", idQueryValidator, validate, incrementPGViews);
+router.get("/total-views", verifyJWT, verifyAdmin, getTotalPGViews);
+
+// Bulk operations
+router.put("/bulk-verify", verifyJWT, verifyAdmin, bulkVerifyPGs);
+router.delete("/bulk-delete", verifyJWT, verifyAdmin, bulkDeletePGs);
 
 export default router;

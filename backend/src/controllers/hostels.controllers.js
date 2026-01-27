@@ -2,7 +2,7 @@ import Hostel from "../models/hostels.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { uploadFilesToCloudinary } from "../utils/cloudinary.js";
+import { uploadFilesToCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js";
 import { sendPropertyRegistrationEmail, sendPropertyVerifiedEmail } from "../utils/sendEmail.js";
 
 export const createHostel = asyncHandler(async (req, res) => {
@@ -61,6 +61,13 @@ export const updateHostel = asyncHandler(async (req, res) => {
   // Handle photo uploads if new photos are provided
   let propertyPhotosUrls;
   if (req.files?.property_photos && Array.isArray(req.files.property_photos) && req.files.property_photos.length > 0) {
+    // Get current hostel to delete old photos
+    const currentHostel = await Hostel.findById(req.query.id);
+    if (currentHostel?.property_photos?.length > 0) {
+      // Delete old photos from Cloudinary (non-blocking, don't fail if delete fails)
+      await Promise.all(currentHostel.property_photos.map(url => deleteFromCloudinary(url)));
+    }
+
     propertyPhotosUrls = [];
     for (let i = 0; i < Math.min(req.files.property_photos.length, 5); i++) {
       const photosLocalPath = req.files.property_photos[i].path;
@@ -111,10 +118,17 @@ export const updateHostel = asyncHandler(async (req, res) => {
 });
 
 export const deleteHostel = asyncHandler(async (req, res) => {
-  const hostel = await Hostel.findByIdAndDelete(req.query.id);
+  const hostel = await Hostel.findById(req.query.id);
   if (!hostel) {
-    return res.status(404).json(new ApiResponse(404, null, "Hostel not found"));
+    throw new ApiError(404, "Hostel not found");
   }
+
+  // Delete photos from Cloudinary (non-blocking)
+  if (hostel.property_photos?.length > 0) {
+    await Promise.all(hostel.property_photos.map(url => deleteFromCloudinary(url)));
+  }
+
+  await Hostel.findByIdAndDelete(req.query.id);
   return res.status(200).json(new ApiResponse(200, null, "Hostel has been deleted"));
 });
 
@@ -269,4 +283,70 @@ export const verifyHostel = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, hostelData, "Hostel verified successfully"));
+});
+
+export const incrementHostelViews = asyncHandler(async (req, res) => {
+  const hostel = await Hostel.findByIdAndUpdate(
+    req.query.id,
+    { $inc: { views: 1 } },
+    { new: true }
+  );
+  if (!hostel) {
+    throw new ApiError(404, "Hostel not found");
+  }
+  return res.status(200).json(new ApiResponse(200, { views: hostel.views }, "View recorded"));
+});
+
+export const getTotalHostelViews = asyncHandler(async (req, res) => {
+  const result = await Hostel.aggregate([
+    { $group: { _id: null, totalViews: { $sum: "$views" } } }
+  ]);
+  const totalViews = result[0]?.totalViews || 0;
+  return res.status(200).json(new ApiResponse(200, totalViews, "Total hostel views"));
+});
+
+export const bulkVerifyHostels = asyncHandler(async (req, res) => {
+  const { ids, featured } = req.body;
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    throw new ApiError(400, "Please provide an array of hostel IDs");
+  }
+  if (typeof featured !== "boolean") {
+    throw new ApiError(400, "Featured status must be a boolean");
+  }
+
+  const result = await Hostel.updateMany(
+    { _id: { $in: ids } },
+    { $set: { featured } }
+  );
+
+  // Send verification emails for verified hostels (non-blocking)
+  if (featured) {
+    const hostels = await Hostel.find({ _id: { $in: ids } }, { owner_email: 1 });
+    hostels.forEach(hostel => sendPropertyVerifiedEmail(hostel.owner_email));
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, { modifiedCount: result.modifiedCount }, `${result.modifiedCount} hostels ${featured ? "verified" : "unverified"} successfully`)
+  );
+});
+
+export const bulkDeleteHostels = asyncHandler(async (req, res) => {
+  const { ids } = req.body;
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    throw new ApiError(400, "Please provide an array of hostel IDs");
+  }
+
+  // Get hostels to delete their photos from Cloudinary
+  const hostels = await Hostel.find({ _id: { $in: ids } }, { property_photos: 1 });
+
+  // Delete photos from Cloudinary (non-blocking)
+  const photoUrls = hostels.flatMap(h => h.property_photos || []);
+  await Promise.all(photoUrls.map(url => deleteFromCloudinary(url)));
+
+  // Delete hostels from database
+  const result = await Hostel.deleteMany({ _id: { $in: ids } });
+
+  return res.status(200).json(
+    new ApiResponse(200, { deletedCount: result.deletedCount }, `${result.deletedCount} hostels deleted successfully`)
+  );
 });

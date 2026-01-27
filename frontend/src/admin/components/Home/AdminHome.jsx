@@ -56,7 +56,21 @@ const AdminHome = () => {
     },
   });
 
-  if (isLoading || isLoading2 || isLoading3 || isLoadingUnverified)
+  // Total views across all properties
+  const { data: totalViewsData, isLoading: isLoadingViews } = useQuery({
+    queryKey: ['Total-Views'],
+    queryFn: async () => {
+      const [hostels, pgs, flats] = await Promise.all([
+        axios.get('/api/v1/hostels/total-views', { withCredentials: true }),
+        axios.get('/api/v1/pgs/total-views', { withCredentials: true }),
+        axios.get('/api/v1/flats/total-views', { withCredentials: true }),
+      ]);
+      return (hostels.data.data || 0) + (pgs.data.data || 0) + (flats.data.data || 0);
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  if (isLoading || isLoading2 || isLoading3 || isLoadingUnverified || isLoadingViews)
     return (
       <div className='flex h-screen w-screen justify-center items-center'>
         <Loader />
@@ -87,6 +101,10 @@ const AdminHome = () => {
         <div className='h-[100px] lg:ml-2 bg-[#61a5c2] w-full rounded-md flex flex-col justify-center  lg:w-[25%] mb-3  '>
           <div className='text-lg ml-5 '>Total Flat Properties</div>
           <p className='font-bold text-xl ml-5'>{data3.data || 10}</p>
+        </div>
+        <div className='h-[100px] lg:ml-2 bg-[#f8a5a5] w-full rounded-md flex flex-col justify-center  lg:w-[25%] mb-3  '>
+          <div className='text-lg ml-5 '>Total Property Views</div>
+          <p className='font-bold text-xl ml-5'>{totalViewsData || 0}</p>
         </div>
       </div>
       <div className='flex flex-col lg:flex-row w-full '>
