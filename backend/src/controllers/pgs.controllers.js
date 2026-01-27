@@ -2,7 +2,7 @@ import PG from "../models/pgs.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { uploadFilesToCloudinary } from "../utils/cloudinary.js";
+import { uploadFilesToCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js";
 import { sendPropertyRegistrationEmail, sendPropertyVerifiedEmail } from "../utils/sendEmail.js";
 
 export const createPG = asyncHandler(async (req, res) => {
@@ -50,6 +50,13 @@ export const updatePG = asyncHandler(async (req, res) => {
   // Handle photo uploads if new photos are provided
   let propertyPhotosUrls;
   if (req.files?.property_photos && Array.isArray(req.files.property_photos) && req.files.property_photos.length > 0) {
+    // Get current PG to delete old photos
+    const currentPG = await PG.findById(req.query.id);
+    if (currentPG?.property_photos?.length > 0) {
+      // Delete old photos from Cloudinary (non-blocking)
+      await Promise.all(currentPG.property_photos.map(url => deleteFromCloudinary(url)));
+    }
+
     propertyPhotosUrls = [];
     for (let i = 0; i < Math.min(req.files.property_photos.length, 5); i++) {
       const photosLocalPath = req.files.property_photos[i].path;
@@ -101,10 +108,17 @@ export const updatePG = asyncHandler(async (req, res) => {
 });
 
 export const deletePG = asyncHandler(async (req, res) => {
-  const pg = await PG.findByIdAndDelete(req.query.id);
+  const pg = await PG.findById(req.query.id);
   if (!pg) {
-    return res.status(404).json(new ApiResponse(404, null, "PG not found"));
+    throw new ApiError(404, "PG not found");
   }
+
+  // Delete photos from Cloudinary (non-blocking)
+  if (pg.property_photos?.length > 0) {
+    await Promise.all(pg.property_photos.map(url => deleteFromCloudinary(url)));
+  }
+
+  await PG.findByIdAndDelete(req.query.id);
   return res.status(200).json(new ApiResponse(200, null, "PG has been deleted"));
 });
 
@@ -206,4 +220,70 @@ export const verifyPG = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, pgData, "PG verified successfully"));
+});
+
+export const incrementPGViews = asyncHandler(async (req, res) => {
+  const pg = await PG.findByIdAndUpdate(
+    req.query.id,
+    { $inc: { views: 1 } },
+    { new: true }
+  );
+  if (!pg) {
+    throw new ApiError(404, "PG not found");
+  }
+  return res.status(200).json(new ApiResponse(200, { views: pg.views }, "View recorded"));
+});
+
+export const getTotalPGViews = asyncHandler(async (req, res) => {
+  const result = await PG.aggregate([
+    { $group: { _id: null, totalViews: { $sum: "$views" } } }
+  ]);
+  const totalViews = result[0]?.totalViews || 0;
+  return res.status(200).json(new ApiResponse(200, totalViews, "Total PG views"));
+});
+
+export const bulkVerifyPGs = asyncHandler(async (req, res) => {
+  const { ids, featured } = req.body;
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    throw new ApiError(400, "Please provide an array of PG IDs");
+  }
+  if (typeof featured !== "boolean") {
+    throw new ApiError(400, "Featured status must be a boolean");
+  }
+
+  const result = await PG.updateMany(
+    { _id: { $in: ids } },
+    { $set: { featured } }
+  );
+
+  // Send verification emails for verified PGs (non-blocking)
+  if (featured) {
+    const pgs = await PG.find({ _id: { $in: ids } }, { owner_email: 1 });
+    pgs.forEach(pg => sendPropertyVerifiedEmail(pg.owner_email));
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, { modifiedCount: result.modifiedCount }, `${result.modifiedCount} PGs ${featured ? "verified" : "unverified"} successfully`)
+  );
+});
+
+export const bulkDeletePGs = asyncHandler(async (req, res) => {
+  const { ids } = req.body;
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    throw new ApiError(400, "Please provide an array of PG IDs");
+  }
+
+  // Get PGs to delete their photos from Cloudinary
+  const pgs = await PG.find({ _id: { $in: ids } }, { property_photos: 1 });
+
+  // Delete photos from Cloudinary (non-blocking)
+  const photoUrls = pgs.flatMap(p => p.property_photos || []);
+  await Promise.all(photoUrls.map(url => deleteFromCloudinary(url)));
+
+  // Delete PGs from database
+  const result = await PG.deleteMany({ _id: { $in: ids } });
+
+  return res.status(200).json(
+    new ApiResponse(200, { deletedCount: result.deletedCount }, `${result.deletedCount} PGs deleted successfully`)
+  );
 });

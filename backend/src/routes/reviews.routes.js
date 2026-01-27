@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { body, query, param } from "express-validator";
-import { validate } from "../middlewares/validate.middleware.js";
+import { validate } from "../validators/index.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {
   createReview,
