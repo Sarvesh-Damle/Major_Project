@@ -40,7 +40,10 @@ const Navbar = () => {
           isAuthenticated({ login: false, signup: true });
         }
       } catch (error) {
-        // Silent fail - user is not authenticated
+        // User is not authenticated - this is expected for unauthenticated visitors
+        if (import.meta.env.DEV && error.response?.status !== 401) {
+          console.warn('Auth check failed:', error.response?.status || error.message);
+        }
       }
     }
     callData();
