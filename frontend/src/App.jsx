@@ -7,6 +7,7 @@ import ErrorBoundary from './components/ErrorBoundary.jsx';
 import Loader from './pages/Loader.jsx';
 import Navbar from './pages/Navbar.jsx';
 import Footer from './pages/Footer.jsx';
+import Breadcrumbs from './components/ui/Breadcrumbs.jsx';
 
 // Lazy load route components
 const Home = lazy(() => import('./components/Home/Home.jsx'));
@@ -67,9 +68,17 @@ const App = () => {
       >
         Skip to main content
       </a>
-      <ToastContainer autoClose={1000} />
+      <ToastContainer
+        position='bottom-right'
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+      />
       <loginContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
         {url_name === 'dashboard' ? null : <Navbar />}
+        {url_name === 'dashboard' ? null : <Breadcrumbs />}
         <ScrollToTop />
         <ErrorBoundary>
           <Suspense fallback={<Loader />}>

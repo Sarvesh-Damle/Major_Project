@@ -11,7 +11,7 @@ const PropertiesCard = memo(function PropertiesCard({ card }) {
 
   const handleClick = useCallback(() => {
     if (!isLoggedIn.login) {
-      toast.error('Please login!!', { position: 'bottom-right' });
+      toast.error('Please sign in to view property details');
       return;
     }
     let url = 'hostels';

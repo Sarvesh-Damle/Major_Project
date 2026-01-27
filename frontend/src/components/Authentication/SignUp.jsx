@@ -24,7 +24,7 @@ const SignUp = () => {
     onSuccess(data) {
       setIsLoggedIn({ login: false, signup: true });
       navigate('/signin');
-      toast.success(data.data.message, { position: 'bottom-right' });
+      toast.success(data.data.message);
     },
     onError(error) {
       let message = error.response?.data?.message;
@@ -43,6 +43,7 @@ const SignUp = () => {
                   <img
                     src='https://res.cloudinary.com/sarvesh-damle/image/upload/v1696435051/Buddies_MajorProject/logos/logo_black2_zrvewb.png'
                     alt='logo'
+                    loading='lazy'
                   />
                 </Link>
               </div>

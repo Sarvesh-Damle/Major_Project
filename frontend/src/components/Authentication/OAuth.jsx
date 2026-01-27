@@ -10,6 +10,10 @@ const OAuth = () => {
   const navigate = useNavigate();
   const { setIsLoggedIn } = useContext(loginContext);
   const handleGoogleClick = async () => {
+    if (!app) {
+      toast.error('Google sign-in is not configured');
+      return;
+    }
     try {
       const provider = new GoogleAuthProvider();
       const auth = getAuth(app);

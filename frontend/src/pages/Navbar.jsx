@@ -40,7 +40,10 @@ const Navbar = () => {
           isAuthenticated({ login: false, signup: true });
         }
       } catch (error) {
-        // Silent fail - user is not authenticated
+        // User is not authenticated - this is expected for unauthenticated visitors
+        if (import.meta.env.DEV && error.response?.status !== 401) {
+          console.warn('Auth check failed:', error.response?.status || error.message);
+        }
       }
     }
     callData();
@@ -107,7 +110,7 @@ const Navbar = () => {
               <div className='flex gap-2'>
                 <Link
                   to='/signin'
-                  className='font-medium px-6 py-2 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-105 bg-blue-gradient'
+                  className='btn-primary'
                 >
                   Sign in
                 </Link>
@@ -116,7 +119,7 @@ const Navbar = () => {
                 ) : (
                   <Link
                     to='/signup'
-                    className='font-medium px-6 py-2 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-105 bg-blue-gradient'
+                    className='btn-primary'
                   >
                     Sign Up
                   </Link>

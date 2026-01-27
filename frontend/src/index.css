@@ -2,6 +2,55 @@
 
 @tailwind components;
 
+@layer components {
+  .btn {
+    @apply font-medium px-6 py-2.5 rounded-lg transition-all duration-200 ease-in cursor-pointer;
+  }
+
+  .btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px #4066ff;
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn text-white border-none;
+    background: var(--blue-gradient);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    transform: scale(1.05);
+  }
+
+  .btn-secondary {
+    @apply btn text-gray-700 bg-white border border-gray-300;
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    @apply bg-gray-50;
+  }
+
+  .btn-danger {
+    @apply btn text-white bg-red-500;
+  }
+
+  .btn-danger:hover:not(:disabled) {
+    @apply bg-red-600;
+  }
+
+  .btn-sm {
+    @apply px-4 py-1.5 text-sm;
+  }
+
+  .btn-lg {
+    @apply px-8 py-3 text-lg;
+  }
+}
+
 @tailwind utilities;
 
 :root {

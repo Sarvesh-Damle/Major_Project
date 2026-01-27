@@ -16,7 +16,7 @@ const useFavorite = (propertyId, propertyTag) => {
 
   const toggleFavorite = async () => {
     if (!isLoggedIn.login) {
-      toast.error('Please login to add favorites!', { position: 'bottom-right' });
+      toast.error('Please sign in to add favourites');
       return;
     }
 
@@ -31,19 +31,17 @@ const useFavorite = (propertyId, propertyTag) => {
           { withCredentials: true }
         );
         setLiked(true);
-        toast.success('Added to favorites!', { position: 'bottom-right' });
+        toast.success('Added to favourites');
       } else {
         await axios.delete('/api/v1/favourites/delete-favourite', {
           data: { propertyId },
           withCredentials: true,
         });
         setLiked(false);
-        toast.success('Removed from favorites!', { position: 'bottom-right' });
+        toast.success('Removed from favourites');
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to update favorites', {
-        position: 'bottom-right',
-      });
+      toast.error(error.response?.data?.message || 'Failed to update favourites');
     } finally {
       setIsLoading(false);
     }

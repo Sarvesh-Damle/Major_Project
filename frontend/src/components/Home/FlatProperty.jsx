@@ -79,7 +79,7 @@ const FlatProperty = () => {
             <div className='mt-12 text-[#555] leading-5 bottom'>{property.description}</div>
             <div className='flex items-center gap-4 mt-10'>
               <button
-                className='font-medium px-6 py-2 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-105 bg-blue-gradient'
+                className='btn-primary'
                 value={liked}
                 onClick={toggleFavorite}
               >
