@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 const ChevronDown = () => (
   <svg
@@ -39,10 +39,10 @@ const ChevronUp = () => (
 const Dropdown = ({ value, placeholder, options, onChange, className = '' }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleSelect = (option) => {
+  const handleSelect = useCallback((option) => {
     onChange(option);
     setIsOpen(false);
-  };
+  }, [onChange]);
 
   return (
     <div className={`relative ${className}`}>

@@ -43,6 +43,7 @@ const SignUp = () => {
                   <img
                     src='https://res.cloudinary.com/sarvesh-damle/image/upload/v1696435051/Buddies_MajorProject/logos/logo_black2_zrvewb.png'
                     alt='logo'
+                    loading='lazy'
                   />
                 </Link>
               </div>

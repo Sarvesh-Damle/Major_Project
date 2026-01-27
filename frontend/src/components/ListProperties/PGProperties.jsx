@@ -1,6 +1,6 @@
 import { usePropertiesPGs } from '../../hooks/useProperties.js';
 import PropertiesCard from './PropertiesCard.jsx';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { CardSkeletonGrid } from '@/components/ui/CardSkeleton.jsx';
 import ErrorComponent from '@/pages/ErrorComponent.jsx';
 import EmptyState from '@/components/ui/EmptyState.jsx';
@@ -9,6 +9,7 @@ import { CheckBoxDropdown, DropdownSelect } from './HostelProperties.jsx';
 import { localities, room_types, preferred_tennats } from '../../data/Property.js';
 import PriceRangeSlider from '@/components/ui/PriceRangeSlider.jsx';
 import Pagination from '@/components/ui/Pagination.jsx';
+import useDebounce from '@/hooks/useDebounce.js';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -29,20 +30,21 @@ const PGProperties = () => {
     limit: ITEMS_PER_PAGE,
   });
 
-  const { data, isLoading, isError } = usePropertiesPGs(city, filters);
+  const debouncedFilters = useDebounce(filters, 300);
+  const { data, isLoading, isError } = usePropertiesPGs(city, debouncedFilters);
 
-  const updateFilter = (key, value) => {
+  const updateFilter = useCallback((key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value, page: 1 }));
-  };
+  }, []);
 
-  const handlePriceChange = (min, max) => {
+  const handlePriceChange = useCallback((min, max) => {
     setFilters((prev) => ({ ...prev, minPrice: min, maxPrice: max, page: 1 }));
-  };
+  }, []);
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = useCallback((newPage) => {
     setFilters((prev) => ({ ...prev, page: newPage }));
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  }, []);
 
   const sortByValue = useMemo(() => {
     if (filters.sortBy === 'price_asc') return 'Price: Low to High';
