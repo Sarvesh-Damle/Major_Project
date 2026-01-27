@@ -31,6 +31,8 @@ export const sort = ['Price: Low to High', 'Price: High to Low'];
 
 export const room_types = ['Single', 'Double-Sharing', 'Triple-Sharing', 'Four-Sharing'];
 
+export const preferred_tennats = ['Boys', 'Girls', 'Family', 'Anyone'];
+
 export const propertiesData = [
   {
     name: 'Aliva Priva Jardin',
