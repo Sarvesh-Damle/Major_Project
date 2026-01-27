@@ -1,6 +1,7 @@
 import { truncate } from 'lodash';
 import { useNavigate } from 'react-router-dom';
 import Heart from '@/pages/Heart';
+import { getOptimizedUrl } from '@/utils/cloudinaryUrl.js';
 
 const PropertyCard = ({ card }) => {
   let url = 'hostels';
@@ -22,9 +23,10 @@ const PropertyCard = ({ card }) => {
       >
         <Heart id={card._id} propertyTag={propertyTag} />
         <img
-          src={card.property_photos[0]}
+          src={getOptimizedUrl(card.property_photos[0], { width: 300 })}
           alt='property-image'
-          className='w-60 h-40 rounded-[10px]'
+          className='w-60 h-40 object-cover rounded-[10px]'
+          loading='lazy'
         />
         <span className='secondaryText text-xl font-semibold r-price'>
           <span className='text-orange-500'>Rs. </span>

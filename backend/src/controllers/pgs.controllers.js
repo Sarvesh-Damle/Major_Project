@@ -3,7 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadFilesToCloudinary } from "../utils/cloudinary.js";
-import axios from "axios";
+import { sendPropertyRegistrationEmail, sendPropertyVerifiedEmail } from "../utils/sendEmail.js";
 
 export const createPG = asyncHandler(async (req, res) => {
   const pgData = req.body;
@@ -36,30 +36,64 @@ export const createPG = asyncHandler(async (req, res) => {
   if (!pg) {
     throw new ApiError(500, "Something went wrong while listing the property");
   }
-  try {
-    await axios.post("http://localhost:4000/backend-email-service/email", {
-      to: pgData.owner_email,
-      subject: "Property Registration Process has began!",
-      body: `Thank you, for providing property details!\n\nOur Team will verify the property and will surely get back to you`,
-      user: "Buddies.com",
-    });
-  } catch {
-    // Email service unavailable - non-critical, continue
-  }
+  // Send registration email (non-blocking)
+  sendPropertyRegistrationEmail(pgData.owner_email);
+
   return res
     .status(201)
     .json(new ApiResponse(201, pg, "PG Property listed successfully"));
 });
 
 export const updatePG = asyncHandler(async (req, res) => {
-  const {pgName, preferredTennats, locality, rentAmount, securityDeposit, verified, city, ownerName, ownerEmail, ownerPhoneNumber, pincode, address, distanceFromRailwayStation, distanceFromBusStop, description, foodIncluded} = req.body;
+  const { pgName, preferredTennats, locality, rentAmount, securityDeposit, verified, city, ownerName, ownerEmail, ownerPhoneNumber, pincode, address, distanceFromRailwayStation, distanceFromBusStop, description, foodIncluded } = req.body;
+
+  // Handle photo uploads if new photos are provided
+  let propertyPhotosUrls;
+  if (req.files?.property_photos && Array.isArray(req.files.property_photos) && req.files.property_photos.length > 0) {
+    propertyPhotosUrls = [];
+    for (let i = 0; i < Math.min(req.files.property_photos.length, 5); i++) {
+      const photosLocalPath = req.files.property_photos[i].path;
+      const propertyPhoto = await uploadFilesToCloudinary(photosLocalPath);
+      if (propertyPhoto) {
+        propertyPhotosUrls.push(propertyPhoto.url);
+      }
+    }
+  }
+
+  const updateData = {
+    pg_name: pgName,
+    preferred_tennats: preferredTennats,
+    locality,
+    rent_amount: rentAmount,
+    security_deposit: securityDeposit,
+    featured: verified,
+    city,
+    owner_name: ownerName,
+    owner_email: ownerEmail,
+    owner_phoneNumber: ownerPhoneNumber,
+    pincode,
+    address,
+    distance_from_nearest_railway_station: distanceFromRailwayStation,
+    distance_from_bus_stop: distanceFromBusStop,
+    description,
+    food_included: foodIncluded,
+  };
+
+  // Only update photos if new ones were uploaded
+  if (propertyPhotosUrls && propertyPhotosUrls.length > 0) {
+    updateData.property_photos = propertyPhotosUrls;
+  }
+
+  // Remove undefined values
+  Object.keys(updateData).forEach(key => updateData[key] === undefined && delete updateData[key]);
+
   const updatedPG = await PG.findByIdAndUpdate(
     req.query.id,
-    { $set: {pg_name: pgName, preferred_tennats: preferredTennats, locality, rent_amount: rentAmount, security_deposit: securityDeposit, featured: verified, city, owner_name: ownerName, owner_email: ownerEmail, owner_phoneNumber: ownerPhoneNumber, pincode, address, distance_from_nearest_railway_station: distanceFromRailwayStation, distance_from_bus_stop: distanceFromBusStop, description, food_included: foodIncluded} },
+    { $set: updateData },
     { new: true }
   );
   if (!updatedPG) {
-    throw new ApiError(500, "Something went wrong while updating the property");
+    throw new ApiError(404, "PG not found");
   }
   return res
     .status(200)
@@ -67,51 +101,52 @@ export const updatePG = asyncHandler(async (req, res) => {
 });
 
 export const deletePG = asyncHandler(async (req, res) => {
-  const pg = await PG.findById(req.query.id);
+  const pg = await PG.findByIdAndDelete(req.query.id);
   if (!pg) {
-    return res.status(200).json(new ApiResponse(200, "PG not found"));
-  } else {
-    await PG.findByIdAndDelete(req.query.id);
+    return res.status(404).json(new ApiResponse(404, null, "PG not found"));
   }
-  return res.status(200).json(new ApiResponse(200, "PG has been deleted"));
+  return res.status(200).json(new ApiResponse(200, null, "PG has been deleted"));
 });
 
 export const getPG = asyncHandler(async (req, res) => {
   const pg = await PG.findById(req.query.id);
   if (!pg) {
-    throw new ApiError(
-      500,
-      "Something went wrong while fetching the PG property"
-    );
+    throw new ApiError(404, "PG not found");
   }
   return res
     .status(200)
-    .json(new ApiResponse(200, pg, "PG founded successfully"));
+    .json(new ApiResponse(200, pg, "PG found successfully"));
 });
 
 export const getAllPG = asyncHandler(async (req, res) => {
-  const { city, locality } = req.query;
+  const { city, locality, page = 1, limit = 10 } = req.query;
   if (!city) {
-    throw new ApiError(400, "City paramater not found");
+    throw new ApiError(400, "City parameter not found");
   }
-  let query = {};
-  if (city) {
-    query.city = { $regex: new RegExp(city, "i") };
-  }
+  let query = { city: { $regex: new RegExp(city, "i") } };
   if (locality) {
     query.locality = { $regex: new RegExp(locality, "i") };
   }
   query.featured = true;
-  const pgs = await PG.find(query);
-  if (!pgs) {
-    throw new ApiError(
-      500,
-      "Something went wrong while fetching PG properties"
-    );
-  }
-  return res
-    .status(200)
-    .json(new ApiResponse(200, pgs, "PGs found successfully"));
+
+  const skip = (parseInt(page) - 1) * parseInt(limit);
+  const total = await PG.countDocuments(query);
+  const pgs = await PG.find(query)
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(parseInt(limit));
+
+  return res.status(200).json(
+    new ApiResponse(200, {
+      pgs,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        totalPages: Math.ceil(total / parseInt(limit)),
+      },
+    }, "PGs found successfully")
+  );
 });
 
 export const getAllPGsInfo = asyncHandler(async (req, res) => {
@@ -147,15 +182,9 @@ export const verifyPG = asyncHandler(async (req, res) => {
   if (!pgData) {
     throw new ApiError(404, "PG not found");
   }
-  try {
-    await axios.post("http://localhost:4000/backend-email-service/email", {
-      to: pgData.owner_email,
-      subject: "Property Listed Successfully!",
-      body: `Thank you, your property has been listed!`,
-      user: "Buddies.com",
-    });
-  } catch {
-    // Email service unavailable - non-critical, continue
+  // Send verification email (non-blocking)
+  if (featured) {
+    sendPropertyVerifiedEmail(pgData.owner_email);
   }
   return res
     .status(200)

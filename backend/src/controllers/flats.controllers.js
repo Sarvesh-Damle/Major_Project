@@ -3,7 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadFilesToCloudinary } from "../utils/cloudinary.js";
-import axios from "axios";
+import { sendPropertyRegistrationEmail, sendPropertyVerifiedEmail } from "../utils/sendEmail.js";
 
 export const createFlat = asyncHandler(async (req, res) => {
   const flatData = req.body;
@@ -36,30 +36,65 @@ export const createFlat = asyncHandler(async (req, res) => {
   if (!flat) {
     throw new ApiError(500, "Something went wrong while listing the property");
   }
-  try {
-    await axios.post("http://localhost:4000/backend-email-service/email", {
-      to: flatData.owner_email,
-      subject: "Property Registration Process has began!",
-      body: `Thank you, for providing property details!\n\nOur Team will verify the property and will surely get back to you`,
-      user: "Buddies.com",
-    });
-  } catch {
-    // Email service unavailable - non-critical, continue
-  }
+  // Send registration email (non-blocking)
+  sendPropertyRegistrationEmail(flatData.owner_email);
+
   return res
     .status(201)
     .json(new ApiResponse(201, flat, "Flat Property listed successfully"));
 });
 
 export const updateFlat = asyncHandler(async (req, res) => {
-  const {flatType, preferredTennats, flatArea, furnishedStatus, locality, rentAmount, securityDeposit, verified, city, ownerName, ownerEmail, ownerPhoneNumber, pincode, address, distanceFromRailwayStation, distanceFromBusStop, description} = req.body;
+  const { flatType, preferredTennats, flatArea, furnishedStatus, locality, rentAmount, securityDeposit, verified, city, ownerName, ownerEmail, ownerPhoneNumber, pincode, address, distanceFromRailwayStation, distanceFromBusStop, description } = req.body;
+
+  // Handle photo uploads if new photos are provided
+  let propertyPhotosUrls;
+  if (req.files?.property_photos && Array.isArray(req.files.property_photos) && req.files.property_photos.length > 0) {
+    propertyPhotosUrls = [];
+    for (let i = 0; i < Math.min(req.files.property_photos.length, 5); i++) {
+      const photosLocalPath = req.files.property_photos[i].path;
+      const propertyPhoto = await uploadFilesToCloudinary(photosLocalPath);
+      if (propertyPhoto) {
+        propertyPhotosUrls.push(propertyPhoto.url);
+      }
+    }
+  }
+
+  const updateData = {
+    flat_type: flatType,
+    preferred_tennats: preferredTennats,
+    flat_area: flatArea,
+    furnished_status: furnishedStatus,
+    locality,
+    rent_amount: rentAmount,
+    security_deposit: securityDeposit,
+    featured: verified,
+    city,
+    owner_name: ownerName,
+    owner_email: ownerEmail,
+    owner_phoneNumber: ownerPhoneNumber,
+    pincode,
+    address,
+    distance_from_nearest_railway_station: distanceFromRailwayStation,
+    distance_from_bus_stop: distanceFromBusStop,
+    description,
+  };
+
+  // Only update photos if new ones were uploaded
+  if (propertyPhotosUrls && propertyPhotosUrls.length > 0) {
+    updateData.property_photos = propertyPhotosUrls;
+  }
+
+  // Remove undefined values
+  Object.keys(updateData).forEach(key => updateData[key] === undefined && delete updateData[key]);
+
   const updatedFlat = await Flat.findByIdAndUpdate(
     req.query.id,
-    { $set: {flat_type: flatType, preferred_tennats: preferredTennats, flat_area: flatArea, furnished_status: furnishedStatus, locality, rent_amount: rentAmount, security_deposit: securityDeposit, featured: verified, city, owner_name: ownerName, owner_email: ownerEmail, owner_phoneNumber: ownerPhoneNumber, pincode, address, distance_from_nearest_railway_station: distanceFromRailwayStation, distance_from_bus_stop: distanceFromBusStop, description} },
+    { $set: updateData },
     { new: true }
   );
   if (!updatedFlat) {
-    throw new ApiError(500, "Something went wrong while updating the property");
+    throw new ApiError(404, "Flat not found");
   }
   return res
     .status(200)
@@ -78,39 +113,42 @@ export const deleteFlat = asyncHandler(async (req, res) => {
 export const getFlat = asyncHandler(async (req, res) => {
   const flat = await Flat.findById(req.query.id);
   if (!flat) {
-    throw new ApiError(
-      500,
-      "Something went wrong while fetching the flat property"
-    );
+    throw new ApiError(404, "Flat not found");
   }
   return res
     .status(200)
-    .json(new ApiResponse(200, flat, "Flat founded successfully"));
+    .json(new ApiResponse(200, flat, "Flat found successfully"));
 });
 
 export const getAllFlat = asyncHandler(async (req, res) => {
-  const { city, locality } = req.query;
+  const { city, locality, page = 1, limit = 10 } = req.query;
   if (!city) {
-    throw new ApiError(400, "City paramater not found");
+    throw new ApiError(400, "City parameter not found");
   }
-  let query = {};
-  if (city) {
-    query.city = { $regex: new RegExp(city, "i") };
-  }
+  let query = { city: { $regex: new RegExp(city, "i") } };
   if (locality) {
     query.locality = { $regex: new RegExp(locality, "i") };
   }
   query.featured = true;
-  const flats = await Flat.find(query);
-  if (!flats) {
-    throw new ApiError(
-      500,
-      "Something went wrong while fetching Flat properties"
-    );
-  }
-  return res
-    .status(200)
-    .json(new ApiResponse(200, flats, "Flats found successfully"));
+
+  const skip = (parseInt(page) - 1) * parseInt(limit);
+  const total = await Flat.countDocuments(query);
+  const flats = await Flat.find(query)
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(parseInt(limit));
+
+  return res.status(200).json(
+    new ApiResponse(200, {
+      flats,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        totalPages: Math.ceil(total / parseInt(limit)),
+      },
+    }, "Flats found successfully")
+  );
 });
 
 export const getAllFlatsInfo = asyncHandler(async (req, res) => {
@@ -146,15 +184,9 @@ export const verifyFlat = asyncHandler(async (req, res) => {
   if (!flatData) {
     throw new ApiError(404, "Flat not found");
   }
-  try {
-    await axios.post("http://localhost:4000/backend-email-service/email", {
-      to: flatData.owner_email,
-      subject: "Property Listed Successfully!",
-      body: `Thank you, your property has been listed!`,
-      user: "Buddies.com",
-    });
-  } catch {
-    // Email service unavailable - non-critical, continue
+  // Send verification email (non-blocking)
+  if (featured) {
+    sendPropertyVerifiedEmail(flatData.owner_email);
   }
   return res
     .status(200)

@@ -19,6 +19,7 @@ const optional = [
   "NODE_ENV",
   "ALLOWED_ORIGINS",
   "EMAIL_SERVICE_URL",
+  "ADMIN_EMAIL",
 ];
 
 const missing = required.filter((key) => !process.env[key]);

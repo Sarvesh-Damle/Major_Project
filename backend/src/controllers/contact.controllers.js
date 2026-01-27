@@ -2,6 +2,7 @@ import Contact from "../models/contact.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { sendContactAcknowledgmentEmail, sendContactNotificationEmail } from "../utils/sendEmail.js";
 
 export const contact = asyncHandler(async (req, res) => {
   const { name, email, phoneNumber, message } = req.body;
@@ -21,6 +22,10 @@ export const contact = asyncHandler(async (req, res) => {
       "Something went wrong while submitting the message"
     );
   }
+
+  // Send emails (non-blocking, fire-and-forget)
+  sendContactAcknowledgmentEmail(email, name);
+  sendContactNotificationEmail(name, email, phoneNumber, message);
 
   return res
     .status(201)

@@ -1,4 +1,5 @@
 import axios from "axios";
+import logger from "./logger.js";
 
 const EMAIL_SERVICE_URL = process.env.EMAIL_SERVICE_URL || "http://localhost:4000";
 
@@ -22,7 +23,7 @@ export const sendEmail = async (to, subject, body) => {
     return true;
   } catch (error) {
     // Log error but don't throw - email is non-critical
-    console.error("Email service error:", error.message);
+    logger.warn("Email service error", { error: error.message });
     return false;
   }
 };
@@ -56,6 +57,45 @@ Your property is now visible to potential tenants on our platform.
 
 Best regards,
 Buddies.com Team`
+  );
+};
+
+/**
+ * Send contact form acknowledgment to the user
+ */
+export const sendContactAcknowledgmentEmail = async (email, name) => {
+  return sendEmail(
+    email,
+    "We received your message!",
+    `Hi ${name},
+
+Thank you for reaching out to us! We have received your message and our team will get back to you shortly.
+
+Best regards,
+Buddies.com Team`
+  );
+};
+
+/**
+ * Send contact form notification to admin
+ */
+export const sendContactNotificationEmail = async (name, email, phoneNumber, message) => {
+  const adminEmail = process.env.ADMIN_EMAIL;
+  if (!adminEmail) {
+    logger.warn("ADMIN_EMAIL not configured, skipping contact notification");
+    return false;
+  }
+  return sendEmail(
+    adminEmail,
+    `New Contact Inquiry from ${name}`,
+    `A new contact form submission has been received:
+
+Name: ${name}
+Email: ${email}
+Phone: ${phoneNumber}
+Message: ${message}
+
+Please respond to this inquiry promptly.`
   );
 };
 

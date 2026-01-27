@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import connectDB from "./db/index.js";
 import { app } from "./app.js";
+import logger from "./utils/logger.js";
 
 const PORT = process.env.PORT || 8000;
 dotenv.config({ path: "./.env" });
@@ -9,17 +10,17 @@ dotenv.config({ path: "./.env" });
 connectDB()
   .then(() => {
     app.listen(PORT, () => {
-      console.log("Connected to backend");
+      logger.info(`Server running on port ${PORT}`);
     });
     app.on("error", (error) => {
-      console.log("ERROR: ", error);
+      logger.error("Server error", { error: error.message });
       throw error;
     });
   })
   .catch((err) => {
-    console.log("MongoDB connection failed !!", err);
+    logger.error("MongoDB connection failed", { error: err.message });
   });
 
 mongoose.connection.on("disconnected", () => {
-  console.log("MongoDB disconnected");
+  logger.warn("MongoDB disconnected");
 });

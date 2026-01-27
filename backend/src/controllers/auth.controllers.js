@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import axios from "axios";
+import { sendWelcomeEmail } from "../utils/sendEmail.js";
 import bcrypt from "bcryptjs";
 
 const generateRefreshAndAccessTokens = async (userId) => {
@@ -55,17 +55,8 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Something went wrong while registering a user");
   }
 
-  await axios.post("http://localhost:4000/backend-email-service/email", {
-    to: email,
-    subject: "User Registration Successful!",
-    body: `   Thank you, for registering with Buddies!!
-    
-    
-    We are always ready to help by providing the best services for our customers.
-    
-    We believe in convenience and getting you a good place to live`,
-    user: "Buddies.com",
-  });
+  // Send welcome email (non-blocking)
+  sendWelcomeEmail(email);
 
   return res
     .status(201)
