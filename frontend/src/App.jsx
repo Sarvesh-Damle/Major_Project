@@ -60,12 +60,19 @@ const App = () => {
 
   return (
     <div className='relative w-screen overflow-hidden'>
+      <a
+        href='#main-content'
+        className='sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded'
+      >
+        Skip to main content
+      </a>
       <ToastContainer autoClose={1000} />
       <loginContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
         {url_name === 'dashboard' ? null : <Navbar />}
         <ScrollToTop />
         <ErrorBoundary>
           <Suspense fallback={<Loader />}>
+            <main id='main-content'>
             <Routes>
               <Route path='/' element={<Home />} />
               <Route path='/signin' element={<SignIn />} />
@@ -157,6 +164,7 @@ const App = () => {
               />
               <Route path='*' element={<Error />} />
             </Routes>
+            </main>
           </Suspense>
         </ErrorBoundary>
         {url_name === 'dashboard' ? null : <Footer />}

@@ -34,9 +34,12 @@ const Footer = () => {
           <div className='w-full px-4 sm:w-1/2 lg:w-3/12'>
             <div className='w-full mb-10 flex flex-col justify-center items-center'>
               <h4 className='text-lg font-semibold mb-9 text-dark'>Follow us On</h4>
-              <div className='flex items-center mb-6'>
+              <div className='flex items-center mb-6' role='list' aria-label='Social media links'>
                 <a
                   href='https://www.facebook.com'
+                  aria-label='Facebook'
+                  rel='noopener noreferrer'
+                  target='_blank'
                   className='mr-3 flex h-8 w-8 items-center justify-center rounded-full border border-[#E5E5E5] text-dark hover:border-primary hover:bg-gray-100 hover:text-blue-500 sm:mr-4 lg:mr-3 xl:mr-4'
                 >
                   <svg width={8} height={16} viewBox='0 0 8 16' className='fill-current text-blue'>
@@ -45,6 +48,9 @@ const Footer = () => {
                 </a>
                 <a
                   href='https://twitter.com/damle_sarvesh'
+                  aria-label='Twitter'
+                  rel='noopener noreferrer'
+                  target='_blank'
                   className='mr-3 flex h-8 w-8 items-center justify-center rounded-full border border-[#E5E5E5] text-dark hover:border-primary hover:bg-gray-100 hover:text-blue-500 sm:mr-4 lg:mr-3 xl:mr-4'
                 >
                   <svg
@@ -58,6 +64,9 @@ const Footer = () => {
                 </a>
                 <a
                   href='https://www.youtube.com/channel/UC9dXrEqIiT4RYN__hWJm-Lw'
+                  aria-label='YouTube'
+                  rel='noopener noreferrer'
+                  target='_blank'
                   className='mr-3 flex h-8 w-8 items-center justify-center rounded-full border border-[#E5E5E5] text-dark hover:border-primary hover:bg-gray-100 hover:text-red-500 sm:mr-4 lg:mr-3 xl:mr-4'
                 >
                   <svg
@@ -71,6 +80,9 @@ const Footer = () => {
                 </a>
                 <a
                   href='https://www.linkedin.com/in/sarvesh-damle/'
+                  aria-label='LinkedIn'
+                  rel='noopener noreferrer'
+                  target='_blank'
                   className='mr-3 flex h-8 w-8 items-center justify-center rounded-full border border-[#E5E5E5] text-dark hover:border-primary hover:bg-gray-100 hover:text-blue-500 sm:mr-4 lg:mr-3 xl:mr-4'
                 >
                   <svg
