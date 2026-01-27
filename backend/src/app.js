@@ -11,6 +11,7 @@ import flatsRoute from "./routes/flats.routes.js";
 import pgsRoute from "./routes/pgs.routes.js";
 import favouritesRoute from "./routes/favourites.routes.js";
 import contactsRoute from "./routes/contact.routes.js";
+import reviewsRoute from "./routes/reviews.routes.js";
 import { ApiResponse } from "./utils/ApiResponse.js";
 import logger, { requestLogger } from "./utils/logger.js";
 
@@ -92,6 +93,7 @@ app.use("/api/v1/hostels", hostelsRoute);
 app.use("/api/v1/pgs", pgsRoute);
 app.use("/api/v1/favourites", favouritesRoute);
 app.use("/api/v1/contact", contactsRoute);
+app.use("/api/v1/reviews", reviewsRoute);
 
 // 404 handler for undefined routes
 app.use("*", (req, res) => {

@@ -8,6 +8,7 @@ import PropertyMaps from '@/components/ui/PropertyMaps.jsx';
 import useFavorite from '@/hooks/useFavorite.js';
 import { useTrackPropertyView } from '@/hooks/useRecentlyViewed.js';
 import ShareButtons from '@/components/ui/ShareButtons.jsx';
+import ReviewList from '@/components/ui/ReviewList.jsx';
 import { HiLocationMarker } from 'react-icons/hi';
 import { ImProfile, ImSpoonKnife } from 'react-icons/im';
 import { MdDirectionsRailway, MdDriveFileRenameOutline, MdEmail, MdOutlineNoFood } from 'react-icons/md';
@@ -37,8 +38,8 @@ const PGProperty = () => {
   if (isError) return <ErrorComponent />;
 
   return (
-    <div className='flex justify-center w-full h-full my-8 singlePage'>
-      <div className='w-1/2 details'>
+    <div className='flex flex-wrap justify-center w-full h-full my-8 singlePage'>
+      <div className='w-1/2 max-lg:w-full details'>
         <div className='pr-[50px] wrapper'>
           <Slider images={property.property_photos} />
           <div className='mt-12 info'>
@@ -89,7 +90,7 @@ const PGProperty = () => {
           </div>
         </div>
       </div>
-      <div className='bg-[#fcf5f3] w-1/3 features'>
+      <div className='bg-[#fcf5f3] w-1/3 max-lg:w-full features'>
         <div className='py-5 flex flex-col gap-5 wrapper'>
           <p className='font-bold text-lg mb-[10px] flex justify-center title'>General</p>
           <div className='flex flex-col gap-5 py-5 px-2 mx-3 bg-white rounded-[10px] listVertical'>
@@ -170,6 +171,9 @@ const PGProperty = () => {
             <PropertyMaps address={property.address} />
           </div>
         </div>
+      </div>
+      <div className='w-full px-8 pb-8'>
+        <ReviewList propertyId={id} propertyType='pg' />
       </div>
     </div>
   );
