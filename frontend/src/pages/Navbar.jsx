@@ -72,6 +72,9 @@ const Navbar = () => {
             <NavLink to='/' className='hover:text-white'>
               Home
             </NavLink>
+            <NavLink to='/map?city=Mumbai' className='hover:text-white'>
+              Map View
+            </NavLink>
             <NavLink to='/contact' className='hover:text-white'>
               Contact & Support
             </NavLink>
