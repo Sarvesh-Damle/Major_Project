@@ -15,11 +15,11 @@ const Home = () => {
       <Featured />
       <Value />
       <Flatmates />
-      <div className='px-8 py-12'>
-        <h2 className='flex justify-center items-center text-3xl font-bold mb-6'>
+      <div className='px-4 sm:px-8 py-12'>
+        <h2 className='flex justify-center items-center text-2xl sm:text-3xl font-bold mb-6'>
           Explore Properties Near You
         </h2>
-        <div className='h-[400px] rounded-[20px] overflow-hidden'>
+        <div className='h-[280px] sm:h-[400px] rounded-[20px] overflow-hidden'>
           <Map />
         </div>
       </div>

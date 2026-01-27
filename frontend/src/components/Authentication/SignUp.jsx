@@ -11,8 +11,8 @@ const SignUp = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
-  } = useForm();
+    formState: { errors, touchedFields },
+  } = useForm({ mode: 'onTouched' });
   const navigate = useNavigate();
   const { setIsLoggedIn } = useContext(loginContext);
 
@@ -65,10 +65,13 @@ const SignUp = () => {
                           {...field}
                           type='text'
                           placeholder='Enter your name...'
-                          className='border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none'
+                          className={`w-full rounded-md border py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus-visible:shadow-none ${errors.name ? 'border-red-400 focus:border-red-500' : touchedFields.name ? 'border-green-400 focus:border-green-500' : 'border-[#E9EDF4] focus:border-primary'} bg-[#FCFDFE]`}
                           autoComplete='name'
+                          disabled={mutation.isPending}
                         />
-                        {errors.name && <p className='text-red-600'>{errors.name.message}</p>}
+                        {errors.name && (
+                          <p className='text-red-500 text-sm mt-1 text-left'>{errors.name.message}</p>
+                        )}
                       </>
                     )}
                   />
@@ -91,10 +94,13 @@ const SignUp = () => {
                           {...field}
                           type='email'
                           placeholder='Enter your email...'
-                          className='border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none'
+                          className={`w-full rounded-md border py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus-visible:shadow-none ${errors.email ? 'border-red-400 focus:border-red-500' : touchedFields.email ? 'border-green-400 focus:border-green-500' : 'border-[#E9EDF4] focus:border-primary'} bg-[#FCFDFE]`}
                           autoComplete='email'
+                          disabled={mutation.isPending}
                         />
-                        {errors.email && <p className='text-red-600'>{errors.email.message}</p>}
+                        {errors.email && (
+                          <p className='text-red-500 text-sm mt-1 text-left'>{errors.email.message}</p>
+                        )}
                       </>
                     )}
                   />
@@ -120,12 +126,13 @@ const SignUp = () => {
                         <input
                           {...field}
                           type='number'
-                          placeholder='Enter your phone number...'
-                          className='border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none'
+                          placeholder='Enter your 10-digit phone number...'
+                          className={`w-full rounded-md border py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus-visible:shadow-none ${errors.phoneNumber ? 'border-red-400 focus:border-red-500' : touchedFields.phoneNumber ? 'border-green-400 focus:border-green-500' : 'border-[#E9EDF4] focus:border-primary'} bg-[#FCFDFE]`}
                           autoComplete='tel'
+                          disabled={mutation.isPending}
                         />
                         {errors.phoneNumber && (
-                          <p className='text-red-600'>{errors.phoneNumber.message}</p>
+                          <p className='text-red-500 text-sm mt-1 text-left'>{errors.phoneNumber.message}</p>
                         )}
                       </>
                     )}
@@ -148,12 +155,13 @@ const SignUp = () => {
                         <input
                           {...field}
                           type='password'
-                          placeholder='Enter your password...'
-                          className='border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none'
-                          autoComplete='current-password'
+                          placeholder='Min. 8 characters...'
+                          className={`w-full rounded-md border py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus-visible:shadow-none ${errors.password ? 'border-red-400 focus:border-red-500' : touchedFields.password ? 'border-green-400 focus:border-green-500' : 'border-[#E9EDF4] focus:border-primary'} bg-[#FCFDFE]`}
+                          autoComplete='new-password'
+                          disabled={mutation.isPending}
                         />
                         {errors.password && (
-                          <p className='text-red-600'>{errors.password.message}</p>
+                          <p className='text-red-500 text-sm mt-1 text-left'>{errors.password.message}</p>
                         )}
                       </>
                     )}
@@ -162,10 +170,11 @@ const SignUp = () => {
 
                 <div className='mb-10 mt-5'>
                   <button
-                    className='w-full font-medium px-6 py-2 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95 bg-blue-gradient'
+                    className='w-full font-medium px-6 py-2 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95 bg-blue-gradient disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none'
                     type='submit'
+                    disabled={mutation.isPending}
                   >
-                    Sign Up
+                    {mutation.isPending ? 'Signing Up...' : 'Sign Up'}
                   </button>
                 </div>
               </form>
