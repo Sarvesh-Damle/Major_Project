@@ -1,144 +1,118 @@
 import { usePropertiesFlats } from '../../hooks/useProperties.js';
 import PropertiesCard from './PropertiesCard.jsx';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { CardSkeletonGrid } from '@/components/ui/CardSkeleton.jsx';
 import ErrorComponent from '@/pages/ErrorComponent.jsx';
 import { useLocation } from 'react-router-dom';
 import { CheckBoxDropdown, DropdownSelect } from './HostelProperties.jsx';
-import { localities, sort } from '../../data/Property.js';
+import { localities, flat_types, furnished_status } from '../../data/Property.js';
+import PriceRangeSlider from '@/components/ui/PriceRangeSlider.jsx';
+import Pagination from '@/components/ui/Pagination.jsx';
+
+const ITEMS_PER_PAGE = 12;
 
 const FlatProperties = () => {
-  // const [filter, setFilter] = useState("");
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const city = queryParams.get('city') || '';
-  const locality = queryParams.get('locality') || '';
-  const { data, isLoading, isError, refetch } = usePropertiesFlats(city, locality);
-  const items_type_of_hostels = ['Boys-Hostel', 'Girls-Hostel'];
-  const items_sharingType = ['Single', 'Double-Sharing', 'Triple-Sharing', 'Four-Sharing'];
-  const [filteredData, setFilteredData] = useState(null);
-  const [dropdownValueSort, setDropdownValueSort] = useState('');
-  const [dropdownValueLocality, setDropdownValueLocality] = useState('');
-  const [typeOfHostel, setTypeOfHostel] = useState([]);
-  const [sharingType, setSharingType] = useState([]);
+  const initialLocality = queryParams.get('locality') || '';
 
-  const handleSelectFilter = async (filterName, value) => {
-    switch (filterName) {
-      case 'Sort':
-        if (value === 'Price: Low to High') {
-          const sortingProducts = (a, b) => {
-            return a.rent_amount - b.rent_amount;
-          };
-          newSortedData = sortedData.sort(sortingProducts);
-        } else if (value === 'Price: High to Low') {
-          const sortingProducts = (a, b) => {
-            return b.rent_amount - a.rent_amount;
-          };
-          newSortedData = sortedData.sort(sortingProducts);
-        }
-        break;
-      case 'Type of Hostel':
-        break;
-      case 'Sharing Type':
-        if (sharingType.includes(value)) {
-          setSharingType(sharingType.filter((item) => item !== value)); // Deselect
-        } else {
-          setSharingType([...sharingType, value]); // Select
-        }
-        break;
-      case 'By Locality':
-        newSortedData = newSortedData.filter((property) =>
-          property.locality.toLowerCase().includes(value.toLowerCase())
-        );
-        break;
-      default:
-        break;
-    }
-    setFilteredData(newSortedData);
-    await refetch();
+  const [filters, setFilters] = useState({
+    locality: initialLocality,
+    flatType: [],
+    furnishedStatus: [],
+    minPrice: null,
+    maxPrice: null,
+    sortBy: null,
+    page: 1,
+    limit: ITEMS_PER_PAGE,
+  });
+
+  const { data, isLoading, isError } = usePropertiesFlats(city, filters);
+
+  const updateFilter = (key, value) => {
+    setFilters((prev) => ({ ...prev, [key]: value, page: 1 }));
   };
+
+  const handlePriceChange = (min, max) => {
+    setFilters((prev) => ({ ...prev, minPrice: min, maxPrice: max, page: 1 }));
+  };
+
+  const handlePageChange = (newPage) => {
+    setFilters((prev) => ({ ...prev, page: newPage }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const sortByValue = useMemo(() => {
+    if (filters.sortBy === 'price_asc') return 'Price: Low to High';
+    if (filters.sortBy === 'price_desc') return 'Price: High to Low';
+    return '';
+  }, [filters.sortBy]);
 
   if (isLoading) return <CardSkeletonGrid count={8} />;
   if (isError) return <ErrorComponent />;
 
-  let sortedData = [...data.data];
-  let newSortedData = sortedData;
-
-  const propertiesData =
-    filteredData ||
-    data.data.filter(
-      (property) =>
-        property.city.toLowerCase().includes(city.toLowerCase()) ||
-        property.locality.toLowerCase().includes(locality.toLowerCase())
-    );
+  const properties = data?.data?.flats || data?.data || [];
+  const pagination = data?.data?.pagination;
 
   return (
-    <>
-      <div className='wrapper'>
-        <div className='flexColCenter p-6 innerWidth gap-8 properties-container'>
-          {/* Filters */}
-          <div className='flex w-full gap-x-10 gap-y-4 flex-wrap filters'>
-            <div className='flex w-full gap-4 sm:gap-8 justify-center items-center flex-wrap'>
-              <CheckBoxDropdown
-                dropdownTitle='Type of Flats'
-                items={items_type_of_hostels}
-                selectedItems={typeOfHostel}
-                onItemsSelected={(value) => {
-                  setTypeOfHostel(value);
-                  handleSelectFilter('Type of Hostel', value);
-                }}
-              />
-              <CheckBoxDropdown
-                dropdownTitle='Sharing Type'
-                items={items_sharingType}
-                selectedItems={sharingType}
-                onItemsSelected={(value) => {
-                  setSharingType(value);
-                  handleSelectFilter('Sharing Type', value);
-                }}
-              />
-
-              <DropdownSelect
-                title='Sort'
-                options={sort}
-                onSelect={(title, value) => {
-                  setDropdownValueSort(value);
-                  handleSelectFilter(title, value);
-                }}
-                dropdownValue={dropdownValueSort}
-                setDropdownValue={setDropdownValueSort}
-              />
-              <DropdownSelect
-                title='By Locality'
-                options={localities}
-                onSelect={(title, value) => {
-                  setDropdownValueLocality(value);
-                  handleSelectFilter(title, value);
-                }}
-                dropdownValue={dropdownValueLocality}
-                setDropdownValue={setDropdownValueLocality}
-              />
-            </div>
-          </div>
-          <div className='p-6 w-full flex justify-center items-center gap-y-8 gap-4 flex-wrap properties'>
-            {propertiesData &&
-              propertiesData
-                // .filter(property =>
-                //   property.flat_type.toLowerCase().includes(filter.toLowerCase()) ||
-                //   property.locality.toLowerCase().includes(filter.toLowerCase()) ||
-                //   property.city.toLowerCase().includes(filter.toLowerCase()) ||
-                //   property.city.toLowerCase().includes(city.toLowerCase()) ||
-                //   property.locality.toLowerCase().includes(locality.toLowerCase()) ||
-                //   property.rent_amount.toString().includes(filter.toLowerCase())
-                // )
-                .map((card, index) => {
-                  return <PropertiesCard card={card} key={index} />;
-                })}
-            {propertiesData.length === 0 && 'No results found!!'}
+    <div className='wrapper'>
+      <div className='flexColCenter p-6 innerWidth gap-8 properties-container'>
+        <div className='flex w-full gap-x-10 gap-y-4 flex-wrap filters'>
+          <div className='flex w-full gap-4 sm:gap-6 justify-center items-center flex-wrap'>
+            <CheckBoxDropdown
+              dropdownTitle='Flat Type'
+              items={flat_types}
+              selectedItems={filters.flatType}
+              onItemsSelected={(value) => updateFilter('flatType', value)}
+            />
+            <CheckBoxDropdown
+              dropdownTitle='Furnished Status'
+              items={furnished_status}
+              selectedItems={filters.furnishedStatus}
+              onItemsSelected={(value) => updateFilter('furnishedStatus', value)}
+            />
+            <PriceRangeSlider
+              minPrice={filters.minPrice}
+              maxPrice={filters.maxPrice}
+              onPriceChange={handlePriceChange}
+              min={0}
+              max={100000}
+              step={1000}
+            />
+            <DropdownSelect
+              title='Sort'
+              options={['Price: Low to High', 'Price: High to Low']}
+              dropdownValue={sortByValue}
+              onSelect={(_, value) => {
+                const sortBy = value === 'Price: Low to High' ? 'price_asc' : 'price_desc';
+                updateFilter('sortBy', sortBy);
+              }}
+              setDropdownValue={() => {}}
+            />
+            <DropdownSelect
+              title='By Locality'
+              options={localities}
+              dropdownValue={filters.locality}
+              onSelect={(_, value) => updateFilter('locality', value)}
+              setDropdownValue={() => {}}
+            />
           </div>
         </div>
+
+        <div className='p-6 w-full flex justify-center items-center gap-y-8 gap-4 flex-wrap properties'>
+          {properties.length > 0 ? (
+            properties.map((card) => <PropertiesCard card={card} key={card._id} />)
+          ) : (
+            <p className='text-gray-500'>No results found!</p>
+          )}
+        </div>
+
+        {pagination && pagination.totalPages > 1 && (
+          <Pagination currentPage={pagination.page} totalPages={pagination.totalPages} onPageChange={handlePageChange} />
+        )}
       </div>
-    </>
+    </div>
   );
 };
 

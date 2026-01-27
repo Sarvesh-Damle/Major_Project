@@ -22,6 +22,7 @@ const Error = lazy(() => import('./pages/Error.jsx'));
 const HostelProperties = lazy(() => import('./components/ListProperties/HostelProperties.jsx'));
 const PGProperties = lazy(() => import('./components/ListProperties/PGProperties.jsx'));
 const FlatProperties = lazy(() => import('./components/ListProperties/FlatProperties.jsx'));
+const MapView = lazy(() => import('./components/Map/MapView.jsx'));
 const HostelProperty = lazy(() => import('./components/Home/HostelProperty.jsx'));
 const PGProperty = lazy(() => import('./components/Home/PGProperty.jsx'));
 const FlatProperty = lazy(() => import('./components/Home/FlatProperty.jsx'));
@@ -60,12 +61,19 @@ const App = () => {
 
   return (
     <div className='relative w-screen overflow-hidden'>
+      <a
+        href='#main-content'
+        className='sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded'
+      >
+        Skip to main content
+      </a>
       <ToastContainer autoClose={1000} />
       <loginContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
         {url_name === 'dashboard' ? null : <Navbar />}
         <ScrollToTop />
         <ErrorBoundary>
           <Suspense fallback={<Loader />}>
+            <main id='main-content'>
             <Routes>
               <Route path='/' element={<Home />} />
               <Route path='/signin' element={<SignIn />} />
@@ -76,6 +84,7 @@ const App = () => {
               <Route path='/pgs/:propertyId' element={<PGProperty />} />
               <Route path='/flats' element={<FlatProperties />} />
               <Route path='/flats/:propertyId' element={<FlatProperty />} />
+              <Route path='/map' element={<MapView />} />
               <Route path='/profile' element={<Profile />} />
               <Route path='/contact' element={<Contact />} />
               <Route path='/team' element={<Team />} />
@@ -157,6 +166,7 @@ const App = () => {
               />
               <Route path='*' element={<Error />} />
             </Routes>
+            </main>
           </Suspense>
         </ErrorBoundary>
         {url_name === 'dashboard' ? null : <Footer />}

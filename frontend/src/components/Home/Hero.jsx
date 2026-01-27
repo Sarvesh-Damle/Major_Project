@@ -6,7 +6,7 @@ import { ReactTyped } from 'react-typed';
 
 const Hero = () => {
   return (
-    <section className='text-white relative pb-8 bg-black hero-wrapper'>
+    <section className='text-white relative pb-8 bg-black hero-wrapper' aria-label='Hero banner'>
       <div className='flex flex-wrap gap-y-8 p-6 innerWidth justify-around items-end max-lg:pt-12 hero-container'>
         {/* left side */}
         <div className='flex flex-col justify-center items-start gap-12 hero-left'>
@@ -62,7 +62,7 @@ const Hero = () => {
           >
             <img
               src='https://res.cloudinary.com/sarvesh-damle/image/upload/v1710397575/Buddies_MajorProject/logos/hero-image_fs2tsc.png'
-              alt='image'
+              alt='Modern apartment building'
               className='w-[100%] h-[100%]'
             />
           </motion.div>

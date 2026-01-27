@@ -158,4 +158,16 @@ export const getAllPropertiesValidator = [
     .optional()
     .isInt({ min: 1, max: 100 })
     .withMessage("Limit must be between 1 and 100"),
+  query("minPrice")
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage("Minimum price must be a non-negative integer"),
+  query("maxPrice")
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage("Maximum price must be a non-negative integer"),
+  query("sortBy")
+    .optional()
+    .isIn(["price_asc", "price_desc", "newest", "oldest"])
+    .withMessage("Invalid sort option"),
 ];

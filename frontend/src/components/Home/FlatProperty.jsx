@@ -6,6 +6,8 @@ import ErrorComponent from '@/pages/ErrorComponent.jsx';
 import Slider from './Slider.jsx';
 import PropertyMaps from '@/components/ui/PropertyMaps.jsx';
 import useFavorite from '@/hooks/useFavorite.js';
+import { useTrackPropertyView } from '@/hooks/useRecentlyViewed.js';
+import ShareButtons from '@/components/ui/ShareButtons.jsx';
 import { HiLocationMarker } from 'react-icons/hi';
 import { ImProfile } from 'react-icons/im';
 import { MdDirectionsRailway, MdDriveFileRenameOutline, MdEmail } from 'react-icons/md';
@@ -31,10 +33,11 @@ const FlatProperty = () => {
     },
   });
 
+  const property = data?.data;
+  useTrackPropertyView(property, 'flat');
+
   if (isLoading) return <Loader />;
   if (isError) return <ErrorComponent />;
-
-  const property = data?.data;
 
   return (
     <div className='flex justify-center w-full h-full my-8 singlePage'>
@@ -73,13 +76,19 @@ const FlatProperty = () => {
               </div>
             </div>
             <div className='mt-12 text-[#555] leading-5 bottom'>{property.description}</div>
-            <button
-              className='font-medium px-6 py-2 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-105 bg-blue-gradient mt-10'
-              value={liked}
-              onClick={toggleFavorite}
-            >
-              {liked ? 'Remove from Favourites' : 'Add Property to Favourites'}
-            </button>
+            <div className='flex items-center gap-4 mt-10'>
+              <button
+                className='font-medium px-6 py-2 text-white border-none rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-105 bg-blue-gradient'
+                value={liked}
+                onClick={toggleFavorite}
+              >
+                {liked ? 'Remove from Favourites' : 'Add Property to Favourites'}
+              </button>
+              <ShareButtons
+                title={`${property.flat_type} Flat`}
+                text={`Check out this ${property.flat_type} Flat - Rs. ${property.rent_amount}/month at ${property.address}`}
+              />
+            </div>
           </div>
         </div>
       </div>

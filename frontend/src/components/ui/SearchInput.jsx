@@ -36,23 +36,29 @@ const SearchInput = ({ data, placeholder, onSelect, className = '' }) => {
         <input
           type='search'
           placeholder={placeholder}
+          aria-label={placeholder}
+          aria-autocomplete='list'
+          aria-expanded={filteredData.length > 0 && !showResults}
           className='w-full flex gap-y-8 bg-white rounded-lg border-2 border-solid border-gray-300 border-opacity-50 p-3 mx-0.5 justify-between'
           onChange={handleFilter}
           value={inputValue}
         />
       </div>
       {filteredData.length > 0 && !showResults && (
-        <div className='w-full max-h-[200px] bg-white shadow-lg rounded-lg overflow-hidden overflow-y-auto no-scrollbar absolute top-full z-20'>
+        <ul role='listbox' className='w-full max-h-[200px] bg-white shadow-lg rounded-lg overflow-hidden overflow-y-auto no-scrollbar absolute top-full z-20 list-none p-0 m-0'>
           {filteredData.map((item, index) => (
-            <div
+            <li
               key={index}
-              className='w-full py-3 px-3 flex text-black cursor-pointer hover:bg-gray-200'
+              role='option'
+              tabIndex={0}
+              className='w-full py-3 px-3 flex text-black cursor-pointer hover:bg-gray-200 focus:bg-gray-200 focus:outline-none'
               onClick={() => handleSelect(item)}
+              onKeyDown={(e) => { if (e.key === 'Enter') handleSelect(item); }}
             >
-              <p>{item.name}</p>
-            </div>
+              {item.name}
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );
