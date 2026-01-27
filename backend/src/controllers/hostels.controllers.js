@@ -3,7 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadFilesToCloudinary } from "../utils/cloudinary.js";
-import { sendPropertyVerifiedEmail } from "../utils/sendEmail.js";
+import { sendPropertyRegistrationEmail, sendPropertyVerifiedEmail } from "../utils/sendEmail.js";
 
 export const createHostel = asyncHandler(async (req, res) => {
   const hostelData = req.body;
@@ -32,15 +32,8 @@ export const createHostel = asyncHandler(async (req, res) => {
   if (!hostel) {
     throw new ApiError(500, "Something went wrong while listing the property");
   }
-  // const sendEmail = await axios.post("http://localhost:4000/backend-email-service/email", {
-  //   to: hostelData.email,
-  //   subject: "Property Registration Process has began!",
-  //   body: `   Thank you, for providing property details!!\n\nOur Team will verify the property and will surely get back to you`,
-  //   user: "Buddies.com",
-  // });
-  // if (!sendEmail) {
-  //   throw new ApiError(500, "Something went wrong while sending email");
-  // }
+  sendPropertyRegistrationEmail(hostelData.owner_email);
+
   return res
     .status(201)
     .json(new ApiResponse(201, hostel, "Hostel Property listed successfully"));

@@ -61,6 +61,45 @@ Buddies.com Team`
 };
 
 /**
+ * Send contact form acknowledgment to the user
+ */
+export const sendContactAcknowledgmentEmail = async (email, name) => {
+  return sendEmail(
+    email,
+    "We received your message!",
+    `Hi ${name},
+
+Thank you for reaching out to us! We have received your message and our team will get back to you shortly.
+
+Best regards,
+Buddies.com Team`
+  );
+};
+
+/**
+ * Send contact form notification to admin
+ */
+export const sendContactNotificationEmail = async (name, email, phoneNumber, message) => {
+  const adminEmail = process.env.ADMIN_EMAIL;
+  if (!adminEmail) {
+    logger.warn("ADMIN_EMAIL not configured, skipping contact notification");
+    return false;
+  }
+  return sendEmail(
+    adminEmail,
+    `New Contact Inquiry from ${name}`,
+    `A new contact form submission has been received:
+
+Name: ${name}
+Email: ${email}
+Phone: ${phoneNumber}
+Message: ${message}
+
+Please respond to this inquiry promptly.`
+  );
+};
+
+/**
  * Send user registration welcome email
  */
 export const sendWelcomeEmail = async (email) => {
