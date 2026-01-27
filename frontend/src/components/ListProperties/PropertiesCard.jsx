@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { truncate } from 'lodash';
 import { loginContext } from '../../provider/authContext';
 import { toast } from 'react-toastify';
+import { getOptimizedUrl } from '@/utils/cloudinaryUrl.js';
 
 const PropertiesCard = memo(function PropertiesCard({ card }) {
   const navigate = useNavigate();
@@ -21,14 +22,14 @@ const PropertiesCard = memo(function PropertiesCard({ card }) {
   return (
     <>
       <div
-        className='flex flex-col w-72 h-96 gap-2 p-4 m-auto rounded-xl max-w-max max-h-max transition-all duration-300 ease-in hover:scale-105 hover:cursor-pointer hover:bg-gradient-to-b from-[#ffffff] to-[#eeeef7] shadow hover:shadow-lg r-card'
+        className='flex flex-col w-full sm:w-72 gap-2 p-4 m-auto rounded-xl max-w-xs transition-all duration-300 ease-in hover:scale-105 hover:cursor-pointer hover:bg-gradient-to-b from-[#ffffff] to-[#eeeef7] shadow hover:shadow-lg r-card'
         onClick={handleClick}
       >
         {card.property_photos.length > 0 && (
           <img
-            src={card.property_photos[0]}
+            src={getOptimizedUrl(card.property_photos[0], { width: 300 })}
             alt='property-image'
-            className='w-60 h-40 rounded-[10px]'
+            className='w-full h-40 object-cover rounded-[10px]'
             loading='lazy'
           />
         )}

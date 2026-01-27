@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { getOptimizedUrl } from '@/utils/cloudinaryUrl.js';
 
 const Featured = () => {
   // const { data, loading, error, reFetch } = useFetch("/api/hostels/countByAddress?address=Wadala,Dadar,Nerul");
@@ -51,7 +52,7 @@ const SingleCard = ({ image, Button, CardDescription, CardTitle }) => {
         className='overflow-hidden bg-white rounded-lg cursor-pointer'
         onClick={() => navigate('/property')}
       >
-        <img src={image} alt='Room' className='w-full' />
+        <img src={getOptimizedUrl(image, { width: 500 })} alt='Room' className='w-full' loading='lazy' />
         <div className='p-8 text-center sm:p-9 md:p-7 xl:p-9'>
           <h3>
             <div className='mb-4 block text-xl font-semibold text-dark hover:text-primary sm:text-[22px] md:text-xl lg:text-[22px] xl:text-xl 2xl:text-[22px] cursor-pointer'>

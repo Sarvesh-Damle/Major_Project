@@ -1,14 +1,16 @@
+import { getOptimizedUrl } from '@/utils/cloudinaryUrl.js';
+
 const Testimonials = ({ testimonials }) => {
   return (
     <>
       <h1 className='primaryText max-md:text-2xl flex justify-center items-center mt-8 mb-3'>
         Testimonials
       </h1>
-      <div className='p-6 w-full m-4 max-sm:m-0 h-auto overflow-hidden flex flex-wrap gap-8'>
+      <div className='p-6 w-full m-4 max-sm:m-0 h-auto overflow-hidden flex flex-wrap justify-center gap-8'>
         {testimonials.map((testimonial, index) => (
           <div
             key={index}
-            className='flex justify-center items-center gap-2 p-4 rounded-xl w-[430px] ml-5 max-sm:ml-0 transition-all duration-300 ease-in hover:scale-105 hover:bg-gradient-to-b from-[#ffffff] to-[#eeeef7] shadow hover:shadow-lg'
+            className='flex justify-center items-center gap-2 p-4 rounded-xl w-full sm:w-[430px] transition-all duration-300 ease-in hover:scale-105 hover:bg-gradient-to-b from-[#ffffff] to-[#eeeef7] shadow hover:shadow-lg'
           >
             <div className='flex flex-1 flex-col justify-between p-8'>
               <div className='mb-4 flex space-x-2'>
@@ -39,8 +41,9 @@ const Testimonials = ({ testimonials }) => {
                 <div className='flex items-center'>
                   <img
                     className='h-10 w-10 flex-shrink-0 rounded-full object-cover'
-                    src={testimonial.imageUrl}
+                    src={getOptimizedUrl(testimonial.imageUrl, { width: 80 })}
                     alt='profile_photo'
+                    loading='lazy'
                   />
                   <div className='ml-3 min-w-0'>
                     <p className='truncate text-base font-semibold text-gray-800'>

@@ -31,7 +31,7 @@ const SearchInput = ({ data, placeholder, onSelect, className = '' }) => {
   };
 
   return (
-    <div className={`flex flex-col gap-0.5 ${className}`}>
+    <div className={`relative flex flex-col gap-0.5 ${className}`}>
       <div className='flex'>
         <input
           type='search'
@@ -42,14 +42,14 @@ const SearchInput = ({ data, placeholder, onSelect, className = '' }) => {
         />
       </div>
       {filteredData.length > 0 && !showResults && (
-        <div className='w-[340px] h-[200px] bg-white shadow-gray-800 overflow-hidden overflow-y-auto no-scrollbar'>
+        <div className='w-full max-h-[200px] bg-white shadow-lg rounded-lg overflow-hidden overflow-y-auto no-scrollbar absolute top-full z-20'>
           {filteredData.map((item, index) => (
             <div
               key={index}
-              className='w-full h-[50px] flex text-black cursor-pointer hover:bg-gray-200'
+              className='w-full py-3 px-3 flex text-black cursor-pointer hover:bg-gray-200'
               onClick={() => handleSelect(item)}
             >
-              <p className='ml-[10px]'>{item.name}</p>
+              <p>{item.name}</p>
             </div>
           ))}
         </div>

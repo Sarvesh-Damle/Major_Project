@@ -11,8 +11,8 @@ const SignIn = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
-  } = useForm();
+    formState: { errors, touchedFields },
+  } = useForm({ mode: 'onTouched' });
   const navigate = useNavigate();
   const { setIsLoggedIn } = useContext(loginContext);
 
@@ -66,10 +66,13 @@ const SignIn = () => {
                           {...field}
                           type='email'
                           placeholder='Enter your email...'
-                          className='border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none'
+                          className={`w-full rounded-md border py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus-visible:shadow-none ${errors.email ? 'border-red-400 focus:border-red-500' : touchedFields.email ? 'border-green-400 focus:border-green-500' : 'border-[#E9EDF4] focus:border-primary'} bg-[#FCFDFE]`}
                           autoComplete='email'
+                          disabled={mutation.isPending}
                         />
-                        {errors.email && <p className='text-red-600'>{errors.email.message}</p>}
+                        {errors.email && (
+                          <p className='text-red-500 text-sm mt-1 text-left'>{errors.email.message}</p>
+                        )}
                       </>
                     )}
                   />
@@ -92,11 +95,12 @@ const SignIn = () => {
                           {...field}
                           type='password'
                           placeholder='Enter your password...'
-                          className='border-[#E9EDF4] w-full rounded-md border bg-[#FCFDFE] py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus:border-primary focus-visible:shadow-none'
+                          className={`w-full rounded-md border py-3 px-5 text-base text-body-color placeholder-[#ACB6BE] outline-none focus-visible:shadow-none ${errors.password ? 'border-red-400 focus:border-red-500' : touchedFields.password ? 'border-green-400 focus:border-green-500' : 'border-[#E9EDF4] focus:border-primary'} bg-[#FCFDFE]`}
                           autoComplete='current-password'
+                          disabled={mutation.isPending}
                         />
                         {errors.password && (
-                          <p className='text-red-600'>{errors.password.message}</p>
+                          <p className='text-red-500 text-sm mt-1 text-left'>{errors.password.message}</p>
                         )}
                       </>
                     )}
@@ -105,10 +109,11 @@ const SignIn = () => {
 
                 <div className='mb-8'>
                   <button
-                    className='w-full font-medium px-6 py-2 text-white border-primary rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95 bg-blue-gradient'
+                    className='w-full font-medium px-6 py-2 text-white border-primary rounded-lg transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95 bg-blue-gradient disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none'
                     type='submit'
+                    disabled={mutation.isPending}
                   >
-                    Sign In
+                    {mutation.isPending ? 'Signing In...' : 'Sign In'}
                   </button>
                 </div>
               </form>

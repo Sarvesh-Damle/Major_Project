@@ -8,19 +8,23 @@ import {
   usePropertiesHostels,
   usePropertiesPGs,
 } from '../../hooks/useProperties.js';
-import Loader from '@/pages/Loader.jsx';
+import { CardSkeleton } from '@/components/ui/CardSkeleton.jsx';
 import ErrorComponent from '@/pages/ErrorComponent.jsx';
 
 const Properties = () => {
   const { data, isLoading, isError } = usePropertiesHostels();
   const { data: data2, isLoading: isLoading2, isError: isError2 } = usePropertiesPGs();
   const { data: data3, isLoading: isLoading3, isError: isError3 } = usePropertiesFlats();
-  if (isLoading) return <Loader />;
-  if (isError) return <ErrorComponent />;
-  if (isLoading2) return <Loader />;
-  if (isError2) return <ErrorComponent />;
-  if (isLoading3) return <Loader />;
-  if (isError3) return <ErrorComponent />;
+
+  if (isError && isError2 && isError3) return <ErrorComponent />;
+
+  const SkeletonSlider = () => (
+    <div className='flex gap-4 overflow-hidden py-4'>
+      {Array.from({ length: 4 }).map((_, i) => (
+        <CardSkeleton key={i} />
+      ))}
+    </div>
+  );
 
   return (
     <section className='r-wrapper'>
@@ -30,41 +34,59 @@ const Properties = () => {
           <span className='primaryText max-md:text-2xl'>Popular Hostel Properties</span>
         </div>
         {/* Hostel Properties: */}
-        <Swiper {...sliderSettings}>
-          <SliderButtons />
-          {data &&
-            data.data.slice(0, 8).map((card, index) => (
-              <SwiperSlide key={index}>
-                <PropertyCard card={card} />
-              </SwiperSlide>
-            ))}
-        </Swiper>
+        {isLoading ? (
+          <SkeletonSlider />
+        ) : isError ? (
+          <ErrorComponent />
+        ) : (
+          <Swiper {...sliderSettings}>
+            <SliderButtons />
+            {data &&
+              data.data.slice(0, 8).map((card, index) => (
+                <SwiperSlide key={index}>
+                  <PropertyCard card={card} />
+                </SwiperSlide>
+              ))}
+          </Swiper>
+        )}
         <div className='flexColStart mb-8 max-lg:items-center r-head'>
           <span className='primaryText max-md:text-2xl'>Popular PGs</span>
         </div>
         {/* PG Properties */}
-        <Swiper {...sliderSettings}>
-          <SliderButtons />
-          {data2 &&
-            data2.data.slice(0, 8).map((card, index) => (
-              <SwiperSlide key={index}>
-                <PropertyCard card={card} />
-              </SwiperSlide>
-            ))}
-        </Swiper>
+        {isLoading2 ? (
+          <SkeletonSlider />
+        ) : isError2 ? (
+          <ErrorComponent />
+        ) : (
+          <Swiper {...sliderSettings}>
+            <SliderButtons />
+            {data2 &&
+              data2.data.slice(0, 8).map((card, index) => (
+                <SwiperSlide key={index}>
+                  <PropertyCard card={card} />
+                </SwiperSlide>
+              ))}
+          </Swiper>
+        )}
         <div className='flexColStart mb-8 max-lg:items-center r-head'>
           <span className='primaryText max-md:text-2xl'>Popular Flats</span>
         </div>
         {/* Flat Properties */}
-        <Swiper {...sliderSettings}>
-          <SliderButtons />
-          {data3 &&
-            data3.data.slice(0, 8).map((card, index) => (
-              <SwiperSlide key={index}>
-                <PropertyCard card={card} />
-              </SwiperSlide>
-            ))}
-        </Swiper>
+        {isLoading3 ? (
+          <SkeletonSlider />
+        ) : isError3 ? (
+          <ErrorComponent />
+        ) : (
+          <Swiper {...sliderSettings}>
+            <SliderButtons />
+            {data3 &&
+              data3.data.slice(0, 8).map((card, index) => (
+                <SwiperSlide key={index}>
+                  <PropertyCard card={card} />
+                </SwiperSlide>
+              ))}
+          </Swiper>
+        )}
       </div>
     </section>
   );

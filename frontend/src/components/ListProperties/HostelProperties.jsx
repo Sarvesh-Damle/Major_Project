@@ -2,7 +2,7 @@
 import { usePropertiesHostels } from '../../hooks/useProperties.js';
 import PropertiesCard from './PropertiesCard.jsx';
 import { useState } from 'react';
-import Loader from '@/pages/Loader.jsx';
+import { CardSkeletonGrid } from '@/components/ui/CardSkeleton.jsx';
 import ErrorComponent from '@/pages/ErrorComponent.jsx';
 import { useLocation } from 'react-router-dom';
 import { localities, sort } from '../../data/Property.js';
@@ -59,7 +59,7 @@ const HostelProperties = () => {
     await refetch();
   };
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <CardSkeletonGrid count={8} />;
   if (isError) return <ErrorComponent />;
 
   let sortedData = [...data.data];
@@ -79,7 +79,7 @@ const HostelProperties = () => {
         <div className='flexColCenter p-6 innerWidth gap-8 properties-container'>
           {/* Filters */}
           <div className='flex w-full gap-x-10 gap-y-4 flex-wrap filters'>
-            <div className='flex w-full gap-8 justify-center items-center'>
+            <div className='flex w-full gap-4 sm:gap-8 justify-center items-center flex-wrap'>
               <CheckBoxDropdown
                 dropdownTitle='Type of Flats'
                 items={items_type_of_hostels}

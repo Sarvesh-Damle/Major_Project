@@ -98,7 +98,7 @@ function SearchBar() {
       />
 
       {/* Search input and button */}
-      <div className='w-1/3 flex max-sm:flex-col max-sm:flex-wrap max-sm:w-96 gap-0.5 max-sm:gap-3 max-sm:justify-center max-sm:items-center justify-center mx-1 ml-3'>
+      <div className='w-full sm:w-1/3 flex max-sm:flex-col gap-0.5 max-sm:gap-3 max-sm:justify-center max-sm:items-center justify-center mx-1 sm:ml-3 max-sm:px-4'>
         <SearchInput
           data={searchData}
           placeholder='Search near your College, Company...'
@@ -107,7 +107,7 @@ function SearchBar() {
         />
         <button
           type='submit'
-          className='px-1.5 gap-3 w-32 max-sm:w-40 h-14 flex justify-center items-center font-medium ml-0.5 bg-blue-gradient text-white rounded-lg border-none transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95'
+          className='px-1.5 gap-3 w-full sm:w-32 h-14 flex justify-center items-center font-medium sm:ml-0.5 bg-blue-gradient text-white rounded-lg border-none transition-all duration-200 ease-in hover:cursor-pointer transform hover:scale-95'
         >
           <svg
             className='w-4 h-4 mt-1'
