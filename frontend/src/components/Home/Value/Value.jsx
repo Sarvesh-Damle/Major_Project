@@ -11,7 +11,7 @@ import { MdOutlineArrowDropDown } from 'react-icons/md';
 
 const Value = () => {
   return (
-    <section className='v-wrapper'>
+    <section className='v-wrapper' aria-label='Our values'>
       <div className='flex flex-wrap justify-center items-center gap-y-8 p-6 innerWidth max-lg:flex-col v-container'>
         {/* left side */}
         <div className='flex-1 v-left'>

@@ -53,14 +53,16 @@ const Navbar = () => {
   return (
     <header className='bg-black text-white'>
       <div className='flex items-center flex-wrap gap-y-8 p-6 innerWidth py-4 text-secondary justify-between h-container'>
-        <img
-          src='https://res.cloudinary.com/sarvesh-damle/image/upload/v1696443430/Buddies_MajorProject/logos/logo_transparent_yf8nw4.png'
-          alt='logo'
-          className='w-[100px] h-auto cursor-pointer'
-          onClick={() => navigate('/')}
-        />
+        <Link to='/' aria-label='Buddies - Go to homepage'>
+          <img
+            src='https://res.cloudinary.com/sarvesh-damle/image/upload/v1696443430/Buddies_MajorProject/logos/logo_transparent_yf8nw4.png'
+            alt='Buddies logo'
+            className='w-[100px] h-auto'
+          />
+        </Link>
         <OutsideClickHandler onOutsideClick={() => setMenuOpened(false)}>
-          <div
+          <nav
+            aria-label='Main navigation'
             className={
               menuOpened
                 ? 'flexCenter gap-8 hover:cursor-pointer max-lg:text-black max-lg:absolute max-lg:top-12 max-lg:right-16 max-lg:bg-white max-lg:flex-col max-lg:flex max-lg:font-medium max-lg:gap-8 max-lg:p-12 max-lg:rounded-[10px] max-lg:items-start max-lg:shadow-md transition-all duration-300 ease-in z-10  text-black h-menu'
@@ -81,13 +83,16 @@ const Navbar = () => {
             </div>
             {isLoggedIn.login ? (
               <div className='flex items-center gap-4 h-[50px] mx-2 '>
-                <div className='w-[50px] h-[50px] flex justify-center items-center '>
+                <button
+                  className='w-[50px] h-[50px] flex justify-center items-center bg-transparent border-none cursor-pointer'
+                  onClick={() => navigate('/profile')}
+                  aria-label='View profile'
+                >
                   <FaRegCircleUser
                     size={30}
                     className='hover:scale-105 active:text-violet-400'
-                    onClick={() => navigate('/profile')}
                   />
-                </div>
+                </button>
                 <button
                   onClick={() => mutation.mutate()}
                   className='w-full h-[40px] rounded-lg  flex items-center justify-center mr-2 text-black font-semibold bg-slate-300 hover:bg-slate-400 active:bg-slate-200 text-xl'
@@ -115,11 +120,16 @@ const Navbar = () => {
                 )}
               </div>
             )}
-          </div>
+          </nav>
         </OutsideClickHandler>
-        <div className='block lg:hidden menu-icon' onClick={() => setMenuOpened((prev) => !prev)}>
+        <button
+          className='block lg:hidden menu-icon bg-transparent border-none cursor-pointer'
+          onClick={() => setMenuOpened((prev) => !prev)}
+          aria-label={menuOpened ? 'Close navigation menu' : 'Open navigation menu'}
+          aria-expanded={menuOpened}
+        >
           <BiMenuAltRight size={30} />
-        </div>
+        </button>
       </div>
     </header>
   );

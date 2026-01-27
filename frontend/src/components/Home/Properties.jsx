@@ -27,7 +27,7 @@ const Properties = () => {
   );
 
   return (
-    <section className='r-wrapper'>
+    <section className='r-wrapper' aria-label='Popular properties'>
       <div className='p-6 innerWidth overflow-hidden relative r-container'>
         <div className='flexColStart mb-8 max-lg:items-center r-head'>
           <span className='orangeText'>Best Choices</span>
@@ -95,15 +95,17 @@ const Properties = () => {
 const SliderButtons = () => {
   const swiper = useSwiper();
   return (
-    <div className='flex justify-center sticky gap-4 mb-4 mt-8 z-10 r-buttons'>
+    <div className='flex justify-center sticky gap-4 mb-4 mt-8 z-10 r-buttons' role='group' aria-label='Slider navigation'>
       <button
         onClick={() => swiper.slidePrev()}
+        aria-label='Previous properties'
         className='bg-[#EEEEFF] px-3 py-1 text-xl text-blue border-none rounded-lg shadow cursor-pointer'
       >
         &lt;
       </button>
       <button
         onClick={() => swiper.slideNext()}
+        aria-label='Next properties'
         className='bg-white px-3 py-1 text-xl text-blue border-none rounded-lg shadow-md cursor-pointer'
       >
         &gt;
