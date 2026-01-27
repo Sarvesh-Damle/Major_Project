@@ -19,7 +19,7 @@ const useAuth = () => {
   });
 
   const user = data?.data || null;
-  const isAdmin = user?.role === 'admin' || user?.role === 'owner';
+  const isAdmin = user?.isAdmin === true;
 
   return {
     user,

@@ -60,6 +60,11 @@ Both `frontend/.env` and `backend/.env` are required. See:
 - Backend follows MVC pattern with validators and middleware
 - Run `npm run lint` and `npm run format` before committing
 
+## Git Commit Rules
+
+- Do NOT add `Co-Authored-By` lines in commit messages
+- Keep commit messages concise and descriptive
+
 ## Key Features
 
 ### Frontend Optimizations
