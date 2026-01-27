@@ -1,48 +1,8 @@
-import { useContext, useState } from 'react';
 import { AiFillHeart } from 'react-icons/ai';
-import { loginContext } from '@/provider/authContext';
-import { toast } from 'react-toastify';
-import axios from 'axios';
+import useFavorite from '@/hooks/useFavorite.js';
 
 const Heart = ({ id, propertyTag }) => {
-  const [liked, setLiked] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const { isLoggedIn } = useContext(loginContext);
-
-  const handleLike = async () => {
-    if (!isLoggedIn.login) {
-      toast.error('Please login to add favorites!', { position: 'bottom-right' });
-      return;
-    }
-
-    if (isLoading) return;
-
-    setIsLoading(true);
-    try {
-      if (!liked) {
-        await axios.post(
-          '/api/v1/favourites/add-favourites',
-          { propertyId: id, propertyTag },
-          { withCredentials: true }
-        );
-        setLiked(true);
-        toast.success('Added to favorites!', { position: 'bottom-right' });
-      } else {
-        await axios.delete('/api/v1/favourites/delete-favourite', {
-          data: { propertyId: id },
-          withCredentials: true,
-        });
-        setLiked(false);
-        toast.success('Removed from favorites!', { position: 'bottom-right' });
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to update favorites', {
-        position: 'bottom-right',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { liked, isLoading, toggleFavorite } = useFavorite(id, propertyTag);
 
   return (
     <AiFillHeart
@@ -54,7 +14,7 @@ const Heart = ({ id, propertyTag }) => {
       }}
       onClick={(e) => {
         e.stopPropagation();
-        handleLike();
+        toggleFavorite();
       }}
     />
   );
