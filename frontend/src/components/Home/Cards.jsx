@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Card = (props) => {
@@ -27,7 +28,7 @@ const Card = (props) => {
 
 export default Card;
 
-const SingleCard = ({
+const SingleCard = memo(({
   image,
   Button,
   CardDescription1,
@@ -43,7 +44,7 @@ const SingleCard = ({
         className='overflow-hidden bg-white rounded-lg cursor-pointer'
         onClick={() => navigate('/product')}
       >
-        <img src={image} alt='Room' className='w-full' />
+        <img src={image} alt='Room' className='w-full' loading='lazy' />
         <div className='p-8 text-center sm:p-9 md:p-7 xl:p-9'>
           <p className='text-base leading-relaxed mb-3 text-body-color'>{CardDescription1}</p>
           <h3>
@@ -64,4 +65,6 @@ const SingleCard = ({
       {/*  */}
     </>
   );
-};
+});
+
+SingleCard.displayName = 'SingleCard';

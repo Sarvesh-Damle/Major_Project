@@ -1,9 +1,10 @@
+import { memo } from 'react';
 import { truncate } from 'lodash';
 import { useNavigate } from 'react-router-dom';
 import Heart from '@/pages/Heart';
 import { getOptimizedUrl } from '@/utils/cloudinaryUrl.js';
 
-const PropertyCard = ({ card }) => {
+const PropertyCard = memo(({ card }) => {
   let url = 'hostels';
   let propertyTag = 'hostel';
   const navigate = useNavigate();
@@ -42,6 +43,8 @@ const PropertyCard = ({ card }) => {
       </div>
     </>
   );
-};
+});
+
+PropertyCard.displayName = 'PropertyCard';
 
 export default PropertyCard;
