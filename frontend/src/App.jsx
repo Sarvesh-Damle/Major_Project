@@ -22,6 +22,7 @@ const Error = lazy(() => import('./pages/Error.jsx'));
 const HostelProperties = lazy(() => import('./components/ListProperties/HostelProperties.jsx'));
 const PGProperties = lazy(() => import('./components/ListProperties/PGProperties.jsx'));
 const FlatProperties = lazy(() => import('./components/ListProperties/FlatProperties.jsx'));
+const MapView = lazy(() => import('./components/Map/MapView.jsx'));
 const HostelProperty = lazy(() => import('./components/Home/HostelProperty.jsx'));
 const PGProperty = lazy(() => import('./components/Home/PGProperty.jsx'));
 const FlatProperty = lazy(() => import('./components/Home/FlatProperty.jsx'));
@@ -83,6 +84,7 @@ const App = () => {
               <Route path='/pgs/:propertyId' element={<PGProperty />} />
               <Route path='/flats' element={<FlatProperties />} />
               <Route path='/flats/:propertyId' element={<FlatProperty />} />
+              <Route path='/map' element={<MapView />} />
               <Route path='/profile' element={<Profile />} />
               <Route path='/contact' element={<Contact />} />
               <Route path='/team' element={<Team />} />
