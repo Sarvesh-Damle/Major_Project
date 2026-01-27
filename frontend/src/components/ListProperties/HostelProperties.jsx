@@ -9,6 +9,7 @@ import { localities, hostel_types, room_types } from '../../data/Property.js';
 import PriceRangeSlider from '@/components/ui/PriceRangeSlider.jsx';
 import Pagination from '@/components/ui/Pagination.jsx';
 import useDebounce from '@/hooks/useDebounce.js';
+import SaveSearchButton from '@/components/ui/SaveSearchButton.jsx';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -98,6 +99,17 @@ const HostelProperties = () => {
               dropdownValue={filters.locality}
               onSelect={(_, value) => updateFilter('locality', value)}
               setDropdownValue={() => {}}
+            />
+            <SaveSearchButton
+              propertyType='hostel'
+              filters={{
+                city,
+                locality: filters.locality,
+                minPrice: filters.minPrice,
+                maxPrice: filters.maxPrice,
+                typeOfHostel: filters.typeOfHostel?.[0],
+                roomType: filters.roomType?.[0],
+              }}
             />
           </div>
         </div>

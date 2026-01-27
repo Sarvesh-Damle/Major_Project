@@ -4,6 +4,8 @@ import {
   getAllUser,
   getUser,
   updateUser,
+  getMyProperties,
+  getMyPropertyStats,
 } from "../controllers/users.controllers.js";
 import { getCurrentUser } from "../controllers/auth.controllers.js";
 import { verifyJWT, verifyAdmin, verifyOwnerOrAdmin } from "../middlewares/auth.middleware.js";
@@ -25,5 +27,9 @@ router.get("/get-user-info", verifyJWT, idQueryValidator, validate, getUser);
 
 // GET ALL users (admin only)
 router.get("/", verifyJWT, verifyAdmin, getAllUser);
+
+// User dashboard - My Properties
+router.get("/my-properties", verifyJWT, getMyProperties);
+router.get("/my-property-stats", verifyJWT, getMyPropertyStats);
 
 export default router;

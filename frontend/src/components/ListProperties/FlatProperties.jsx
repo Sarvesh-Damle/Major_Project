@@ -10,6 +10,7 @@ import { localities, flat_types, furnished_status } from '../../data/Property.js
 import PriceRangeSlider from '@/components/ui/PriceRangeSlider.jsx';
 import Pagination from '@/components/ui/Pagination.jsx';
 import useDebounce from '@/hooks/useDebounce.js';
+import SaveSearchButton from '@/components/ui/SaveSearchButton.jsx';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -99,6 +100,17 @@ const FlatProperties = () => {
               dropdownValue={filters.locality}
               onSelect={(_, value) => updateFilter('locality', value)}
               setDropdownValue={() => {}}
+            />
+            <SaveSearchButton
+              propertyType='flat'
+              filters={{
+                city,
+                locality: filters.locality,
+                minPrice: filters.minPrice,
+                maxPrice: filters.maxPrice,
+                flatType: filters.flatType?.[0],
+                furnishedStatus: filters.furnishedStatus?.[0],
+              }}
             />
           </div>
         </div>
