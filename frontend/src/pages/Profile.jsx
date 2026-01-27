@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Loader from './Loader';
 import ErrorComponent from './ErrorComponent';
 import 'swiper/css';
@@ -12,8 +12,6 @@ import { HiChartPie, HiUser, HiShoppingBag } from 'react-icons/hi';
 import { FaIndianRupeeSign } from 'react-icons/fa6';
 
 const Profile = () => {
-  const { pathname } = useLocation();
-  const id = pathname.split('/').slice(-1)[0];
   const navigate = useNavigate();
 
   const [selectedItem, setSelectedItem] = useState('User Details');
@@ -28,7 +26,7 @@ const Profile = () => {
     isError,
     refetch: refetchUserDetails,
   } = useQuery({
-    queryKey: ['User_Details', id],
+    queryKey: ['User_Details'],
     queryFn: async () => {
       const response = await axios.get(`/api/v1/users/me`, { withCredentials: true });
       return response.data;
