@@ -64,31 +64,53 @@ export const updateHostel = asyncHandler(async (req, res) => {
     distanceFromBusStop,
     description,
   } = req.body;
+
+  // Handle photo uploads if new photos are provided
+  let propertyPhotosUrls;
+  if (req.files?.property_photos && Array.isArray(req.files.property_photos) && req.files.property_photos.length > 0) {
+    propertyPhotosUrls = [];
+    for (let i = 0; i < Math.min(req.files.property_photos.length, 5); i++) {
+      const photosLocalPath = req.files.property_photos[i].path;
+      const propertyPhoto = await uploadFilesToCloudinary(photosLocalPath);
+      if (propertyPhoto) {
+        propertyPhotosUrls.push(propertyPhoto.url);
+      }
+    }
+  }
+
+  const updateData = {
+    hostel_name: hostelName,
+    type_of_hostel: typeOfHostel,
+    locality,
+    rent_amount: rentAmount,
+    security_deposit: securityDeposit,
+    featured: verified,
+    city,
+    owner_name: ownerName,
+    owner_email: ownerEmail,
+    owner_phoneNumber: ownerPhoneNumber,
+    pincode,
+    address,
+    distance_from_nearest_railway_station: distanceFromRailwayStation,
+    distance_from_bus_stop: distanceFromBusStop,
+    description,
+  };
+
+  // Only update photos if new ones were uploaded
+  if (propertyPhotosUrls && propertyPhotosUrls.length > 0) {
+    updateData.property_photos = propertyPhotosUrls;
+  }
+
+  // Remove undefined values
+  Object.keys(updateData).forEach(key => updateData[key] === undefined && delete updateData[key]);
+
   const updatedHostel = await Hostel.findByIdAndUpdate(
     req.query.id,
-    {
-      $set: {
-        hostel_name: hostelName,
-        type_of_hostel: typeOfHostel,
-        locality,
-        rent_amount: rentAmount,
-        security_deposit: securityDeposit,
-        featured: verified,
-        city,
-        owner_name: ownerName,
-        owner_email: ownerEmail,
-        owner_phoneNumber: ownerPhoneNumber,
-        pincode,
-        address,
-        distance_from_nearest_railway_station: distanceFromRailwayStation,
-        distance_from_bus_stop: distanceFromBusStop,
-        description,
-      },
-    },
+    { $set: updateData },
     { new: true }
   );
   if (!updatedHostel) {
-    throw new ApiError(500, "Something went wrong while updating the property");
+    throw new ApiError(404, "Hostel not found");
   }
   return res
     .status(200)
@@ -96,32 +118,27 @@ export const updateHostel = asyncHandler(async (req, res) => {
 });
 
 export const deleteHostel = asyncHandler(async (req, res) => {
-  const hostel = await Hostel.findById(req.query.id);
+  const hostel = await Hostel.findByIdAndDelete(req.query.id);
   if (!hostel) {
-    return res.status(200).json(new ApiResponse(200, "Hostel not found"));
-  } else {
-    await Hostel.findByIdAndDelete(req.query.id);
+    return res.status(404).json(new ApiResponse(404, null, "Hostel not found"));
   }
-  return res.status(200).json(new ApiResponse(200, "Hostel has been deleted"));
+  return res.status(200).json(new ApiResponse(200, null, "Hostel has been deleted"));
 });
 
 export const getHostel = asyncHandler(async (req, res) => {
   const hostel = await Hostel.findById(req.query.id);
   if (!hostel) {
-    throw new ApiError(
-      500,
-      "Something went wrong while fetching the hostel property"
-    );
+    throw new ApiError(404, "Hostel not found");
   }
   return res
     .status(200)
-    .json(new ApiResponse(200, hostel, "Hostel founded successfully"));
+    .json(new ApiResponse(200, hostel, "Hostel found successfully"));
 });
 
 export const getAllHostel = asyncHandler(async (req, res) => {
-  const { city, locality, typeOfHostel, sharingType } = req.query;
+  const { city, locality, typeOfHostel, roomType, page = 1, limit = 10 } = req.query;
   if (!city) {
-    throw new ApiError(400, "City paramater not found");
+    throw new ApiError(400, "City parameter not found");
   }
   let query = { city: { $regex: new RegExp(city, "i") } };
 
@@ -129,23 +146,31 @@ export const getAllHostel = asyncHandler(async (req, res) => {
     query.locality = { $regex: new RegExp(locality, "i") };
   }
   if (typeOfHostel) {
-    query.typeOfHostel = { $in: Array.isArray(typeOfHostel) ? typeOfHostel : [typeOfHostel] };
+    query.type_of_hostel = { $in: Array.isArray(typeOfHostel) ? typeOfHostel : [typeOfHostel] };
   }
-  if (sharingType) {
-    query.sharingType = { $in: Array.isArray(sharingType) ? sharingType : [sharingType] };
+  if (roomType) {
+    query.room_type = { $in: Array.isArray(roomType) ? roomType : [roomType] };
   }
   query.featured = true;
-  const hostels = await Hostel.find(query);
 
-  if (!hostels) {
-    throw new ApiError(
-      500,
-      "Something went wrong while fetching Hostel properties"
-    );
-  }
-  res
-    .status(200)
-    .json(new ApiResponse(200, hostels, "Hostels found successfully"));
+  const skip = (parseInt(page) - 1) * parseInt(limit);
+  const total = await Hostel.countDocuments(query);
+  const hostels = await Hostel.find(query)
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(parseInt(limit));
+
+  res.status(200).json(
+    new ApiResponse(200, {
+      hostels,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        totalPages: Math.ceil(total / parseInt(limit)),
+      },
+    }, "Hostels found successfully")
+  );
 });
 
 export const getAllHostelsInfo = asyncHandler(async (req, res) => {
