@@ -6,12 +6,16 @@ import Value from './Value/Value.jsx';
 import Featured from './Featured.jsx';
 import Flatmates from './Flatmates.jsx';
 import Map from '../Map/Map.jsx';
+import RecentlyViewed from '@/components/ui/RecentlyViewed.jsx';
 
 const Home = () => {
   return (
     <div>
       <Hero />
       <SearchBar />
+      <div className='max-w-md mx-auto px-4 my-6'>
+        <RecentlyViewed />
+      </div>
       <Featured />
       <Value />
       <Flatmates />
