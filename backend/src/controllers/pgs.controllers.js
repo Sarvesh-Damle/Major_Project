@@ -3,7 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadFilesToCloudinary } from "../utils/cloudinary.js";
-import axios from "axios";
+import { sendPropertyRegistrationEmail, sendPropertyVerifiedEmail } from "../utils/sendEmail.js";
 
 export const createPG = asyncHandler(async (req, res) => {
   const pgData = req.body;
@@ -36,16 +36,9 @@ export const createPG = asyncHandler(async (req, res) => {
   if (!pg) {
     throw new ApiError(500, "Something went wrong while listing the property");
   }
-  try {
-    await axios.post("http://localhost:4000/backend-email-service/email", {
-      to: pgData.owner_email,
-      subject: "Property Registration Process has began!",
-      body: `Thank you, for providing property details!\n\nOur Team will verify the property and will surely get back to you`,
-      user: "Buddies.com",
-    });
-  } catch {
-    // Email service unavailable - non-critical, continue
-  }
+  // Send registration email (non-blocking)
+  sendPropertyRegistrationEmail(pgData.owner_email);
+
   return res
     .status(201)
     .json(new ApiResponse(201, pg, "PG Property listed successfully"));
@@ -189,15 +182,9 @@ export const verifyPG = asyncHandler(async (req, res) => {
   if (!pgData) {
     throw new ApiError(404, "PG not found");
   }
-  try {
-    await axios.post("http://localhost:4000/backend-email-service/email", {
-      to: pgData.owner_email,
-      subject: "Property Listed Successfully!",
-      body: `Thank you, your property has been listed!`,
-      user: "Buddies.com",
-    });
-  } catch {
-    // Email service unavailable - non-critical, continue
+  // Send verification email (non-blocking)
+  if (featured) {
+    sendPropertyVerifiedEmail(pgData.owner_email);
   }
   return res
     .status(200)

@@ -3,7 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadFilesToCloudinary } from "../utils/cloudinary.js";
-import axios from "axios";
+import { sendPropertyVerifiedEmail } from "../utils/sendEmail.js";
 
 export const createHostel = asyncHandler(async (req, res) => {
   const hostelData = req.body;
@@ -258,15 +258,9 @@ export const verifyHostel = asyncHandler(async (req, res) => {
   if (!hostelData) {
     throw new ApiError(404, "Hostel not found");
   }
-  try {
-    await axios.post("http://localhost:4000/backend-email-service/email", {
-      to: hostelData.owner_email,
-      subject: "Property Listed Successfully!",
-      body: `Thank you, your property has been listed!`,
-      user: "Buddies.com",
-    });
-  } catch {
-    // Email service unavailable - non-critical, continue
+  // Send verification email (non-blocking)
+  if (featured) {
+    sendPropertyVerifiedEmail(hostelData.owner_email);
   }
   return res
     .status(200)

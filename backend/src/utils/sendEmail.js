@@ -1,4 +1,5 @@
 import axios from "axios";
+import logger from "./logger.js";
 
 const EMAIL_SERVICE_URL = process.env.EMAIL_SERVICE_URL || "http://localhost:4000";
 
@@ -22,7 +23,7 @@ export const sendEmail = async (to, subject, body) => {
     return true;
   } catch (error) {
     // Log error but don't throw - email is non-critical
-    console.error("Email service error:", error.message);
+    logger.warn("Email service error", { error: error.message });
     return false;
   }
 };

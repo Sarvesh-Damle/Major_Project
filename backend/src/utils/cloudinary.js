@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
+import logger from "./logger.js";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -10,16 +11,16 @@ cloudinary.config({
 const uploadFilesToCloudinary = async (localFilePath) => {
   try {
     if (!localFilePath) return null;
-    // uploading file on cloudinary
     const response = await cloudinary.uploader.upload(localFilePath, {
       folder: "Buddies_MajorProject/property_images",
       resource_type: "auto",
     });
-    console.log("File upload on cloudinary successful!! ", response.url);
+    logger.info("Cloudinary upload successful", { url: response.url });
     fs.unlinkSync(localFilePath);
     return response;
   } catch (error) {
-    fs.unlinkSync(localFilePath); // removing the locally saved temporary file as the upload operation failed
+    fs.unlinkSync(localFilePath);
+    logger.error("Cloudinary upload failed", { error: error.message });
     return null;
   }
 };
@@ -27,10 +28,10 @@ const uploadFilesToCloudinary = async (localFilePath) => {
 const deleteFromCloudinary = async (imageUrl) => {
   try {
     if (!imageUrl) return null;
-    const response = await cloudinary.uploader.destroy(imageUrl);
-    console.log("File deleted from cloudinary successfully");
+    await cloudinary.uploader.destroy(imageUrl);
+    logger.info("Cloudinary file deleted", { imageUrl });
   } catch (error) {
-    console.error("Error deleting file from cloudinary: ", error);
+    logger.error("Cloudinary delete failed", { error: error.message });
     return null;
   }
 };
