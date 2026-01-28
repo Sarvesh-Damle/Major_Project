@@ -8,7 +8,7 @@ import {
   getMyPropertyStats,
 } from "../controllers/users.controllers.js";
 import { getCurrentUser } from "../controllers/auth.controllers.js";
-import { verifyJWT, verifyAdmin, verifyOwnerOrAdmin } from "../middlewares/auth.middleware.js";
+import { verifyJWT, verifyAdmin } from "../middlewares/auth.middleware.js";
 import { idQueryValidator, validate } from "../validators/index.js";
 
 const router = express.Router();

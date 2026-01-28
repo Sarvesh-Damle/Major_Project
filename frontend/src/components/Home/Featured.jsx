@@ -52,7 +52,12 @@ const SingleCard = ({ image, Button, CardDescription, CardTitle }) => {
         className='overflow-hidden bg-white rounded-lg cursor-pointer'
         onClick={() => navigate('/property')}
       >
-        <img src={getOptimizedUrl(image, { width: 500 })} alt='Room' className='w-full' loading='lazy' />
+        <img
+          src={getOptimizedUrl(image, { width: 500 })}
+          alt='Room'
+          className='w-full'
+          loading='lazy'
+        />
         <div className='p-8 text-center sm:p-9 md:p-7 xl:p-9'>
           <h3>
             <div className='mb-4 block text-xl font-semibold text-dark hover:text-primary sm:text-[22px] md:text-xl lg:text-[22px] xl:text-xl 2xl:text-[22px] cursor-pointer'>

@@ -94,10 +94,7 @@ const Navbar = () => {
                   onClick={() => navigate('/profile')}
                   aria-label='View profile'
                 >
-                  <FaRegCircleUser
-                    size={30}
-                    className='hover:scale-105 active:text-violet-400'
-                  />
+                  <FaRegCircleUser size={30} className='hover:scale-105 active:text-violet-400' />
                 </button>
                 <button
                   onClick={() => mutation.mutate()}
@@ -108,19 +105,13 @@ const Navbar = () => {
               </div>
             ) : (
               <div className='flex gap-2'>
-                <Link
-                  to='/signin'
-                  className='btn-primary'
-                >
+                <Link to='/signin' className='btn-primary'>
                   Sign in
                 </Link>
                 {isLoggedIn.signup ? (
                   <></>
                 ) : (
-                  <Link
-                    to='/signup'
-                    className='btn-primary'
-                  >
+                  <Link to='/signup' className='btn-primary'>
                     Sign Up
                   </Link>
                 )}

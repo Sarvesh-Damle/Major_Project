@@ -1,5 +1,4 @@
 import { validationResult } from "express-validator";
-import { ApiError } from "../utils/ApiError.js";
 
 /**
  * Middleware to validate request using express-validator

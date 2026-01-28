@@ -11,7 +11,12 @@ import ShareButtons from '@/components/ui/ShareButtons.jsx';
 import ReviewList from '@/components/ui/ReviewList.jsx';
 import { HiLocationMarker } from 'react-icons/hi';
 import { ImProfile, ImSpoonKnife } from 'react-icons/im';
-import { MdDirectionsRailway, MdDriveFileRenameOutline, MdEmail, MdOutlineNoFood } from 'react-icons/md';
+import {
+  MdDirectionsRailway,
+  MdDriveFileRenameOutline,
+  MdEmail,
+  MdOutlineNoFood,
+} from 'react-icons/md';
 import { FaPhoneAlt, FaParking } from 'react-icons/fa';
 import { TbHexagonLetterA } from 'react-icons/tb';
 import { FcRules } from 'react-icons/fc';
@@ -75,11 +80,7 @@ const PGProperty = () => {
             </div>
             <div className='mt-12 text-[#555] leading-5 bottom'>{property.description}</div>
             <div className='flex items-center gap-4 mt-10'>
-              <button
-                className='btn-primary'
-                value={liked}
-                onClick={toggleFavorite}
-              >
+              <button className='btn-primary' value={liked} onClick={toggleFavorite}>
                 {liked ? 'Remove from Favourites' : 'Add Property to Favourites'}
               </button>
               <ShareButtons

@@ -53,7 +53,13 @@ const Slider = ({ images }) => {
         </div>
       </div>
 
-      {lightboxOpen && <Lightbox images={images} initialIndex={lightboxIndex} onClose={() => setLightboxOpen(false)} />}
+      {lightboxOpen && (
+        <Lightbox
+          images={images}
+          initialIndex={lightboxIndex}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
     </>
   );
 };

@@ -28,43 +28,38 @@ const Card = (props) => {
 
 export default Card;
 
-const SingleCard = memo(({
-  image,
-  Button,
-  CardDescription1,
-  CardDescription2,
-  CardDescription3,
-  CardTitle,
-}) => {
-  const navigate = useNavigate();
-  return (
-    <>
-      {/*  */}
-      <div
-        className='overflow-hidden bg-white rounded-lg cursor-pointer'
-        onClick={() => navigate('/product')}
-      >
-        <img src={image} alt='Room' className='w-full' loading='lazy' />
-        <div className='p-8 text-center sm:p-9 md:p-7 xl:p-9'>
-          <p className='text-base leading-relaxed mb-3 text-body-color'>{CardDescription1}</p>
-          <h3>
-            <div className='mb-4 block text-xl font-semibold text-dark hover:text-primary sm:text-[22px] md:text-xl lg:text-[22px] xl:text-xl 2xl:text-[22px] cursor-pointer'>
-              {CardTitle}
-            </div>
-          </h3>
-          <p className='text-base leading-relaxed mb-0 text-body-color'>{CardDescription2}</p>
-          <p className='text-base leading-relaxed mb-3 text-body-color'>{CardDescription3}</p>
+const SingleCard = memo(
+  ({ image, Button, CardDescription1, CardDescription2, CardDescription3, CardTitle }) => {
+    const navigate = useNavigate();
+    return (
+      <>
+        {/*  */}
+        <div
+          className='overflow-hidden bg-white rounded-lg cursor-pointer'
+          onClick={() => navigate('/product')}
+        >
+          <img src={image} alt='Room' className='w-full' loading='lazy' />
+          <div className='p-8 text-center sm:p-9 md:p-7 xl:p-9'>
+            <p className='text-base leading-relaxed mb-3 text-body-color'>{CardDescription1}</p>
+            <h3>
+              <div className='mb-4 block text-xl font-semibold text-dark hover:text-primary sm:text-[22px] md:text-xl lg:text-[22px] xl:text-xl 2xl:text-[22px] cursor-pointer'>
+                {CardTitle}
+              </div>
+            </h3>
+            <p className='text-base leading-relaxed mb-0 text-body-color'>{CardDescription2}</p>
+            <p className='text-base leading-relaxed mb-3 text-body-color'>{CardDescription3}</p>
 
-          {Button && (
-            <div className='inline-block rounded-full border border-[#E5E7EB] py-2 px-7 text-base font-medium text-body-color transition hover:border-primary hover:bg-blue-50 hover:text-blue-500'>
-              {Button}
-            </div>
-          )}
+            {Button && (
+              <div className='inline-block rounded-full border border-[#E5E7EB] py-2 px-7 text-base font-medium text-body-color transition hover:border-primary hover:bg-blue-50 hover:text-blue-500'>
+                {Button}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-      {/*  */}
-    </>
-  );
-});
+        {/*  */}
+      </>
+    );
+  }
+);
 
 SingleCard.displayName = 'SingleCard';

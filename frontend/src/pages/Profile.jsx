@@ -221,20 +221,14 @@ const UserProfile = ({ data, refetchUserDetails }) => {
       </div>
       {isEditMode && (
         <div className='flex justify-start items-center ml-20 mb-2 mt-10'>
-          <button
-            className='btn-primary'
-            onClick={handleSave}
-          >
+          <button className='btn-primary' onClick={handleSave}>
             Save
           </button>
         </div>
       )}
       {!isEditMode && (
         <div className='flex justify-start items-center ml-20 mb-2 mt-10'>
-          <button
-            className='btn-primary'
-            onClick={() => setIsEditMode(true)}
-          >
+          <button className='btn-primary' onClick={() => setIsEditMode(true)}>
             Edit
           </button>
         </div>
@@ -494,13 +488,19 @@ const SavedSearches = () => {
                       <span className='text-xs text-gray-500'>City: {search.filters.city}</span>
                     )}
                     {search.filters.locality && (
-                      <span className='text-xs text-gray-500'>• Locality: {search.filters.locality}</span>
+                      <span className='text-xs text-gray-500'>
+                        • Locality: {search.filters.locality}
+                      </span>
                     )}
                     {search.filters.minPrice && (
-                      <span className='text-xs text-gray-500'>• Min: ₹{search.filters.minPrice}</span>
+                      <span className='text-xs text-gray-500'>
+                        • Min: ₹{search.filters.minPrice}
+                      </span>
                     )}
                     {search.filters.maxPrice && (
-                      <span className='text-xs text-gray-500'>• Max: ₹{search.filters.maxPrice}</span>
+                      <span className='text-xs text-gray-500'>
+                        • Max: ₹{search.filters.maxPrice}
+                      </span>
                     )}
                   </div>
                   <p className='text-xs text-gray-400 mt-1'>
@@ -581,7 +581,9 @@ const NotificationPreferences = () => {
               <p className='text-sm text-gray-500'>Receive email notifications</p>
             </div>
             <button
-              onClick={() => handleToggle('emailNotificationsEnabled', !prefs.emailNotificationsEnabled)}
+              onClick={() =>
+                handleToggle('emailNotificationsEnabled', !prefs.emailNotificationsEnabled)
+              }
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                 prefs.emailNotificationsEnabled ? 'bg-blue-600' : 'bg-gray-200'
               }`}
@@ -598,18 +600,24 @@ const NotificationPreferences = () => {
           <div className='px-6 py-4 flex items-center justify-between'>
             <div>
               <p className='text-sm font-medium text-gray-900'>Saved Search Alerts</p>
-              <p className='text-sm text-gray-500'>Get notified when new properties match your saved searches</p>
+              <p className='text-sm text-gray-500'>
+                Get notified when new properties match your saved searches
+              </p>
             </div>
             <button
               onClick={() => handleToggle('savedSearchAlerts', !prefs.savedSearchAlerts)}
               disabled={!prefs.emailNotificationsEnabled}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                prefs.savedSearchAlerts && prefs.emailNotificationsEnabled ? 'bg-blue-600' : 'bg-gray-200'
+                prefs.savedSearchAlerts && prefs.emailNotificationsEnabled
+                  ? 'bg-blue-600'
+                  : 'bg-gray-200'
               } ${!prefs.emailNotificationsEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <span
                 className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  prefs.savedSearchAlerts && prefs.emailNotificationsEnabled ? 'translate-x-6' : 'translate-x-1'
+                  prefs.savedSearchAlerts && prefs.emailNotificationsEnabled
+                    ? 'translate-x-6'
+                    : 'translate-x-1'
                 }`}
               />
             </button>
@@ -647,12 +655,16 @@ const NotificationPreferences = () => {
               onClick={() => handleToggle('propertyVerifiedAlert', !prefs.propertyVerifiedAlert)}
               disabled={!prefs.emailNotificationsEnabled}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                prefs.propertyVerifiedAlert && prefs.emailNotificationsEnabled ? 'bg-blue-600' : 'bg-gray-200'
+                prefs.propertyVerifiedAlert && prefs.emailNotificationsEnabled
+                  ? 'bg-blue-600'
+                  : 'bg-gray-200'
               } ${!prefs.emailNotificationsEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <span
                 className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  prefs.propertyVerifiedAlert && prefs.emailNotificationsEnabled ? 'translate-x-6' : 'translate-x-1'
+                  prefs.propertyVerifiedAlert && prefs.emailNotificationsEnabled
+                    ? 'translate-x-6'
+                    : 'translate-x-1'
                 }`}
               />
             </button>
@@ -668,12 +680,16 @@ const NotificationPreferences = () => {
               onClick={() => handleToggle('promotionalEmails', !prefs.promotionalEmails)}
               disabled={!prefs.emailNotificationsEnabled}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                prefs.promotionalEmails && prefs.emailNotificationsEnabled ? 'bg-blue-600' : 'bg-gray-200'
+                prefs.promotionalEmails && prefs.emailNotificationsEnabled
+                  ? 'bg-blue-600'
+                  : 'bg-gray-200'
               } ${!prefs.emailNotificationsEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <span
                 className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  prefs.promotionalEmails && prefs.emailNotificationsEnabled ? 'translate-x-6' : 'translate-x-1'
+                  prefs.promotionalEmails && prefs.emailNotificationsEnabled
+                    ? 'translate-x-6'
+                    : 'translate-x-1'
                 }`}
               />
             </button>

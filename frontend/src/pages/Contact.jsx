@@ -29,11 +29,17 @@ const Contact = () => {
 
   return (
     <>
-      <section className='bg-white py-20 lg:py-[120px] mx-4 overflow-hidden relative' aria-labelledby='contact-heading'>
+      <section
+        className='bg-white py-20 lg:py-[120px] mx-4 overflow-hidden relative'
+        aria-labelledby='contact-heading'
+      >
         <div className='flex flex-wrap -mx-4 lg:justify-between'>
           <div className='w-full flex justify-center px-4 lg:w-1/2 xl:w-6/12'>
             <div className='mb-12 max-w-[570px] lg:mb-0'>
-              <h2 id='contact-heading' className='mb-6 text-[32px] font-bold uppercase text-dark sm:text-[40px] lg:text-[36px] xl:text-[40px]'>
+              <h2
+                id='contact-heading'
+                className='mb-6 text-[32px] font-bold uppercase text-dark sm:text-[40px] lg:text-[36px] xl:text-[40px]'
+              >
                 GET IN TOUCH WITH US
               </h2>
               <p className='text-base leading-relaxed mb-9 text-body-color'>
@@ -80,7 +86,10 @@ const Contact = () => {
           </div>
           <div className='w-full px-4 lg:w-1/2 xl:w-5/12'>
             <div className='relative p-8 bg-white rounded-lg shadow-lg sm:p-12'>
-              <form onSubmit={handleSubmit((formData) => mutation.mutate(formData))} aria-label='Contact form'>
+              <form
+                onSubmit={handleSubmit((formData) => mutation.mutate(formData))}
+                aria-label='Contact form'
+              >
                 <div className='mb-6'>
                   <Controller
                     name='name'

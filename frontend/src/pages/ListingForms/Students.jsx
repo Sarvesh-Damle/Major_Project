@@ -210,10 +210,7 @@ const Students = () => {
                   accept="property_photos/*"
                 /> */}
               <div className='flex justify-center'>
-                <button
-                  type='submit'
-                  className='w-full btn-primary'
-                >
+                <button type='submit' className='w-full btn-primary'>
                   Submit
                 </button>
               </div>

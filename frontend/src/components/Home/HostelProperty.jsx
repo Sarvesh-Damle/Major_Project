@@ -77,11 +77,7 @@ const HostelProperty = () => {
             </div>
             <div className='mt-12 text-[#555] leading-5 bottom'>{property.description}</div>
             <div className='flex items-center gap-4 mt-10'>
-              <button
-                className='btn-primary'
-                value={liked}
-                onClick={toggleFavorite}
-              >
+              <button className='btn-primary' value={liked} onClick={toggleFavorite}>
                 {liked ? 'Remove from Favourites' : 'Add Property to Favourites'}
               </button>
               <ShareButtons

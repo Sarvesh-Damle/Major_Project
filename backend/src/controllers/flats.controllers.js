@@ -10,7 +10,7 @@ export const createFlat = asyncHandler(async (req, res) => {
   if (!flatData) {
     throw new ApiError(400, "Fields are required for property to be listed");
   }
-  let propertyPhotosUrls = [];
+  const propertyPhotosUrls = [];
   if (
     req.files &&
     req.files.property_photos &&
@@ -138,7 +138,7 @@ export const getAllFlat = asyncHandler(async (req, res) => {
   if (!city) {
     throw new ApiError(400, "City parameter not found");
   }
-  let query = { city: { $regex: new RegExp(city, "i") } };
+  const query = { city: { $regex: new RegExp(city, "i") } };
   if (locality) {
     query.locality = { $regex: new RegExp(locality, "i") };
   }

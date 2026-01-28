@@ -24,7 +24,7 @@ const missingVars = requiredEnvVars.filter((varName) => !import.meta.env[varName
 if (missingVars.length > 0) {
   console.error(
     `Firebase initialization skipped - missing environment variables: ${missingVars.join(', ')}. ` +
-    'Check your .env file.'
+      'Check your .env file.'
   );
 }
 

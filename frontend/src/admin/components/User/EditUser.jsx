@@ -113,10 +113,7 @@ const EditUser = () => {
         </dl>
       </div>
       <div className='flex justify-start items-center ml-20 mb-2 mt-10'>
-        <button
-          className='btn-primary'
-          onClick={handleSave}
-        >
+        <button className='btn-primary' onClick={handleSave}>
           Save
         </button>
       </div>
