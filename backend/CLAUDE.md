@@ -105,12 +105,84 @@ logger.warn('Warning', { details });
 | Route | Controller | Description |
 |-------|------------|-------------|
 | `/api/v1/auth` | auth.controllers.js | Register, Login, Logout, Refresh, Google OAuth |
-| `/api/v1/users` | users.controllers.js | User CRUD, Profile |
-| `/api/v1/hostels` | hostels.controllers.js | Hostel listings |
-| `/api/v1/pgs` | pgs.controllers.js | PG listings |
-| `/api/v1/flats` | flats.controllers.js | Flat listings |
+| `/api/v1/users` | users.controllers.js | User CRUD, Profile, My Properties, Property Stats |
+| `/api/v1/hostels` | hostels.controllers.js | Hostel CRUD, Verify, Bulk ops, Views |
+| `/api/v1/pgs` | pgs.controllers.js | PG CRUD, Verify, Bulk ops, Views |
+| `/api/v1/flats` | flats.controllers.js | Flat CRUD, Verify, Bulk ops, Views |
 | `/api/v1/favourites` | favourites.controllers.js | User favorites |
 | `/api/v1/contact` | contact.controllers.js | Contact submissions |
+| `/api/v1/reviews` | reviews.controllers.js | Property reviews |
+| `/api/v1/saved-searches` | savedSearches.controllers.js | Save/manage search filters |
+| `/api/v1/notification-preferences` | notificationPreferences.controllers.js | Email notification settings |
+
+## Property Endpoints (Hostels/PGs/Flats)
+
+Each property type supports:
+```
+POST   /add-property[-type]     # Create (with photos)
+PUT    /update-[type]?id=       # Update (replaces photos, cleans up old ones)
+DELETE /delete-[type]?id=       # Delete (cleans up Cloudinary photos)
+GET    /find-[type]?id=         # Get single property
+GET    /find-all-[type]s        # List with pagination & filters
+GET    /find-all-[type]s-info   # Admin: all properties
+PUT    /verify-[type]           # Admin: verify property
+GET    /count-verified-[type]s  # Count verified
+GET    /count-unverified-[type]s # Count unverified
+
+# Views tracking
+POST   /increment-views?id=     # Public: increment view counter
+GET    /total-views             # Admin: total views across all
+
+# Bulk operations (Admin)
+PUT    /bulk-verify             # Body: { ids: [], featured: boolean }
+DELETE /bulk-delete             # Body: { ids: [] }
+```
+
+## User Dashboard Endpoints
+
+```javascript
+// Get all properties owned by current user (matches by owner_email)
+GET /api/v1/users/my-properties
+
+// Get stats for user's properties
+GET /api/v1/users/my-property-stats
+// Returns: { totalProperties, totalViews, verifiedCount, byType: {...} }
+```
+
+## Saved Searches
+
+```javascript
+// CRUD operations (max 10 per user)
+POST   /api/v1/saved-searches       // Create saved search
+GET    /api/v1/saved-searches       // List user's saved searches
+GET    /api/v1/saved-searches/:id   // Get single
+PUT    /api/v1/saved-searches/:id   // Update
+DELETE /api/v1/saved-searches/:id   // Delete
+
+// SavedSearch schema
+{
+  userId, searchName, propertyType,
+  filters: { city, locality, minPrice, maxPrice, typeOfHostel, roomType, ... },
+  notifyOnNewMatches: boolean
+}
+```
+
+## Notification Preferences
+
+```javascript
+GET /api/v1/notification-preferences    // Get (auto-creates if none)
+PUT /api/v1/notification-preferences    // Update
+
+// Schema
+{
+  userId,
+  emailNotificationsEnabled: boolean,
+  savedSearchAlerts: boolean,
+  savedSearchFrequency: 'immediate' | 'daily' | 'weekly' | 'never',
+  propertyVerifiedAlert: boolean,
+  promotionalEmails: boolean
+}
+```
 
 ## Authentication
 
@@ -142,30 +214,84 @@ app.use(express.json({ limit: '10kb' })); // Body size limit
 app.use(requestLogger);               // Winston request logging
 ```
 
-## File Upload
+## File Upload & Cloudinary
 
-### Cloudinary Integration
+### Upload
 ```javascript
 import { upload } from '../middlewares/multer.middleware.js';
-import { uploadOnCloudinary } from '../utils/cloudinary.js';
+import { uploadFilesToCloudinary } from '../utils/cloudinary.js';
 
 // Route with file upload
 router.post('/upload', upload.fields([{ name: 'photos', maxCount: 5 }]), controller);
 
 // In controller
-const result = await uploadOnCloudinary(req.files.photos[0].path);
+const result = await uploadFilesToCloudinary(req.files.photos[0].path);
+```
+
+### Delete (Photo Cleanup)
+```javascript
+import { deleteFromCloudinary } from '../utils/cloudinary.js';
+
+// Extracts public_id from Cloudinary URL and deletes
+await deleteFromCloudinary(imageUrl);
+
+// Used in:
+// - updateProperty: deletes old photos before uploading new ones
+// - deleteProperty: deletes all photos before removing from DB
+// - bulkDelete: collects all photo URLs and deletes them
 ```
 
 ## Models
 
 | Model | File | Key Fields | Indexes |
 |-------|------|------------|---------|
-| User | users.models.js | email, password, refreshToken | email (unique) |
-| Hostel | hostels.models.js | hostel_name, city, rent_amount | city+locality, featured, type |
-| PG | pgs.models.js | pg_name, city, rent_amount | city+locality, featured, tenant |
-| Flat | flats.models.js | flat_type, city, rent_amount | city+locality, featured, type |
+| User | users.models.js | email, password, refreshToken, credits | email (unique) |
+| Hostel | hostels.models.js | hostel_name, city, rent_amount, views, featured | city+locality, featured, type |
+| PG | pgs.models.js | pg_name, city, rent_amount, views, featured | city+locality, featured, tenant |
+| Flat | flats.models.js | flat_type, city, rent_amount, views, featured | city+locality, featured, type |
 | Favourite | favourites.models.js | userId, properties | userId |
 | Contact | contact.models.js | name, email, message | - |
+| Review | reviews.models.js | userId, propertyId, rating, comment | propertyId |
+| SavedSearch | savedSearches.models.js | userId, searchName, propertyType, filters | userId+createdAt |
+| NotificationPreference | notificationPreferences.models.js | userId, emailNotificationsEnabled, ... | userId (unique) |
+
+## MongoDB Aggregation Examples
+
+### Property Stats
+```javascript
+// Get total views across all properties
+const result = await Hostel.aggregate([
+  { $group: { _id: null, totalViews: { $sum: "$views" } } }
+]);
+
+// Get stats with conditional count
+const stats = await Hostel.aggregate([
+  { $match: { owner_email: userEmail } },
+  {
+    $group: {
+      _id: null,
+      count: { $sum: 1 },
+      totalViews: { $sum: "$views" },
+      verifiedCount: { $sum: { $cond: ["$featured", 1, 0] } },
+    },
+  },
+]);
+```
+
+### Bulk Operations
+```javascript
+// Bulk verify
+await Hostel.updateMany(
+  { _id: { $in: ids } },
+  { $set: { featured: true } }
+);
+
+// Bulk delete with photo cleanup
+const hostels = await Hostel.find({ _id: { $in: ids } }, { property_photos: 1 });
+const photoUrls = hostels.flatMap(h => h.property_photos || []);
+await Promise.all(photoUrls.map(url => deleteFromCloudinary(url)));
+await Hostel.deleteMany({ _id: { $in: ids } });
+```
 
 ## Environment Variables
 
@@ -204,5 +330,7 @@ EMAIL_SERVICE_URL=http://localhost:4000  # Optional
 4. Add validators for all routes accepting user input
 5. Use proper HTTP status codes (201 create, 404 not found, etc.)
 6. Log errors with `logger.error()`, info with `logger.info()`
-7. Handle file cleanup on upload errors
+7. Handle file cleanup on upload errors and property deletion
 8. Use database indexes for frequently queried fields
+9. Use `$inc` for atomic counter increments (views)
+10. Clean up Cloudinary photos when updating/deleting properties
