@@ -34,10 +34,10 @@ npm run build          # Production build
 
 | Layer     | Technology                                    |
 |-----------|-----------------------------------------------|
-| Frontend  | React 18, Vite, Tailwind CSS, React Query     |
+| Frontend  | React 18, Vite, Tailwind CSS, React Query, AG-Grid |
 | Backend   | Node.js 18+, Express.js, MongoDB, Mongoose    |
 | Auth      | JWT (Access/Refresh tokens), Firebase (OAuth) |
-| Storage   | Cloudinary (images)                           |
+| Storage   | Cloudinary (images with auto-cleanup)         |
 | Maps      | Leaflet, ESRI Geocoder                        |
 | Security  | Helmet, express-rate-limit, express-validator |
 | Logging   | Winston (backend)                             |
@@ -45,7 +45,7 @@ npm run build          # Production build
 ## API Base URL
 
 - Development: `http://localhost:8000/api/v1`
-- Routes: `/auth`, `/users`, `/hostels`, `/pgs`, `/flats`, `/favourites`, `/contact`
+- Routes: `/auth`, `/users`, `/hostels`, `/pgs`, `/flats`, `/favourites`, `/contact`, `/reviews`, `/saved-searches`, `/notification-preferences`
 
 ## Environment Files
 
@@ -67,10 +67,33 @@ Both `frontend/.env` and `backend/.env` are required. See:
 
 ## Key Features
 
+### Property Management
+- Three property types: Hostels, PGs, Flats
+- Property verification system (`featured` field)
+- Views tracking per property
+- Cloudinary photo storage with automatic cleanup on update/delete
+- Bulk verify/unverify/delete operations (admin)
+
+### User Features
+- **User Dashboard** - Property owners see their listings with stats (total properties, views, verified count)
+- **Saved Searches** - Save search filters, run saved searches, max 10 per user
+- **Notification Preferences** - Email toggles for alerts, verification notices, promotions
+- **Favorites** - Save properties to favorites list
+- **Reviews** - Leave reviews on properties
+
+### Admin Dashboard
+- AG-Grid tables with filtering, sorting, pagination
+- Bulk operations (multi-select with checkboxes)
+- Property verification workflow
+- Stats cards (total properties, views by type)
+- Charts (Bar, Pie) for property distribution
+
 ### Frontend Optimizations
 - Route-based code splitting with React.lazy
-- Vendor chunking in Vite config
+- Vendor chunking in Vite config (react, firebase, maps, charts, grid)
 - React.memo on list components
+- useCallback for memoized handlers
+- Debounced search filters
 - AbortController for request cancellation
 - ErrorBoundary for graceful error handling
 
@@ -80,8 +103,10 @@ Both `frontend/.env` and `backend/.env` are required. See:
 - Input validation with express-validator
 - CORS with configurable origins
 - Stack traces hidden in production
+- Cloudinary URL parsing for secure photo deletion
 
 ### Database
 - MongoDB indexes on frequently queried fields
 - Batch queries for favorites (no N+1)
-- Mongoose with aggregate pagination support
+- Mongoose aggregate pipelines for stats
+- Atomic operations with $inc for view counters

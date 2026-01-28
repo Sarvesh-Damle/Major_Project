@@ -12,6 +12,8 @@ import pgsRoute from "./routes/pgs.routes.js";
 import favouritesRoute from "./routes/favourites.routes.js";
 import contactsRoute from "./routes/contact.routes.js";
 import reviewsRoute from "./routes/reviews.routes.js";
+import savedSearchesRoute from "./routes/savedSearches.routes.js";
+import notificationPreferencesRoute from "./routes/notificationPreferences.routes.js";
 import { ApiResponse } from "./utils/ApiResponse.js";
 import logger, { requestLogger } from "./utils/logger.js";
 
@@ -94,6 +96,8 @@ app.use("/api/v1/pgs", pgsRoute);
 app.use("/api/v1/favourites", favouritesRoute);
 app.use("/api/v1/contact", contactsRoute);
 app.use("/api/v1/reviews", reviewsRoute);
+app.use("/api/v1/saved-searches", savedSearchesRoute);
+app.use("/api/v1/notification-preferences", notificationPreferencesRoute);
 
 // 404 handler for undefined routes
 app.use("*", (req, res) => {
