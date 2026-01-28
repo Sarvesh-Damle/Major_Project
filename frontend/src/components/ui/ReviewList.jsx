@@ -32,9 +32,7 @@ const ReviewStats = ({ stats }) => {
 
   return (
     <div className='flex items-center gap-3 mb-6 p-4 bg-blue-50 rounded-lg'>
-      <div className='text-3xl font-bold text-blue-600'>
-        {stats.averageRating.toFixed(1)}
-      </div>
+      <div className='text-3xl font-bold text-blue-600'>{stats.averageRating.toFixed(1)}</div>
       <div>
         <StarRating rating={stats.averageRating} size={20} />
         <p className='text-sm text-gray-600 mt-1'>

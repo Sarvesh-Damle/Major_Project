@@ -203,10 +203,7 @@ const Professionals = () => {
               ) : null}
               {errors.tiffinPhone && <p className='text-red-600'>{errors.tiffinPhone.message}</p>}
               <div className='flex justify-center'>
-                <button
-                  type='submit'
-                  className='w-full btn-primary'
-                >
+                <button type='submit' className='w-full btn-primary'>
                   Submit
                 </button>
               </div>

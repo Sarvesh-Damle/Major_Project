@@ -45,7 +45,10 @@ const SearchInput = ({ data, placeholder, onSelect, className = '' }) => {
         />
       </div>
       {filteredData.length > 0 && !showResults && (
-        <ul role='listbox' className='w-full max-h-[200px] bg-white shadow-lg rounded-lg overflow-hidden overflow-y-auto no-scrollbar absolute top-full z-20 list-none p-0 m-0'>
+        <ul
+          role='listbox'
+          className='w-full max-h-[200px] bg-white shadow-lg rounded-lg overflow-hidden overflow-y-auto no-scrollbar absolute top-full z-20 list-none p-0 m-0'
+        >
           {filteredData.map((item, index) => (
             <li
               key={index}
@@ -53,7 +56,9 @@ const SearchInput = ({ data, placeholder, onSelect, className = '' }) => {
               tabIndex={0}
               className='w-full py-3 px-3 flex text-black cursor-pointer hover:bg-gray-200 focus:bg-gray-200 focus:outline-none'
               onClick={() => handleSelect(item)}
-              onKeyDown={(e) => { if (e.key === 'Enter') handleSelect(item); }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSelect(item);
+              }}
             >
               {item.name}
             </li>

@@ -95,7 +95,11 @@ const Properties = () => {
 const SliderButtons = () => {
   const swiper = useSwiper();
   return (
-    <div className='flex justify-center sticky gap-4 mb-4 mt-8 z-10 r-buttons' role='group' aria-label='Slider navigation'>
+    <div
+      className='flex justify-center sticky gap-4 mb-4 mt-8 z-10 r-buttons'
+      role='group'
+      aria-label='Slider navigation'
+    >
       <button
         onClick={() => swiper.slidePrev()}
         aria-label='Previous properties'

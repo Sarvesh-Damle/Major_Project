@@ -61,9 +61,7 @@ const SaveSearchButton = ({ propertyType, filters }) => {
             <h3 className='text-lg font-semibold mb-4'>Save Search</h3>
 
             <div className='mb-4'>
-              <label className='block text-sm font-medium text-gray-700 mb-1'>
-                Search Name
-              </label>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>Search Name</label>
               <input
                 type='text'
                 value={searchName}
@@ -78,25 +76,37 @@ const SaveSearchButton = ({ propertyType, filters }) => {
               <p className='text-sm text-gray-600 mb-2'>Current filters:</p>
               <div className='flex flex-wrap gap-2'>
                 {filters.city && (
-                  <span className='px-2 py-1 bg-gray-100 rounded text-xs'>City: {filters.city}</span>
+                  <span className='px-2 py-1 bg-gray-100 rounded text-xs'>
+                    City: {filters.city}
+                  </span>
                 )}
                 {filters.locality && (
-                  <span className='px-2 py-1 bg-gray-100 rounded text-xs'>Locality: {filters.locality}</span>
+                  <span className='px-2 py-1 bg-gray-100 rounded text-xs'>
+                    Locality: {filters.locality}
+                  </span>
                 )}
                 {filters.minPrice && (
-                  <span className='px-2 py-1 bg-gray-100 rounded text-xs'>Min: ₹{filters.minPrice}</span>
+                  <span className='px-2 py-1 bg-gray-100 rounded text-xs'>
+                    Min: ₹{filters.minPrice}
+                  </span>
                 )}
                 {filters.maxPrice && (
-                  <span className='px-2 py-1 bg-gray-100 rounded text-xs'>Max: ₹{filters.maxPrice}</span>
+                  <span className='px-2 py-1 bg-gray-100 rounded text-xs'>
+                    Max: ₹{filters.maxPrice}
+                  </span>
                 )}
                 {filters.typeOfHostel && (
-                  <span className='px-2 py-1 bg-gray-100 rounded text-xs'>{filters.typeOfHostel}</span>
+                  <span className='px-2 py-1 bg-gray-100 rounded text-xs'>
+                    {filters.typeOfHostel}
+                  </span>
                 )}
                 {filters.roomType && (
                   <span className='px-2 py-1 bg-gray-100 rounded text-xs'>{filters.roomType}</span>
                 )}
                 {filters.preferredTennats && (
-                  <span className='px-2 py-1 bg-gray-100 rounded text-xs'>{filters.preferredTennats}</span>
+                  <span className='px-2 py-1 bg-gray-100 rounded text-xs'>
+                    {filters.preferredTennats}
+                  </span>
                 )}
                 {filters.flatType && (
                   <span className='px-2 py-1 bg-gray-100 rounded text-xs'>{filters.flatType}</span>

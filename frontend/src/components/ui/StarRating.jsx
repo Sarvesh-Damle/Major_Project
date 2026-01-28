@@ -53,7 +53,8 @@ const StarRating = ({
           tabIndex: 0,
           role: 'button',
           'aria-label': `Rate ${value} out of ${maxRating} stars`,
-          className: 'cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded',
+          className:
+            'cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded',
         }
       : {};
 
@@ -86,9 +87,7 @@ const StarRating = ({
     >
       {Array.from({ length: maxRating }, (_, i) => renderStar(i))}
       {showValue && (
-        <span className='ml-2 text-sm text-gray-600 font-medium'>
-          {rating.toFixed(1)}
-        </span>
+        <span className='ml-2 text-sm text-gray-600 font-medium'>{rating.toFixed(1)}</span>
       )}
     </div>
   );

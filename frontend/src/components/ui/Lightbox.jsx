@@ -61,7 +61,10 @@ const Lightbox = ({ images, initialIndex = 0, onClose }) => {
       )}
 
       {/* Main image */}
-      <div className='max-w-[90vw] max-h-[85vh] flex items-center justify-center' onClick={(e) => e.stopPropagation()}>
+      <div
+        className='max-w-[90vw] max-h-[85vh] flex items-center justify-center'
+        onClick={(e) => e.stopPropagation()}
+      >
         <img
           src={getOptimizedUrl(images[currentIndex], { width: 1200 })}
           alt={`Property image ${currentIndex + 1} of ${images.length}`}
@@ -99,7 +102,9 @@ const Lightbox = ({ images, initialIndex = 0, onClose }) => {
                 setCurrentIndex(index);
               }}
               className={`flex-shrink-0 w-16 h-12 rounded overflow-hidden border-2 transition-all ${
-                index === currentIndex ? 'border-white opacity-100' : 'border-transparent opacity-60 hover:opacity-100'
+                index === currentIndex
+                  ? 'border-white opacity-100'
+                  : 'border-transparent opacity-60 hover:opacity-100'
               }`}
               aria-label={`View image ${index + 1}`}
             >

@@ -63,7 +63,7 @@ const registerUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, createdUser, "User registered successfully"));
 });
 
-const loginUser = asyncHandler(async (req, res, next) => {
+const loginUser = asyncHandler(async (req, res, _next) => {
   // ------------------------------------------------------
   // req body -> data
   // email or phoneNumber through verification

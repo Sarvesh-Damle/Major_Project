@@ -71,7 +71,9 @@ const SignUp = () => {
                           disabled={mutation.isPending}
                         />
                         {errors.name && (
-                          <p className='text-red-500 text-sm mt-1 text-left'>{errors.name.message}</p>
+                          <p className='text-red-500 text-sm mt-1 text-left'>
+                            {errors.name.message}
+                          </p>
                         )}
                       </>
                     )}
@@ -100,7 +102,9 @@ const SignUp = () => {
                           disabled={mutation.isPending}
                         />
                         {errors.email && (
-                          <p className='text-red-500 text-sm mt-1 text-left'>{errors.email.message}</p>
+                          <p className='text-red-500 text-sm mt-1 text-left'>
+                            {errors.email.message}
+                          </p>
                         )}
                       </>
                     )}
@@ -133,7 +137,9 @@ const SignUp = () => {
                           disabled={mutation.isPending}
                         />
                         {errors.phoneNumber && (
-                          <p className='text-red-500 text-sm mt-1 text-left'>{errors.phoneNumber.message}</p>
+                          <p className='text-red-500 text-sm mt-1 text-left'>
+                            {errors.phoneNumber.message}
+                          </p>
                         )}
                       </>
                     )}
@@ -162,7 +168,9 @@ const SignUp = () => {
                           disabled={mutation.isPending}
                         />
                         {errors.password && (
-                          <p className='text-red-500 text-sm mt-1 text-left'>{errors.password.message}</p>
+                          <p className='text-red-500 text-sm mt-1 text-left'>
+                            {errors.password.message}
+                          </p>
                         )}
                       </>
                     )}
