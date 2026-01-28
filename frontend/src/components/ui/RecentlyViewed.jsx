@@ -41,7 +41,10 @@ const RecentlyViewed = () => {
           <IoTimeOutline size={20} className='text-gray-500' />
           <h3 className='font-semibold text-gray-800'>Recently Viewed</h3>
         </div>
-        <button onClick={clearRecentlyViewed} className='text-sm text-gray-500 hover:text-gray-700 transition-colors'>
+        <button
+          onClick={clearRecentlyViewed}
+          className='text-sm text-gray-500 hover:text-gray-700 transition-colors'
+        >
           Clear all
         </button>
       </div>
@@ -70,7 +73,9 @@ const RecentlyViewed = () => {
                   loading='lazy'
                 />
               ) : (
-                <div className='w-full h-full flex items-center justify-center text-gray-400 text-xs'>No image</div>
+                <div className='w-full h-full flex items-center justify-center text-gray-400 text-xs'>
+                  No image
+                </div>
               )}
             </div>
 
@@ -78,7 +83,9 @@ const RecentlyViewed = () => {
               <p className='font-medium text-gray-800 text-sm truncate'>{item.name}</p>
               <p className='text-xs text-gray-500 truncate'>{item.address}</p>
               <div className='flex items-center gap-2 mt-1'>
-                <span className='text-xs font-semibold text-blue-600'>{formatPrice(item.rentAmount)}</span>
+                <span className='text-xs font-semibold text-blue-600'>
+                  {formatPrice(item.rentAmount)}
+                </span>
                 <span className='text-xs text-gray-400'>{getTimeAgo(item.timestamp)}</span>
               </div>
             </div>

@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 
-const PriceRangeSlider = ({ minPrice, maxPrice, onPriceChange, min = 0, max = 50000, step = 500 }) => {
+const PriceRangeSlider = ({
+  minPrice,
+  maxPrice,
+  onPriceChange,
+  min = 0,
+  max = 50000,
+  step = 500,
+}) => {
   const [localMin, setLocalMin] = useState(minPrice || min);
   const [localMax, setLocalMax] = useState(maxPrice || max);
   const [isOpen, setIsOpen] = useState(false);
@@ -41,7 +48,9 @@ const PriceRangeSlider = ({ minPrice, maxPrice, onPriceChange, min = 0, max = 50
   };
 
   const hasActiveFilter = minPrice || maxPrice;
-  const displayText = hasActiveFilter ? `${formatPrice(minPrice || min)} - ${formatPrice(maxPrice || max)}` : 'Price Range';
+  const displayText = hasActiveFilter
+    ? `${formatPrice(minPrice || min)} - ${formatPrice(maxPrice || max)}`
+    : 'Price Range';
 
   return (
     <div className='relative inline-block text-left'>
@@ -60,12 +69,22 @@ const PriceRangeSlider = ({ minPrice, maxPrice, onPriceChange, min = 0, max = 50
           fill='none'
           viewBox='0 0 10 6'
         >
-          <path stroke='currentColor' strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='m1 1 4 4 4-4' />
+          <path
+            stroke='currentColor'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth='2'
+            d='m1 1 4 4 4-4'
+          />
         </svg>
       </button>
 
       {isOpen && (
-        <div className='absolute mt-2 w-72 bg-white rounded-lg shadow-lg z-20 p-4' role='dialog' aria-label='Price range filter'>
+        <div
+          className='absolute mt-2 w-72 bg-white rounded-lg shadow-lg z-20 p-4'
+          role='dialog'
+          aria-label='Price range filter'
+        >
           <div className='mb-4'>
             <label className='block text-sm font-medium text-gray-700 mb-2'>Price Range</label>
             <div className='flex items-center justify-between text-sm text-gray-600 mb-2'>

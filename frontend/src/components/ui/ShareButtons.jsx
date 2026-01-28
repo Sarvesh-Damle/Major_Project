@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import { IoShareSocial, IoLogoWhatsapp, IoLogoFacebook, IoLogoTwitter, IoLink, IoCheckmark } from 'react-icons/io5';
+import {
+  IoShareSocial,
+  IoLogoWhatsapp,
+  IoLogoFacebook,
+  IoLogoTwitter,
+  IoLink,
+  IoCheckmark,
+} from 'react-icons/io5';
 
 const ShareButtons = ({ title, text, url }) => {
   const [isOpen, setIsOpen] = useState(false);

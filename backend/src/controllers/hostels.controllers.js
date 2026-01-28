@@ -10,7 +10,7 @@ export const createHostel = asyncHandler(async (req, res) => {
   if (!hostelData) {
     throw new ApiError(400, "Fields are required for property to be listed");
   }
-  let propertyPhotosUrls = [];
+  const propertyPhotosUrls = [];
   if (req.files?.property_photos && Array.isArray(req.files?.property_photos)) {
     for (let i = 0; i < Math.min(req.files.property_photos.length, 5); i++) {
       const photosLocalPath = req.files.property_photos[i].path;
@@ -147,7 +147,7 @@ export const getAllHostel = asyncHandler(async (req, res) => {
   if (!city) {
     throw new ApiError(400, "City parameter not found");
   }
-  let query = { city: { $regex: new RegExp(city, "i") } };
+  const query = { city: { $regex: new RegExp(city, "i") } };
 
   if (locality) {
     query.locality = { $regex: new RegExp(locality, "i") };

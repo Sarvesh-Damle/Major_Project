@@ -1,7 +1,11 @@
 import { useState, useMemo } from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import { useLocation } from 'react-router-dom';
-import { usePropertiesHostels, usePropertiesPGs, usePropertiesFlats } from '@/hooks/useProperties.js';
+import {
+  usePropertiesHostels,
+  usePropertiesPGs,
+  usePropertiesFlats,
+} from '@/hooks/useProperties.js';
 import PropertyMarker from './PropertyMarker.jsx';
 import { CardSkeletonGrid } from '@/components/ui/CardSkeleton.jsx';
 import 'leaflet/dist/leaflet.css';
@@ -31,12 +35,17 @@ const MapView = () => {
 
   const isLoading = hostelsLoading || pgsLoading || flatsLoading;
 
-  const hostels = hostelsData?.data?.hostels || hostelsData?.data || [];
-  const pgs = pgsData?.data?.pgs || pgsData?.data || [];
-  const flats = flatsData?.data?.flats || flatsData?.data || [];
+  const hostels = useMemo(
+    () => hostelsData?.data?.hostels || hostelsData?.data || [],
+    [hostelsData]
+  );
+  const pgs = useMemo(() => pgsData?.data?.pgs || pgsData?.data || [], [pgsData]);
+  const flats = useMemo(() => flatsData?.data?.flats || flatsData?.data || [], [flatsData]);
 
   const toggleType = (type) => {
-    setSelectedTypes((prev) => (prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]));
+    setSelectedTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    );
   };
 
   const totalCount = useMemo(() => {
@@ -82,7 +91,9 @@ const MapView = () => {
             type='number'
             placeholder='Min'
             value={priceRange.min || ''}
-            onChange={(e) => setPriceRange((prev) => ({ ...prev, min: Number(e.target.value) || 0 }))}
+            onChange={(e) =>
+              setPriceRange((prev) => ({ ...prev, min: Number(e.target.value) || 0 }))
+            }
             className='w-24 px-2 py-1.5 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
           />
           <span className='text-gray-400'>-</span>
@@ -90,7 +101,9 @@ const MapView = () => {
             type='number'
             placeholder='Max'
             value={priceRange.max < 100000 ? priceRange.max : ''}
-            onChange={(e) => setPriceRange((prev) => ({ ...prev, max: Number(e.target.value) || 100000 }))}
+            onChange={(e) =>
+              setPriceRange((prev) => ({ ...prev, max: Number(e.target.value) || 100000 }))
+            }
             className='w-24 px-2 py-1.5 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
           />
         </div>
@@ -121,13 +134,19 @@ const MapView = () => {
           />
 
           {selectedTypes.includes('hostel') &&
-            hostels.map((property) => <PropertyMarker key={`hostel-${property._id}`} property={property} type='hostel' />)}
+            hostels.map((property) => (
+              <PropertyMarker key={`hostel-${property._id}`} property={property} type='hostel' />
+            ))}
 
           {selectedTypes.includes('pg') &&
-            pgs.map((property) => <PropertyMarker key={`pg-${property._id}`} property={property} type='pg' />)}
+            pgs.map((property) => (
+              <PropertyMarker key={`pg-${property._id}`} property={property} type='pg' />
+            ))}
 
           {selectedTypes.includes('flat') &&
-            flats.map((property) => <PropertyMarker key={`flat-${property._id}`} property={property} type='flat' />)}
+            flats.map((property) => (
+              <PropertyMarker key={`flat-${property._id}`} property={property} type='flat' />
+            ))}
         </MapContainer>
 
         {/* Legend */}

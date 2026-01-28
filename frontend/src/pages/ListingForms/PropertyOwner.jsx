@@ -205,10 +205,7 @@ const PropertyOwner = () => {
                     {showPGsForm && <PGs />}
                     {showFlatsForm && <Flats />}
                     <div className='flex justify-center'>
-                      <button
-                        type='submit'
-                        className='w-full btn-primary'
-                      >
+                      <button type='submit' className='w-full btn-primary'>
                         Submit
                       </button>
                     </div>

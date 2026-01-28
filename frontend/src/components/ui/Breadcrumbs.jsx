@@ -35,9 +35,8 @@ const Breadcrumbs = () => {
     const isLast = index === segments.length - 1;
 
     // Use route label or capitalize the segment (for dynamic IDs, show a short version)
-    const label = routeLabels[segment] || (
-      segment.length > 20 ? segment.slice(0, 8) + '...' : segment
-    );
+    const label =
+      routeLabels[segment] || (segment.length > 20 ? segment.slice(0, 8) + '...' : segment);
 
     return { label, path, isLast };
   });
@@ -63,10 +62,7 @@ const Breadcrumbs = () => {
                 {crumb.label}
               </span>
             ) : (
-              <Link
-                to={crumb.path}
-                className='text-gray-500 hover:text-blue-600 transition-colors'
-              >
+              <Link to={crumb.path} className='text-gray-500 hover:text-blue-600 transition-colors'>
                 {crumb.label}
               </Link>
             )}

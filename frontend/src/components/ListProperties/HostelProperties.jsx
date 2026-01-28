@@ -127,7 +127,11 @@ const HostelProperties = () => {
         </div>
 
         {pagination && pagination.totalPages > 1 && (
-          <Pagination currentPage={pagination.page} totalPages={pagination.totalPages} onPageChange={handlePageChange} />
+          <Pagination
+            currentPage={pagination.page}
+            totalPages={pagination.totalPages}
+            onPageChange={handlePageChange}
+          />
         )}
       </div>
     </div>
@@ -162,7 +166,13 @@ export const DropdownSelect = ({ title, options, onSelect, dropdownValue, setDro
           fill='none'
           viewBox='0 0 10 6'
         >
-          <path stroke='currentColor' strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='m1 1 4 4 4-4' />
+          <path
+            stroke='currentColor'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth='2'
+            d='m1 1 4 4 4-4'
+          />
         </svg>
       </button>
       {isOpen && (
@@ -225,7 +235,13 @@ export const CheckBoxDropdown = ({ dropdownTitle, items, selectedItems, onItemsS
           fill='none'
           viewBox='0 0 10 6'
         >
-          <path stroke='currentColor' strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='m1 1 4 4 4-4' />
+          <path
+            stroke='currentColor'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth='2'
+            d='m1 1 4 4 4-4'
+          />
         </svg>
       </button>
       {isOpen && (
@@ -242,7 +258,10 @@ export const CheckBoxDropdown = ({ dropdownTitle, items, selectedItems, onItemsS
                     checked={selectedItems.includes(item)}
                     onChange={() => handleSelect(item)}
                   />
-                  <label htmlFor={`checkbox-item-${item}`} className='ml-2 text-sm font-medium text-gray-900 cursor-pointer'>
+                  <label
+                    htmlFor={`checkbox-item-${item}`}
+                    className='ml-2 text-sm font-medium text-gray-900 cursor-pointer'
+                  >
                     {item}
                   </label>
                 </div>

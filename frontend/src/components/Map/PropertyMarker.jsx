@@ -26,8 +26,18 @@ const PropertyMarker = memo(({ property, type }) => {
   const [position, setPosition] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const name = type === 'hostel' ? property.hostel_name : type === 'pg' ? property.pg_name : `${property.flat_type} Flat`;
-  const url = type === 'hostel' ? `/hostels/${property._id}` : type === 'pg' ? `/pgs/${property._id}` : `/flats/${property._id}`;
+  const name =
+    type === 'hostel'
+      ? property.hostel_name
+      : type === 'pg'
+        ? property.pg_name
+        : `${property.flat_type} Flat`;
+  const url =
+    type === 'hostel'
+      ? `/hostels/${property._id}`
+      : type === 'pg'
+        ? `/pgs/${property._id}`
+        : `/flats/${property._id}`;
 
   useEffect(() => {
     if (!property.address) {
@@ -72,8 +82,12 @@ const PropertyMarker = memo(({ property, type }) => {
           )}
           <div className='p-2'>
             <h3 className='font-semibold text-sm truncate'>{name}</h3>
-            <p className='text-xs text-gray-500 truncate'>{property.locality}, {property.city}</p>
-            <p className='text-sm font-bold text-blue-600 mt-1'>{formatPrice(property.rent_amount)}/month</p>
+            <p className='text-xs text-gray-500 truncate'>
+              {property.locality}, {property.city}
+            </p>
+            <p className='text-sm font-bold text-blue-600 mt-1'>
+              {formatPrice(property.rent_amount)}/month
+            </p>
             <button
               onClick={() => navigate(url)}
               className='w-full mt-2 px-3 py-1.5 text-xs text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors'

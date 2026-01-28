@@ -21,7 +21,9 @@ export const useRecentlyViewed = () => {
     if (!property || !property.id) return;
 
     setRecentlyViewed((prev) => {
-      const filtered = prev.filter((item) => !(item.id === property.id && item.type === property.type));
+      const filtered = prev.filter(
+        (item) => !(item.id === property.id && item.type === property.type)
+      );
       const updated = [
         {
           id: property.id,
@@ -67,7 +69,11 @@ export const useTrackPropertyView = (property, type) => {
   useEffect(() => {
     if (property && property._id) {
       const name =
-        type === 'hostel' ? property.hostel_name : type === 'pg' ? property.pg_name : `${property.flat_type} Flat`;
+        type === 'hostel'
+          ? property.hostel_name
+          : type === 'pg'
+            ? property.pg_name
+            : `${property.flat_type} Flat`;
 
       addToRecentlyViewed({
         id: property._id,

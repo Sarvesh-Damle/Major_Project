@@ -82,7 +82,8 @@ const Hostel = () => {
 
   const handleBulkDelete = () => {
     if (selectedRows.length === 0) return;
-    if (!window.confirm(`Are you sure you want to delete ${selectedRows.length} hostel(s)?`)) return;
+    if (!window.confirm(`Are you sure you want to delete ${selectedRows.length} hostel(s)?`))
+      return;
     const ids = selectedRows.map((row) => row._id);
     bulkDeleteMutation.mutate(ids);
   };
