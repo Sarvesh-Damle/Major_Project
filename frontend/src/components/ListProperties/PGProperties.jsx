@@ -10,6 +10,7 @@ import { localities, room_types, preferred_tennats } from '../../data/Property.j
 import PriceRangeSlider from '@/components/ui/PriceRangeSlider.jsx';
 import Pagination from '@/components/ui/Pagination.jsx';
 import useDebounce from '@/hooks/useDebounce.js';
+import SaveSearchButton from '@/components/ui/SaveSearchButton.jsx';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -99,6 +100,17 @@ const PGProperties = () => {
               dropdownValue={filters.locality}
               onSelect={(_, value) => updateFilter('locality', value)}
               setDropdownValue={() => {}}
+            />
+            <SaveSearchButton
+              propertyType='pg'
+              filters={{
+                city,
+                locality: filters.locality,
+                minPrice: filters.minPrice,
+                maxPrice: filters.maxPrice,
+                preferredTennats: filters.preferredTennats?.[0],
+                roomType: filters.roomType?.[0],
+              }}
             />
           </div>
         </div>
